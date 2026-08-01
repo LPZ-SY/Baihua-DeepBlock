@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "run_id": "qrf_formal_hardware_matrix_v2",
+  "protocol_version": "formal-matrix-v2",
+  "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
+  "task_key": "b23d4ed3b1d70956351ea774a4dca90bb37f021bca1a24a01a62a19a0b6e6054",
+  "instance_id": "seed2027_c6_v2_tight",
+  "repeat_index": 2,
+  "source": "hardware",
+  "status": "submitted",
+  "task_id": "2608020044026086405",
+  "backend_requested": "Shenglian",
+  "backend_actual": "Shenglian",
+  "shots": 1024,
+  "submitted_at": "2026-08-02T00:44:02.752932+08:00",
+  "selected_customer_ids": [
+    4,
+    2,
+    3,
+    5,
+    1,
+    6
+  ],
+  "bit_order": "openqasm_high_classical_bit_left",
+  "circuit": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[6];\ncreg meas[6];\nh q[0];\nh q[1];\nh q[2];\nh q[3];\nh q[4];\nh q[5];\nrzz(0.9359084610832421) q[0],q[1];\nrzz(0.53811946066719607) q[0],q[2];\nrzz(0.43221942084389292) q[0],q[3];\nrzz(0.60776186722425984) q[0],q[4];\nrzz(0.66394771256020457) q[0],q[5];\nrzz(0.45517492034690787) q[1],q[2];\nrzz(0.27500000000000002) q[1],q[3];\nrzz(0.45221326539391971) q[1],q[4];\nrzz(0.50008604763144893) q[1],q[5];\nrzz(0.58987877169205472) q[2],q[3];\nrzz(0.68966574241405432) q[2],q[4];\nrzz(0.51714630623548663) q[2],q[5];\nrzz(0.92215166462118847) q[3],q[4];\nrzz(0.78932616945470613) q[3],q[5];\nrzz(0.89202026248757049) q[4],q[5];\nrx(0.80000000000000004) q[0];\nrx(0.80000000000000004) q[1];\nrx(0.80000000000000004) q[2];\nrx(0.80000000000000004) q[3];\nrx(0.80000000000000004) q[4];\nrx(0.80000000000000004) q[5];\nmeasure q[0] -> meas[0];\nmeasure q[1] -> meas[1];\nmeasure q[2] -> meas[2];\nmeasure q[3] -> meas[3];\nmeasure q[4] -> meas[4];\nmeasure q[5] -> meas[5];\n",
+  "circuit_hash": "b4de2c04ddbde194c87fe6839e932295d6623238b01d32dfba45763bce83b756",
+  "threshold_file_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
+  "compile_options": {
+    "compiler": "quarkcircuit",
+    "correct": false,
+    "open_dd": null,
+    "target_qubits": [],
+    "compile": true
+  }
+}

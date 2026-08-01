@@ -1,0 +1,30 @@
+{
+  "schema_version": 2,
+  "created_at": "2026-08-01T21:35:51.387976+08:00",
+  "created_before_hardware_result": true,
+  "criterion": "raw feasible and normalized_score <= absolute_quality_tau",
+  "threshold_method": "same-budget best classical energies, stored separately for all and raw-feasible candidates",
+  "energy_tolerance": 1e-09,
+  "absolute_quality_tau": 0.2,
+  "near_quality_tau": 0.5,
+  "budget_shots_per_instance": 1024,
+  "instances": {
+    "seed2026_c4_v2_medium": {
+      "threshold": -0.18208246942526785,
+      "best_classical_energy_all": -0.18208246942526785,
+      "best_classical_energy_feasible": -0.18208246942526785,
+      "observed_baseline_shots": 1024,
+      "feasible_baseline_shots": 94,
+      "status_all": "ready",
+      "status_feasible": "ready",
+      "reason_feasible": "Best feasible classical energy frozen before result evaluation.",
+      "exact_optimum_energy": -0.18208246942526785,
+      "random_median_energy": 54.265099966467346,
+      "random_quality_hit_rate": 0.375
+    }
+  },
+  "metadata": {
+    "experiment_id": "qrf_replay_smoke_seeded",
+    "config_hash": "49d2545b4d3cbe35c837ba81650b894626990209601a89e5b5c47ab4771f3eec"
+  }
+}

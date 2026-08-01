@@ -14,7 +14,7 @@ from run_quantum_candidate_quality import (  # noqa: E402
 )
 
 
-def test_pass_requires_energy_strictly_below_frozen_threshold():
+def test_reach_pass_requires_raw_feasibility_and_allows_equal_or_better_energy():
     baseline = {
         "case-a": [
             {"energy": 12.0, "feasible": True, "weight": 1},
@@ -32,7 +32,7 @@ def test_pass_requires_energy_strictly_below_frozen_threshold():
     }
     rows, summary = evaluate_quantum_candidates(quantum, thresholds)
     assert rows[0]["decision"] == "PASS"
-    assert rows[0]["passing_shots"] == 2
+    assert rows[0]["passing_shots"] == 1
     assert rows[0]["feasible_quantum_shots"] == 1
     assert summary["conclusion"] == "positive_contribution_observed"
 
@@ -78,10 +78,33 @@ def test_incomplete_fixed_budget_is_not_evaluable():
     assert rows[0]["decision"] == "NOT_EVALUABLE"
 
 
-def test_threshold_does_not_depend_on_baseline_feasibility():
+def test_all_and_feasible_thresholds_are_separate():
+    thresholds = calibrate_thresholds(
+        {
+            "case-a": [
+                {"energy": 8.0, "feasible": False, "weight": 1},
+                {"energy": 10.0, "feasible": True, "weight": 1},
+            ]
+        },
+        budget=2,
+    )
+    info = thresholds["instances"]["case-a"]
+    assert info["best_classical_energy_all"] == 8.0
+    assert info["best_classical_energy_feasible"] == 10.0
+    assert info["threshold"] == 10.0
+
+
+def test_no_feasible_classical_candidate_is_not_evaluable():
     thresholds = calibrate_thresholds(
         {"case-a": [{"energy": 8.0, "feasible": False, "weight": 2}]},
         budget=2,
     )
-    assert thresholds["instances"]["case-a"]["threshold"] == 8.0
-    assert thresholds["instances"]["case-a"]["feasible_baseline_shots"] == 0
+    info = thresholds["instances"]["case-a"]
+    assert info["best_classical_energy_all"] == 8.0
+    assert info["best_classical_energy_feasible"] is None
+    rows, summary = evaluate_quantum_candidates(
+        {"case-a": [{"energy": 7.0, "feasible": True, "weight": 2}]},
+        thresholds,
+    )
+    assert rows[0]["decision"] == "NOT_EVALUABLE"
+    assert summary["conclusion"] == "not_evaluable"

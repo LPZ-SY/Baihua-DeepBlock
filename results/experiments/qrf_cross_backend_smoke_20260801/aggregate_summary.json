@@ -1,0 +1,60 @@
+{
+  "tasks": 3,
+  "instances": 1,
+  "decisions": {
+    "PASS": 3,
+    "FAIL": 0,
+    "NOT_EVALUABLE": 0
+  },
+  "metrics": {
+    "raw_feasible_rate": {
+      "mean": 0.27734375,
+      "median": 0.2568359375,
+      "low": 0.248046875,
+      "high": 0.3271484375,
+      "confidence": 0.95,
+      "n": 3
+    },
+    "quality_hit_rate": {
+      "mean": 0.27734375,
+      "median": 0.2568359375,
+      "low": 0.248046875,
+      "high": 0.3271484375,
+      "confidence": 0.95,
+      "n": 3
+    },
+    "random_quality_hit_rate": {
+      "mean": 0.375,
+      "median": 0.375,
+      "low": 0.375,
+      "high": 0.375,
+      "confidence": 0.95,
+      "n": 3
+    },
+    "classical_reach_feasible_rate": {
+      "mean": 0.0869140625,
+      "median": 0.0615234375,
+      "low": 0.0595703125,
+      "high": 0.1396484375,
+      "confidence": 0.95,
+      "n": 3
+    },
+    "strict_improvement_rate": {
+      "mean": 0.0,
+      "median": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "confidence": 0.95,
+      "n": 3
+    },
+    "best_gap": {
+      "mean": 0.0,
+      "median": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "confidence": 0.95,
+      "n": 3
+    }
+  },
+  "claim_scope": "Aggregate statistics describe candidate quality under the frozen matrix; they are not a claim of universal quantum or speed advantage."
+}

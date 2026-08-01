@@ -1,0 +1,104 @@
+{
+  "schema_version": 2,
+  "manifest_purpose": "P0-P7 acceptance baseline before formal multi-backend experiments",
+  "repository": "LPZ-SY/kujinganlai-version",
+  "branch": "codex/complete-qrf-workflow",
+  "git_commit": "8eaeefe92a1dd3c1cf1167d7196cead036695517",
+  "git_tag": "qrf-p0-p7-acceptance-v1",
+  "tag_target": "8eaeefe92a1dd3c1cf1167d7196cead036695517",
+  "frozen_at": "2026-08-01",
+  "python_version": "3.12.13",
+  "dependencies": {
+    "source": "repository .venv",
+    "requirements_file": "requirements.txt",
+    "requirements_sha256": "d7c52076975fb804b46c3056f61c1cd7226d126639e4f01c0e12d2b18a4b7ea0",
+    "installed_direct_packages": {
+      "dash": "3.4.0",
+      "plotly": "6.9.0",
+      "matplotlib": "3.11.1",
+      "dimod": "0.12.22",
+      "pyquafu": "0.4.5",
+      "PySocks": "1.7.1",
+      "quarkstudio": "7.3.9"
+    }
+  },
+  "test_summary": {
+    "compileall": {
+      "command": ".venv\\Scripts\\python.exe -m compileall -q src experiments app.py run_cli.py",
+      "result": "passed"
+    },
+    "pytest": {
+      "command": ".venv\\Scripts\\python.exe -m pytest -q",
+      "result": "28 passed, 6 warnings",
+      "duration_seconds": 50.96
+    },
+    "classic_cli": {
+      "command": ".venv\\Scripts\\python.exe run_cli.py --mode classical --customers 8 --vehicles 2 --capacity 13 --seed 2026",
+      "result": "passed",
+      "mode_used": "classical"
+    }
+  },
+  "current_live_task": {
+    "task_id": "2608012138290414123",
+    "backend_requested": "auto",
+    "backend_actual": "Baihua",
+    "status": "completed",
+    "source": "hardware",
+    "shots_requested": 1024,
+    "shots_received": 1024,
+    "counts_sum": 1024,
+    "bit_order": "openqasm_high_classical_bit_left",
+    "selected_customer_ids_in_qubit_order": [3, 4, 1, 2],
+    "result_directory": "results/experiments/qrf_live_acceptance_20260801",
+    "protected_read_only_file_count": 20
+  },
+  "experiment_config_hash": {
+    "path": "experiments/configs/qrf_hw_quality_v2.json",
+    "sha256": "5ba41287518c30c7a36c6dac034752f939838ea4431eae6578d73d87bd3916e9",
+    "note": "Historical P0-P7 matrix; P9 must audit it and create a new v2 protocol file rather than overwrite it if unbalanced."
+  },
+  "live_acceptance_config_hash": {
+    "path": "experiments/configs/qrf_live_acceptance.json",
+    "sha256": "e01ce98ffd1e6a6fc2789a3ba811ad650d00c5d5c14e7207f5ec7446422cf97f"
+  },
+  "threshold_file_hash": {
+    "path": "results/experiments/qrf_live_acceptance_20260801/frozen_thresholds.json",
+    "file_sha256": "ad9fca27458976b9ffdaf8fe2a0865ab82edf0ed7abb2c4299da9c1c5541d38a",
+    "canonical_threshold_sha256": "38992bca343ffa06a86965ec6ef51d0350c0fc21a12be68b1a3ed944fdba22b0"
+  },
+  "logical_qasm_hash": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17",
+  "result_store_integrity": {
+    "live_acceptance": {
+      "complete": true,
+      "task_records": 1,
+      "candidate_records": 16,
+      "evidence_files": 1
+    },
+    "replay_smoke_seeded": {
+      "complete": true,
+      "task_records": 1,
+      "candidate_records": 16,
+      "evidence_files": 1
+    }
+  },
+  "secret_scan": {
+    "scope": "96 repository text files excluding .git, .venv, caches, and IDE metadata",
+    "rules": [
+      "private key blocks",
+      "JWT-like tokens",
+      "AWS access keys",
+      "non-placeholder credential assignments"
+    ],
+    "result": "0 potential secret findings"
+  },
+  "artifacts": [
+    {
+      "path": "results/experiments/qrf_live_acceptance_20260801/manifest.json",
+      "sha256": "036144c838d1694f90377974c0fa49b0dbb85043082617eab5c66cfef7728ab3"
+    },
+    {
+      "path": "results/experiments/qrf_live_acceptance_20260801/raw_evidence/5c2eb84953fd4403bc802b42414cc14319c90dc658048d1d8c2c11446d890bd9.json",
+      "sha256": "d75ac27022808be47333a182011a6b98e78ba10f81258d16b29a854ab8c0ae79"
+    }
+  ]
+}

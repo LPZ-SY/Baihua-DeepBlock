@@ -1,0 +1,150 @@
+{
+  "experiment_id": "qrf_formal_hardware_matrix_v2",
+  "repository": "LPZ-SY/kujinganlai-version",
+  "protocol_version": "formal-matrix-v2",
+  "frozen_git_commit": "6f417d6c3c3e8a16132cd3a472567f9090edab85",
+  "frozen_git_tag": "qrf-formal-protocol-v2",
+  "execution_git_tag": "qrf-preformal-execution-v2",
+  "baseline_git_commit": "8eaeefe92a1dd3c1cf1167d7196cead036695517",
+  "baseline_git_tag": "qrf-p0-p7-acceptance-v1",
+  "source_matrix": "experiments/configs/qrf_hw_quality_v2.json",
+  "matrix_design": "4 fixed instances x 3 fixed backends x 2 repeats",
+  "instance_selection_policy": "Predeclared first seeds from the existing matrix across 4- and 6-customer scales and medium/tight capacity pressure; no hardware outcome was used for selection.",
+  "shots": 1024,
+  "repeats": 2,
+  "backends": [
+    "Baihua",
+    "Dongling",
+    "Shenglian"
+  ],
+  "vehicles": 2,
+  "classical_num_sweeps": 40,
+  "gamma": 1.1,
+  "beta": 0.8,
+  "quality_tau": 0.2,
+  "near_quality_tau": 0.5,
+  "energy_tolerance": 1e-09,
+  "bit_order": "openqasm_high_classical_bit_left",
+  "require_full_quantum_coverage": true,
+  "formal_sources": [
+    "hardware"
+  ],
+  "threshold_file": "experiments/configs/formal_hardware_matrix_v2_thresholds.json",
+  "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
+  "compile_options": {
+    "compile": true,
+    "compiler": "quarkcircuit",
+    "correct": false,
+    "open_dd": null,
+    "target_qubits": []
+  },
+  "instances": [
+    {
+      "instance_id": "seed2026_c4_v2_medium",
+      "seed": 2026,
+      "customers": 4,
+      "vehicles": 2,
+      "capacity": 6,
+      "capacity_pressure": "medium",
+      "selected_customer_ids_in_qubit_order": [
+        3,
+        4,
+        1,
+        2
+      ],
+      "logical_qasm_sha256": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17"
+    },
+    {
+      "instance_id": "seed2027_c4_v2_tight",
+      "seed": 2027,
+      "customers": 4,
+      "vehicles": 2,
+      "capacity": 6,
+      "capacity_pressure": "tight",
+      "selected_customer_ids_in_qubit_order": [
+        4,
+        2,
+        3,
+        1
+      ],
+      "logical_qasm_sha256": "ae0b0cd8c2d5f9492c0ae33b01e41dc4929ceb32f9730db0d263376b9c432e5e"
+    },
+    {
+      "instance_id": "seed2026_c6_v2_medium",
+      "seed": 2026,
+      "customers": 6,
+      "vehicles": 2,
+      "capacity": 9,
+      "capacity_pressure": "medium",
+      "selected_customer_ids_in_qubit_order": [
+        3,
+        4,
+        6,
+        1,
+        2,
+        5
+      ],
+      "logical_qasm_sha256": "66be66f9b8f9dabb1c6cb01570c585d1f776866559ca992217f6bbee4d211eeb",
+      "notes": "Six-qubit complete customer coverage; retained from the existing matrix scale set."
+    },
+    {
+      "instance_id": "seed2027_c6_v2_tight",
+      "seed": 2027,
+      "customers": 6,
+      "vehicles": 2,
+      "capacity": 8,
+      "capacity_pressure": "tight",
+      "selected_customer_ids_in_qubit_order": [
+        4,
+        2,
+        3,
+        5,
+        1,
+        6
+      ],
+      "logical_qasm_sha256": "b4de2c04ddbde194c87fe6839e932295d6623238b01d32dfba45763bce83b756",
+      "notes": "Six-qubit complete customer coverage under tight capacity pressure."
+    }
+  ],
+  "execution_order": [
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Baihua", "repeat_index": 1},
+    {"instance_id": "seed2027_c4_v2_tight", "backend_requested": "Shenglian", "repeat_index": 1},
+    {"instance_id": "seed2026_c6_v2_medium", "backend_requested": "Dongling", "repeat_index": 1},
+    {"instance_id": "seed2027_c6_v2_tight", "backend_requested": "Baihua", "repeat_index": 1},
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Dongling", "repeat_index": 1},
+    {"instance_id": "seed2027_c4_v2_tight", "backend_requested": "Baihua", "repeat_index": 1},
+    {"instance_id": "seed2026_c6_v2_medium", "backend_requested": "Shenglian", "repeat_index": 1},
+    {"instance_id": "seed2027_c6_v2_tight", "backend_requested": "Shenglian", "repeat_index": 1},
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Shenglian", "repeat_index": 1},
+    {"instance_id": "seed2027_c4_v2_tight", "backend_requested": "Dongling", "repeat_index": 1},
+    {"instance_id": "seed2026_c6_v2_medium", "backend_requested": "Baihua", "repeat_index": 1},
+    {"instance_id": "seed2027_c6_v2_tight", "backend_requested": "Dongling", "repeat_index": 1},
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Shenglian", "repeat_index": 2},
+    {"instance_id": "seed2027_c4_v2_tight", "backend_requested": "Dongling", "repeat_index": 2},
+    {"instance_id": "seed2026_c6_v2_medium", "backend_requested": "Baihua", "repeat_index": 2},
+    {"instance_id": "seed2027_c6_v2_tight", "backend_requested": "Dongling", "repeat_index": 2},
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Baihua", "repeat_index": 2},
+    {"instance_id": "seed2027_c4_v2_tight", "backend_requested": "Shenglian", "repeat_index": 2},
+    {"instance_id": "seed2026_c6_v2_medium", "backend_requested": "Dongling", "repeat_index": 2},
+    {"instance_id": "seed2027_c6_v2_tight", "backend_requested": "Baihua", "repeat_index": 2},
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Dongling", "repeat_index": 2},
+    {"instance_id": "seed2027_c4_v2_tight", "backend_requested": "Baihua", "repeat_index": 2},
+    {"instance_id": "seed2026_c6_v2_medium", "backend_requested": "Shenglian", "repeat_index": 2},
+    {"instance_id": "seed2027_c6_v2_tight", "backend_requested": "Shenglian", "repeat_index": 2}
+  ],
+  "live_submission": {
+    "max_tasks_per_invocation": 1,
+    "require_explicit_confirmation": true,
+    "allow_backend_fallback": false,
+    "require_execution_git_tag_match": true,
+    "require_clean_tracked_worktree": true,
+    "persist_submission_receipt_before_polling": true
+  },
+  "eligibility": {
+    "required_source": "hardware",
+    "require_backend_requested_equals_actual": true,
+    "require_counts_sum_equals_shots_received": true,
+    "missing_or_untrusted_counts_decision": "NOT_EVALUABLE",
+    "exclude_replay_manual_and_fallback_from_formal_statistics": true
+  }
+}

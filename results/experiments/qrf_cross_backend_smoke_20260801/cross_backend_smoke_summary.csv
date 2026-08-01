@@ -1,0 +1,4 @@
+﻿task_id,backend_requested,backend_actual,quality_hit_rate,random_quality_hit_rate,quantum_minus_random,classical_reach_feasible_rate,strict_improvement_rate,raw_feasible_rate,decision
+2608012251527123036,Baihua,Baihua,0.2568359375,0.375,-0.1181640625,0.0595703125,0.0,0.2568359375,PASS
+2608012253199368389,Dongling,Dongling,0.3271484375,0.375,-0.0478515625,0.1396484375,0.0,0.3271484375,PASS
+2608012254449770289,Shenglian,Shenglian,0.248046875,0.375,-0.126953125,0.0615234375,0.0,0.248046875,PASS

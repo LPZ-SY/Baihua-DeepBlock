@@ -1,0 +1,21 @@
+* text=auto
+
+# Protocol and evidence hashes are computed from raw bytes. Keep reproducible LF
+# checkouts on Windows so frozen hashes do not depend on core.autocrlf.
+*.json text eol=lf
+*.jsonl text eol=lf
+*.csv text eol=lf
+*.qasm text eol=lf
+*.tex text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.docx binary
+*.pdf binary

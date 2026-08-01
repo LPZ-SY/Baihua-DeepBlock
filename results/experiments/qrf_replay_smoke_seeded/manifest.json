@@ -1,0 +1,10 @@
+{
+  "schema_version": 2,
+  "experiment_id": "qrf_replay_smoke_seeded",
+  "updated_at": "2026-08-01T21:35:48.444468+08:00",
+  "repository": "LPZ-SY/kujinganlai-version",
+  "config_hash": "49d2545b4d3cbe35c837ba81650b894626990209601a89e5b5c47ab4771f3eec",
+  "task_count": 1,
+  "total_requested_shots": 1024,
+  "mode": "evidence_replay"
+}

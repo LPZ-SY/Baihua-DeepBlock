@@ -1,5 +1,6 @@
 dash>=3.0,<4.0
 plotly>=6.0,<7.0
+matplotlib>=3.9,<4.0
 dimod>=0.12,<0.13
 pyquafu==0.4.5
 PySocks>=1.7,<2

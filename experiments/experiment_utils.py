@@ -117,11 +117,14 @@ def repair_assignment_if_needed(
     max_iters: int = 2000,
 ) -> tuple[dict[int, list[Customer]], bool, str]:
     assignments = {k: list(v) for k, v in assignments.items()}
+    repair_applied = False
 
     for _ in range(max_iters):
         cap_viol, _, loads = compute_capacity_metrics(assignments, capacity)
         if cap_viol == 0:
-            return assignments, False, "no_repair_needed"
+            return assignments, repair_applied, (
+                "capacity_repaired" if repair_applied else "no_repair_needed"
+            )
 
         overloaded = [v for v, load in loads.items() if load > capacity]
         moved = False
@@ -138,6 +141,7 @@ def repair_assignment_if_needed(
                 assignments[ov].remove(customer)
                 assignments[target].append(customer)
                 moved = True
+                repair_applied = True
                 break
             if moved:
                 break
@@ -196,11 +200,25 @@ def evaluate_sample(
 
     assignment_energy = float(bqm.energy(completed_sample))
     decoded = decode_assignment(completed_sample, instance.customers, instance.num_vehicles)
+    vehicle_before = {
+        customer.customer_id: vehicle
+        for vehicle, customers in decoded.items()
+        for customer in customers
+    }
     onehot_violation_count = compute_onehot_violation_count(
         completed_sample, instance.customers, instance.num_vehicles
     )
     cap_violation_before, over_before, loads_before = compute_capacity_metrics(decoded, instance.vehicle_capacity)
     repaired_assignment, repaired, repair_summary = repair_assignment_if_needed(decoded, instance.vehicle_capacity)
+    vehicle_after = {
+        customer.customer_id: vehicle
+        for vehicle, customers in repaired_assignment.items()
+        for customer in customers
+    }
+    repair_moved_customers = sum(
+        vehicle_before.get(customer_id) != vehicle_after.get(customer_id)
+        for customer_id in vehicle_before
+    )
     cap_violation_after, over_after, loads_after = compute_capacity_metrics(repaired_assignment, instance.vehicle_capacity)
 
     routes_before = build_route_plans(
@@ -229,6 +247,7 @@ def evaluate_sample(
         "assignment_feasible": bool(onehot_violation_count == 0 and cap_violation_after == 0),
         "repaired": bool(repaired),
         "repair_summary": repair_summary,
+        "repair_moved_customers": int(repair_moved_customers),
         "vehicle_loads": {str(k): int(v) for k, v in sorted(loads_after.items(), key=lambda kv: kv[0])},
         "vehicle_loads_before_repair": {str(k): int(v) for k, v in sorted(loads_before.items(), key=lambda kv: kv[0])},
         "vehicle_route_lengths": {str(r.vehicle_id): float(r.distance) for r in routes_after},

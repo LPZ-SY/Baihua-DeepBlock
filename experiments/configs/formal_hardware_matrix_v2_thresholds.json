@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "created_at": "2026-08-01T22:33:50.579918+08:00",
+  "created_before_hardware_result": true,
+  "criterion": "raw feasible and normalized_score <= absolute_quality_tau",
+  "threshold_method": "same-budget best classical energies, stored separately for all and raw-feasible candidates",
+  "energy_tolerance": 1e-09,
+  "absolute_quality_tau": 0.2,
+  "near_quality_tau": 0.5,
+  "budget_shots_per_instance": 1024,
+  "instances": {
+    "seed2026_c4_v2_medium": {
+      "threshold": -0.18208246942526785,
+      "best_classical_energy_all": -0.18208246942526785,
+      "best_classical_energy_feasible": -0.18208246942526785,
+      "observed_baseline_shots": 1024,
+      "feasible_baseline_shots": 94,
+      "status_all": "ready",
+      "status_feasible": "ready",
+      "reason_feasible": "Best feasible classical energy frozen before result evaluation.",
+      "exact_optimum_energy": -0.18208246942526785,
+      "random_median_energy": 54.265099966467346,
+      "random_quality_hit_rate": 0.375
+    },
+    "seed2026_c6_v2_medium": {
+      "threshold": -1.7959211040904393,
+      "best_classical_energy_all": -1.7959211040904393,
+      "best_classical_energy_feasible": -1.7959211040904393,
+      "observed_baseline_shots": 1024,
+      "feasible_baseline_shots": 43,
+      "status_all": "ready",
+      "status_feasible": "ready",
+      "reason_feasible": "Best feasible classical energy frozen before result evaluation.",
+      "exact_optimum_energy": -1.7959211040904393,
+      "random_median_energy": 8.864317970026718,
+      "random_quality_hit_rate": 0.125
+    },
+    "seed2027_c4_v2_tight": {
+      "threshold": 0.394513299763787,
+      "best_classical_energy_all": 0.394513299763787,
+      "best_classical_energy_feasible": 0.394513299763787,
+      "observed_baseline_shots": 1024,
+      "feasible_baseline_shots": 12,
+      "status_all": "ready",
+      "status_feasible": "ready",
+      "reason_feasible": "Best feasible classical energy frozen before result evaluation.",
+      "exact_optimum_energy": 0.394513299763787,
+      "random_median_energy": 122.36092417016289,
+      "random_quality_hit_rate": 0.125
+    },
+    "seed2027_c6_v2_tight": {
+      "threshold": -0.697452024772474,
+      "best_classical_energy_all": -0.697452024772474,
+      "best_classical_energy_feasible": -0.697452024772474,
+      "observed_baseline_shots": 1024,
+      "feasible_baseline_shots": 9,
+      "status_all": "ready",
+      "status_feasible": "ready",
+      "reason_feasible": "Best feasible classical energy frozen before result evaluation.",
+      "exact_optimum_energy": -0.697452024772474,
+      "random_median_energy": 194.1763779093978,
+      "random_quality_hit_rate": 0.28125
+    }
+  },
+  "metadata": {
+    "experiment_id": "qrf_formal_hardware_matrix_v2",
+    "calibration_input_sha256": "3357705bd178c26f7d2dde28f45ffffe30303e8b4ed7a230f73e63f272ea8ed3"
+  }
+}

@@ -5,7 +5,13 @@ import re
 
 from .assignment_bqm import build_assignment_bqm, decode_assignment
 from .models import AssignmentMetadata, DispatchInstance, OptimizationResult
-from .quafu_bridge import bitstring_to_vehicle_hints, fetch_quafu_task_bitstring, submit_quafu_partition_job
+from .quafu_bridge import (
+    QuafuJobResult,
+    bitstring_to_vehicle_hints,
+    fetch_quafu_task_bitstring,
+    submit_quafu_partition_job,
+)
+from .quantum_measurements import measurement_from_payload
 from .routing import build_route_plans
 from .solvers import solve_bqm_classical
 
@@ -77,6 +83,7 @@ def run_optimization(
     quafu_result_task_id: str = "",
     quafu_manual_bitstring: str = "",
     auto_repair_capacity: bool = False,
+    quantum_action: str = "auto",
 ) -> OptimizationResult:
     mode = (mode or "classical").lower().strip()
     use_quafu = mode in {"quantum", "quafu"}
@@ -92,6 +99,7 @@ def run_optimization(
     manual_bitstring, manual_bitstring_msg = _normalize_bitstring(quafu_manual_bitstring)
     requested_result_task_id = str(quafu_result_task_id or "").strip()
     lookup_task_msg = ""
+    measurement_result = None
 
     if not instance.feasible_capacity:
         if not auto_repair_capacity:
@@ -114,7 +122,51 @@ def run_optimization(
         )
 
     if use_quafu:
-        if requested_result_task_id:
+        action = (quantum_action or "auto").lower().strip()
+        ranked = sorted(instance.customers, key=lambda c: (-c.demand, c.customer_id))
+        action_selected_ids = [
+            customer.customer_id
+            for customer in ranked[: max(2, min(quafu_max_qubits, len(ranked)))]
+        ]
+        if action == "manual":
+            job = QuafuJobResult(
+                ok=bool(manual_bitstring),
+                message="Manual debug action selected; no hardware request was made.",
+                selected_customer_ids=action_selected_ids,
+                status="completed" if manual_bitstring else "failed",
+                shots_requested=1 if manual_bitstring else 0,
+            )
+        elif action == "query":
+            if not requested_result_task_id:
+                job = QuafuJobResult(
+                    ok=False,
+                    message="Query action requires Result Task ID; no new task was submitted.",
+                    selected_customer_ids=action_selected_ids,
+                    status="failed",
+                )
+            else:
+                job = fetch_quafu_task_bitstring(
+                    task_id=requested_result_task_id,
+                    api_token=quafu_token,
+                    base_url=quafu_base_url or None,
+                    timeout_sec=quafu_timeout_sec,
+                    proxy_url=quafu_proxy_url,
+                    verify_ssl=quafu_verify_ssl,
+                )
+        elif action == "submit":
+            job = submit_quafu_partition_job(
+                customers=instance.customers,
+                api_token=quafu_token,
+                backend=quafu_backend or None,
+                base_url=quafu_base_url or None,
+                shots=quafu_shots,
+                wait=quafu_wait,
+                max_qubits=quafu_max_qubits,
+                timeout_sec=quafu_timeout_sec,
+                proxy_url=quafu_proxy_url,
+                verify_ssl=quafu_verify_ssl,
+            )
+        elif requested_result_task_id:
             job = fetch_quafu_task_bitstring(
                 task_id=requested_result_task_id,
                 api_token=quafu_token,
@@ -155,13 +207,13 @@ def run_optimization(
         quafu_bitstring = job.bitstring
         quafu_endpoint = job.endpoint
         quafu_msg = " | ".join(x for x in [lookup_task_msg, job.message] if x)
+        measurement_result = job.measurement_result
 
         selected_by_id = {c.customer_id: c for c in instance.customers}
         if job.selected_customer_ids:
             ordered_selected = [selected_by_id[cid] for cid in job.selected_customer_ids if cid in selected_by_id]
         else:
             # Fallback selection when backend accepts submission but does not expose selected ids in response.
-            ranked = sorted(instance.customers, key=lambda c: (-c.demand, c.customer_id))
             ordered_selected = ranked[: max(2, min(quafu_max_qubits, len(ranked)))]
 
         if manual_bitstring and ordered_selected and instance.num_vehicles >= 2:
@@ -171,6 +223,18 @@ def run_optimization(
                 num_vehicles=instance.num_vehicles,
             )
             quafu_bitstring = manual_bitstring
+            measurement_result = measurement_from_payload(
+                {"counts": {manual_bitstring: 1}},
+                source="manual_debug",
+                platform="local",
+                status="completed",
+                task_id=quafu_task_id,
+                backend=quafu_backend_used,
+                endpoint=quafu_endpoint,
+                shots_requested=1,
+                selected_customer_ids=[customer.customer_id for customer in ordered_selected],
+                message="Manual debug bitstring override; excluded from formal hardware statistics.",
+            )
             used_mode = "quafu_quantum_hybrid"
             quafu_msg = " | ".join(x for x in [quafu_msg, "Manual bitstring override applied."] if x)
         elif job.ok and job.bitstring and ordered_selected and instance.num_vehicles >= 2:
@@ -180,10 +244,35 @@ def run_optimization(
                 num_vehicles=instance.num_vehicles,
             )
             used_mode = "quafu_quantum_hybrid"
+            if measurement_result is None:
+                measurement_result = measurement_from_payload(
+                    {"counts": {job.bitstring: 1}},
+                    source="hardware",
+                    platform="quafu",
+                    status=job.status,
+                    task_id=job.task_id,
+                    backend=job.backend,
+                    endpoint=job.endpoint,
+                    shots_requested=job.shots_requested,
+                    selected_customer_ids=[customer.customer_id for customer in ordered_selected],
+                    message="Backend exposed a single sample through the compatibility path.",
+                )
         elif job.ok:
             used_mode = "quafu_submitted_classical_refine"
         else:
             used_mode = "quafu_unavailable_classical_fallback"
+            measurement_result = measurement_from_payload(
+                {},
+                source="fallback",
+                platform="local",
+                status="failed",
+                task_id=job.task_id,
+                backend=job.backend,
+                endpoint=job.endpoint,
+                shots_requested=job.shots_requested,
+                selected_customer_ids=[customer.customer_id for customer in ordered_selected],
+                message=job.message,
+            )
 
         if manual_bitstring_msg:
             quafu_msg = " | ".join(x for x in [quafu_msg, manual_bitstring_msg] if x)
@@ -238,5 +327,8 @@ def run_optimization(
             quantum_backend=quafu_backend_used,
             quantum_bitstring=quafu_bitstring,
             quantum_endpoint=quafu_endpoint,
+            quantum_measurement_summary=(
+                measurement_result.to_dict() if measurement_result is not None else None
+            ),
         ),
     )
