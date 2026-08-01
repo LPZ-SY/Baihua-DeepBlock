@@ -1,13 +1,13 @@
 # Quantum Route Forge Formal Hardware Protocol v2
 
-Status: frozen for dry-run and cross-backend smoke testing; no formal v2 hardware task has been submitted.
+Status: frozen and executed. All 24 formal v2 hardware tasks completed and passed strict validation on 2026-08-02.
 
 ## Protocol identity
 
 - Protocol: `formal-matrix-v2`
 - Frozen formal-protocol commit: `6f417d6c3c3e8a16132cd3a472567f9090edab85`
 - Frozen formal-protocol tag: `qrf-formal-protocol-v2`
-- Planned execution-code tag: `qrf-preformal-execution-v2` (created only after all offline P11-P14 readiness checks pass)
+- Execution-code commit/tag: `9082b74ee2d22ffdd1103f62e3af9ceca18af740` / `qrf-preformal-execution-v2`
 - P0-P7 baseline commit/tag: `8eaeefe92a1dd3c1cf1167d7196cead036695517` / `qrf-p0-p7-acceptance-v1`
 - Formal config: `experiments/configs/formal_hardware_matrix_v2.json`
 - Frozen thresholds: `experiments/configs/formal_hardware_matrix_v2_thresholds.json`
@@ -56,8 +56,8 @@ For a completed hardware task, `backend_requested` and `backend_actual` are both
 
 P9 verification result: exactly 24 tasks, 24 unique task keys, 4 instances, 6 tasks per instance, no `auto` backend, identical frozen threshold hash within the matrix, and identical customer order and QASM hash for each instance across chips and repeats.
 
-## Live gates
+## Execution record
 
-The next permitted activity is P10: one representative instance submitted once to each of Baihua, Dongling, and Shenglian. The three smoke tasks must preserve identical seed, capacity, customer order, QASM, shots, gamma, beta, compilation options, thresholds, and bit order. Only `backend_requested` may vary.
+P10 completed first with one representative task on each of Baihua, Dongling, and Shenglian. After the smoke evidence passed counts, bit-order, backend, source, idempotency, and storage checks, the user explicitly confirmed the displayed 24-task dry-run manifest.
 
-The formal 24-task matrix must not start until the P10 smoke evidence passes counts, bit-order, backend, source, idempotency, and storage checks and the user then explicitly confirms the displayed 24-task dry-run manifest.
+The formal matrix then ran sequentially with one fresh hardware task per guarded invocation. The final store at `results/experiments/qrf_formal_hardware_matrix_v2` contains 24 completed tasks and 24,576 received shots. Requested and actual backends match for every task; no task is failed or non-evaluable. `integrity_report.json` records `complete=true`, `valid=true`, and zero errors or warnings. Formal results and bounded conclusions are reported in `docs/formal_24_task_report.md` and `docs/hybrid_contribution_report.md`.

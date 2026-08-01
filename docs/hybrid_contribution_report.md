@@ -1,9 +1,25 @@
 # Fair Hybrid Contribution Report
 
-Status: workflow validated on P10 smoke evidence; formal 24-task contribution result pending.
+Date: 2026-08-02
 
-The comparison uses equal total candidate budgets for C, C+R, and C+Q. C+R and C+Q share the exact same classical subset and differ only in the added uniform-random versus measured-quantum half. Measured bitstrings are decoded with the protocol-frozen `selected_customer_ids_in_qubit_order`. All candidates pass through the same BQM evaluator, repair, routing, and 2-opt stages. An empty, failed, replay, manual, or fallback quantum source makes C+Q `NOT_EVALUABLE` for formal analysis.
+Status: complete for all 24 formal hardware tasks.
 
-The task-level outputs are `D_C`, `D_C_plus_R`, `D_C_plus_Q`, `delta_QR = D(C+R) - D(C+Q)`, `delta_QC = D(C) - D(C+Q)`, final winner source, best quantum rank, and repair/route changes. Aggregates report mean, median, standard deviation, positive-task rate, and a 95% bootstrap interval overall and by backend/instance, using the hardware task - not the shot - as the repetition unit.
+## Fair comparison
 
-The corrected P10 smoke sensitivity run contains only three tasks from one instance. All three task-level `delta_QR` values are `0`; therefore it does not show a C+Q route-distance improvement over C+R. Quantum-source tie-break wins are not described as route improvements. These smoke results validate the fair-comparison pipeline only and are not the formal contribution result.
+C, C+R, and C+Q use equal total candidate budgets. C+R and C+Q share the exact same classical subset and differ only in the added uniform-random versus measured-quantum half. Measured bitstrings use the frozen `selected_customer_ids_in_qubit_order`. Every candidate passes through the same BQM evaluation, capacity repair, routing, 2-opt, and final selection rule. No replay, manual, simulator, or fallback evidence was admitted.
+
+## Results
+
+- Hardware task units: 24.
+- Evaluable C+Q comparisons: 24; NOT_EVALUABLE: 0.
+- `D_C+R - D_C+Q` (`delta_QR`): 0 in all 24 tasks.
+- `D_C - D_C+Q` (`delta_QC`): 0 in all 24 tasks.
+- Mean and median `delta_QR`: 0; 95% task-bootstrap CI [0, 0].
+- Mean and median `delta_QC`: 0; 95% task-bootstrap CI [0, 0].
+- A quantum candidate won the C+Q internal energy/source tie-break in 11 of 24 tasks (45.83%), but never changed final route distance.
+
+## Interpretation
+
+The formal experiment observed no task-level C+Q route-distance improvement over the equal-budget C+R control or the pure-classical control. Energy-level ranking or a quantum-source tie-break is not reported as a route improvement. Under this frozen workflow, measured quantum candidates did not provide incremental routing value beyond the matched random candidate supplement.
+
+Detailed task rows are in `results/experiments/qrf_formal_hardware_matrix_v2/hybrid_summary.csv`; overall, backend, and instance strata are in `hybrid/hybrid_aggregate_summary.json`.

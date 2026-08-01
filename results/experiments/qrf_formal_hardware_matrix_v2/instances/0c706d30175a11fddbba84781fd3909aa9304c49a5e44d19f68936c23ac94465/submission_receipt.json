@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "run_id": "qrf_formal_hardware_matrix_v2",
+  "protocol_version": "formal-matrix-v2",
+  "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
+  "task_key": "0c706d30175a11fddbba84781fd3909aa9304c49a5e44d19f68936c23ac94465",
+  "instance_id": "seed2027_c4_v2_tight",
+  "repeat_index": 1,
+  "source": "hardware",
+  "status": "submitted",
+  "task_id": "2608020038518531868",
+  "backend_requested": "Dongling",
+  "backend_actual": "Dongling",
+  "shots": 1024,
+  "submitted_at": "2026-08-02T00:38:51.993149+08:00",
+  "selected_customer_ids": [
+    4,
+    2,
+    3,
+    1
+  ],
+  "bit_order": "openqasm_high_classical_bit_left",
+  "circuit": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[4];\ncreg meas[4];\nh q[0];\nh q[1];\nh q[2];\nh q[3];\nrzz(0.8910183824794633) q[0],q[1];\nrzz(0.38440732082689316) q[0],q[2];\nrzz(0.47310161223518526) q[0],q[3];\nrzz(0.27877186689026767) q[1],q[2];\nrzz(0.27500000000000002) q[1],q[3];\nrzz(0.57741170909548978) q[2],q[3];\nrx(0.80000000000000004) q[0];\nrx(0.80000000000000004) q[1];\nrx(0.80000000000000004) q[2];\nrx(0.80000000000000004) q[3];\nmeasure q[0] -> meas[0];\nmeasure q[1] -> meas[1];\nmeasure q[2] -> meas[2];\nmeasure q[3] -> meas[3];\n",
+  "circuit_hash": "ae0b0cd8c2d5f9492c0ae33b01e41dc4929ceb32f9730db0d263376b9c432e5e",
+  "threshold_file_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
+  "compile_options": {
+    "compiler": "quarkcircuit",
+    "correct": false,
+    "open_dd": null,
+    "target_qubits": [],
+    "compile": true
+  }
+}

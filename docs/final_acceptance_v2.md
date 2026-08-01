@@ -1,8 +1,8 @@
 # Final Acceptance v2
 
-Date: 2026-08-01
+Date: 2026-08-02
 
-This record is intentionally incomplete until the formal hardware confirmation gate is satisfied.
+The explicit hardware confirmation gate was satisfied on 2026-08-02.
 
 ## Completed
 
@@ -19,13 +19,13 @@ This record is intentionally incomplete until the formal hardware confirmation g
 - [x] Paper outputs preserve task-, instance-, and backend-level strata and use a backend-separated shot-weighted energy CDF.
 - [x] Dash and CLI default to one-task guarded submission and preserve fresh/replay/manual/fallback provenance.
 
-## Pending explicit user confirmation and fresh hardware execution
+## Formal experiment completion
 
-- [ ] P11 all 24 planned formal tasks have one terminal status.
-- [ ] Every completed task has counts summing to received shots and matching frozen hashes.
-- [ ] P12 formal C/C+R/C+Q results have been generated for every evaluable task.
-- [ ] P13 task-, instance-, backend-, and overall statistics and paper figures have been generated from the completed matrix.
-- [ ] Final conclusions have been rewritten from the complete predeclared dataset.
+- [x] P11 all 24 planned formal tasks are `COMPLETED`; none are failed or non-evaluable.
+- [x] Every completed task has 1024/1024 counts, requested/actual backend equality, and matching frozen hashes.
+- [x] P12 formal C/C+R/C+Q results were generated for all 24 evaluable tasks with equal budgets and retained provenance.
+- [x] P13 task-, instance-, backend-, and overall statistics and paper figures were generated from the complete matrix.
+- [x] Final conclusions were rewritten from all 24 predeclared tasks, including unfavorable results.
 - [ ] Final credential scan, integrity validation, release commit/tag, and Pull Request are complete.
 
-Until those items are checked, the project must not claim the final formal experiment is complete.
+The project is data-complete; release acceptance remains open until the final scan, validation, release tag, and Pull Request are recorded.

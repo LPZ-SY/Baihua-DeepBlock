@@ -1,0 +1,60 @@
+{
+  "tasks": 24,
+  "instances": 4,
+  "decisions": {
+    "PASS": 24,
+    "FAIL": 0,
+    "NOT_EVALUABLE": 0
+  },
+  "metrics": {
+    "raw_feasible_rate": {
+      "mean": 0.23970540364583334,
+      "median": 0.2578125,
+      "low": 0.1885986328125,
+      "high": 0.2926025390625,
+      "confidence": 0.95,
+      "n": 24
+    },
+    "quality_hit_rate": {
+      "mean": 0.1610107421875,
+      "median": 0.1435546875,
+      "low": 0.12703450520833334,
+      "high": 0.19779459635416666,
+      "confidence": 0.95,
+      "n": 24
+    },
+    "random_quality_hit_rate": {
+      "mean": 0.2265625,
+      "median": 0.203125,
+      "low": 0.18619791666666666,
+      "high": 0.2708333333333333,
+      "confidence": 0.95,
+      "n": 24
+    },
+    "classical_reach_feasible_rate": {
+      "mean": 0.050252278645833336,
+      "median": 0.05322265625,
+      "low": 0.0440673828125,
+      "high": 0.056599934895833336,
+      "confidence": 0.95,
+      "n": 24
+    },
+    "strict_improvement_rate": {
+      "mean": 0.0,
+      "median": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "confidence": 0.95,
+      "n": 24
+    },
+    "best_gap": {
+      "mean": 0.0,
+      "median": 0.0,
+      "low": 0.0,
+      "high": 0.0,
+      "confidence": 0.95,
+      "n": 24
+    }
+  },
+  "claim_scope": "Aggregate statistics describe candidate quality under the frozen matrix; they are not a claim of universal quantum or speed advantage."
+}

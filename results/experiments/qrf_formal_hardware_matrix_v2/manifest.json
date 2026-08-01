@@ -1,0 +1,10 @@
+{
+  "schema_version": 2,
+  "experiment_id": "qrf_formal_hardware_matrix_v2",
+  "updated_at": "2026-08-02T00:43:56.428812+08:00",
+  "repository": "LPZ-SY/kujinganlai-version",
+  "config_hash": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
+  "task_count": 24,
+  "total_requested_shots": 24576,
+  "mode": "live_hardware"
+}

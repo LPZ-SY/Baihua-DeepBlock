@@ -162,6 +162,8 @@ Missing/failed counts produce a preserved evidence record and `NOT_EVALUABLE`, n
 
 ## Formal batch experiment
 
+Formal v2 execution completed on 2026-08-02: all 24 predeclared hardware tasks returned 1024/1024 shots, requested and actual backends matched, and the strict validator reported a complete, valid store with zero errors. The preserved evidence is under `results/experiments/qrf_formal_hardware_matrix_v2`; the task-level report is `docs/formal_24_task_report.md`.
+
 Preview the exact matrix and shot budget without submitting:
 
 ```powershell
@@ -176,7 +178,7 @@ order hashes, and prints 24 unique task keys without accessing hardware. Live su
 requires `HEAD` to resolve to the frozen `execution_git_tag`, a clean tracked worktree, and the
 protocol-enforced one-task cap.
 
-After reviewing the dry-run manifest, submit at most one fresh hardware task with explicit confirmation:
+The completed run used the following guarded one-task submission command after explicit confirmation:
 
 ```powershell
 .\.venv\Scripts\python.exe experiments\batch_candidate_quality.py `
@@ -294,7 +296,7 @@ It also writes task-level candidate-quality and cross-backend CSVs, `statistics_
 
 The offline suite covers dual thresholds, equality/strict comparisons, zero normalization denominators, nested/probability counts, shot mismatches, bit order, evidence-source isolation, exact evaluation, result-store idempotence, batch resume, fair candidate budgets, app tabs, capacity behavior, and checked-in evidence replay.
 
-Fresh P10 smoke evidence is checked in for Baihua task `2608012251527123036`, Dongling task `2608012253199368389`, and Shenglian task `2608012254449770289`; each has 1024/1024 counts and matching requested/actual backend, QASM, thresholds, customer order, and code commit. These three tasks validate the pipeline only. The formal 24-task matrix remains unsubmitted until explicit user confirmation, and no replay/manual/fallback data is substituted for it.
+Fresh P10 smoke evidence is checked in for Baihua task `2608012251527123036`, Dongling task `2608012253199368389`, and Shenglian task `2608012254449770289`; each has 1024/1024 counts and matching requested/actual backend, QASM, thresholds, customer order, and code commit. These three tasks validate the pipeline only. The separate formal matrix contains 24 completed hardware tasks; no replay/manual/fallback data was substituted. Across the formal matrix, mean measured quality hit rate was 0.161011 versus 0.226562 for the frozen random reference, strict feasible-classical improvement was zero in all tasks, and C+Q did not change route distance relative to C+R.
 
 ## Network troubleshooting
 

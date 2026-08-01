@@ -1,6 +1,6 @@
-# Quantum Route Forge paper result template
+# Quantum Route Forge paper result companion
 
-Do not fill formal-result cells from P10 smoke evidence. The template becomes a formal report only after all 24 predeclared tasks have terminal statuses and the strict result-store validator passes.
+The formal result was generated from all 24 predeclared hardware tasks after strict result-store validation. P10 smoke evidence is not included in the formal statistics.
 
 ## Experimental setup
 
@@ -10,9 +10,12 @@ The main candidate-quality matrix must use two vehicles and 100% customer-to-qub
 
 ## Candidate-quality result table
 
-| Instance | Source | Shots | Raw feasible | Quality HR | Random HR | Classical reach | Strict improve | Best gap |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| seed2026_c4_v2_medium | Hardware / Replay |  |  |  |  |  |  |  |
+| Instance | Source | Tasks | Shots | Quality HR | Random HR | Classical reach | Strict improve |
+|---|---|---:|---:|---:|---:|---:|---:|
+| seed2026_c4_v2_medium | Hardware | 6 | 6144 | 0.277181 | 0.375000 | 0.062663 | 0 |
+| seed2027_c4_v2_tight | Hardware | 6 | 6144 | 0.064290 | 0.125000 | 0.064290 | 0 |
+| seed2026_c6_v2_medium | Hardware | 6 | 6144 | 0.101074 | 0.125000 | 0.039225 | 0 |
+| seed2027_c6_v2_tight | Hardware | 6 | 6144 | 0.201497 | 0.281250 | 0.034831 | 0 |
 
 ## Required figures
 
@@ -34,3 +37,5 @@ All uncertainty intervals and paired comparisons use one hardware task as one re
 - If C+Q improves on C+R only for some instances: “Quantum candidates provide instance-dependent incremental contribution.”
 
 Never replace these bounded statements with claims of universal quantum advantage, speed advantage, or pure-quantum optimization of the full vehicle-routing problem.
+
+For the completed formal matrix, measured QHR was below the prespecified random reference in all 24 tasks, strict feasible-classical improvement was absent, and C+Q changed no final route distance relative to C+R. See `docs/formal_24_task_report.md`, `docs/hybrid_contribution_report.md`, and the generated figures under `results/experiments/qrf_formal_hardware_matrix_v2/figures`.

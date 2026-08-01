@@ -1,0 +1,1083 @@
+{
+  "tasks": 24,
+  "evaluable_tasks": 24,
+  "not_evaluable_tasks": 0,
+  "quantum_source_win_rate": 0.4583333333333333,
+  "metrics": {
+    "delta_QR": {
+      "mean": 0.0,
+      "median": 0.0,
+      "standard_deviation": 0.0,
+      "positive_task_rate": 0.0,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        0.0,
+        0.0
+      ],
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "delta_QC": {
+      "mean": 0.0,
+      "median": 0.0,
+      "standard_deviation": 0.0,
+      "positive_task_rate": 0.0,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        0.0,
+        0.0
+      ],
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "delta_energy_C_to_CQ": {
+      "mean": 15.177465586269626,
+      "median": 0.0,
+      "standard_deviation": 68.44777515416713,
+      "positive_task_rate": 0.20833333333333334,
+      "positive_instance_rate": 0.20833333333333334,
+      "bootstrap_95_ci": [
+        -10.41022630784803,
+        42.77890939715788
+      ],
+      "values": [
+        0.0,
+        0.0,
+        135.70309619119143,
+        0.0,
+        0.0,
+        0.0,
+        -87.3064306722581,
+        0.0,
+        0.0,
+        0.0,
+        135.70309619119143,
+        0.0,
+        0.0,
+        0.0,
+        200.4013877562188,
+        104.68074029830382,
+        0.0,
+        0.0,
+        -87.3064306722581,
+        0.0,
+        0.0,
+        49.69014565033984,
+        -87.3064306722581,
+        0.0
+      ]
+    },
+    "delta_distance_C_to_CQ": {
+      "mean": 0.0,
+      "median": 0.0,
+      "standard_deviation": 0.0,
+      "positive_task_rate": 0.0,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        0.0,
+        0.0
+      ],
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "paired_gain_CQ_vs_CR_energy": {
+      "mean": 105.45324845559581,
+      "median": 0.0,
+      "standard_deviation": 128.2944901197533,
+      "positive_task_rate": 0.4583333333333333,
+      "positive_instance_rate": 0.4583333333333333,
+      "bootstrap_95_ci": [
+        55.45876747565871,
+        158.66645066639174
+      ],
+      "values": [
+        273.7967008050466,
+        0.0,
+        223.00952686344954,
+        0.0,
+        273.7967008050466,
+        0.0,
+        0.0,
+        0.0,
+        273.7967008050466,
+        0.0,
+        223.00952686344954,
+        0.0,
+        273.7967008050466,
+        0.0,
+        287.7078184284769,
+        104.68074029830382,
+        273.7967008050466,
+        0.0,
+        0.0,
+        0.0,
+        273.7967008050466,
+        49.69014565033984,
+        0.0,
+        0.0
+      ]
+    },
+    "paired_gain_CQ_vs_CR_distance": {
+      "mean": 0.0,
+      "median": 0.0,
+      "standard_deviation": 0.0,
+      "positive_task_rate": 0.0,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        0.0,
+        0.0
+      ],
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "by_backend": {
+    "Baihua": {
+      "delta_QR": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_QC": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_energy_C_to_CQ": {
+        "mean": 48.22432869971876,
+        "median": 0.0,
+        "standard_deviation": 77.86478213355139,
+        "positive_task_rate": 0.375,
+        "positive_instance_rate": 0.375,
+        "bootstrap_95_ci": [
+          0.0,
+          100.98900801075149
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          135.70309619119143,
+          200.4013877562188,
+          0.0,
+          0.0,
+          49.69014565033984
+        ]
+      },
+      "delta_distance_C_to_CQ": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_energy": {
+        "mean": 138.50011156904495,
+        "median": 136.3498362568947,
+        "standard_deviation": 137.03449406097843,
+        "positive_task_rate": 0.625,
+        "positive_instance_rate": 0.625,
+        "bootstrap_95_ci": [
+          46.50999547680863,
+          230.21597058846694
+        ],
+        "values": [
+          273.7967008050466,
+          0.0,
+          0.0,
+          223.00952686344954,
+          287.7078184284769,
+          273.7967008050466,
+          0.0,
+          49.69014565033984
+        ]
+      },
+      "paired_gain_CQ_vs_CR_distance": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "Dongling": {
+      "delta_QR": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_QC": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_energy_C_to_CQ": {
+        "mean": 19.134675727154644,
+        "median": 0.0,
+        "standard_deviation": 69.76154694031418,
+        "positive_task_rate": 0.25,
+        "positive_instance_rate": 0.25,
+        "bootstrap_95_ci": [
+          -21.826607668064526,
+          63.973753608984765
+        ],
+        "values": [
+          135.70309619119143,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          104.68074029830382,
+          -87.3064306722581,
+          0.0
+        ]
+      },
+      "delta_distance_C_to_CQ": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_energy": {
+        "mean": 109.41045859648082,
+        "median": 52.34037014915191,
+        "standard_deviation": 128.09337308741343,
+        "positive_task_rate": 0.5,
+        "positive_instance_rate": 0.5,
+        "bootstrap_95_ci": [
+          34.22458760063083,
+          192.6507321183857
+        ],
+        "values": [
+          223.00952686344954,
+          273.7967008050466,
+          0.0,
+          0.0,
+          0.0,
+          104.68074029830382,
+          0.0,
+          273.7967008050466
+        ]
+      },
+      "paired_gain_CQ_vs_CR_distance": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "Shenglian": {
+      "delta_QR": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_QC": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_energy_C_to_CQ": {
+        "mean": -21.826607668064526,
+        "median": 0.0,
+        "standard_deviation": 40.41502417788767,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          -54.566519170161314,
+          0.0
+        ],
+        "values": [
+          0.0,
+          -87.3064306722581,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -87.3064306722581,
+          0.0
+        ]
+      },
+      "delta_distance_C_to_CQ": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_energy": {
+        "mean": 68.44917520126165,
+        "median": 0.0,
+        "standard_deviation": 126.74324442836183,
+        "positive_task_rate": 0.25,
+        "positive_instance_rate": 0.25,
+        "bootstrap_95_ci": [
+          0.0,
+          136.8983504025233
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          273.7967008050466,
+          273.7967008050466,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_distance": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "by_instance": {
+    "seed2026_c4_v2_medium": {
+      "delta_QR": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_QC": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_energy_C_to_CQ": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_distance_C_to_CQ": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_energy": {
+        "mean": 273.7967008050466,
+        "median": 273.7967008050466,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 1.0,
+        "positive_instance_rate": 1.0,
+        "bootstrap_95_ci": [
+          273.7967008050466,
+          273.7967008050466
+        ],
+        "values": [
+          273.7967008050466,
+          273.7967008050466,
+          273.7967008050466,
+          273.7967008050466,
+          273.7967008050466,
+          273.7967008050466
+        ]
+      },
+      "paired_gain_CQ_vs_CR_distance": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "seed2026_c6_v2_medium": {
+      "delta_QR": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_QC": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_energy_C_to_CQ": {
+        "mean": 34.98138135363789,
+        "median": 24.198332759466666,
+        "standard_deviation": 136.0267864121677,
+        "positive_task_rate": 0.5,
+        "positive_instance_rate": 0.5,
+        "bootstrap_95_ci": [
+          -50.13817619501651,
+          130.88398749646353
+        ],
+        "values": [
+          135.70309619119143,
+          -87.3064306722581,
+          135.70309619119143,
+          200.4013877562188,
+          -87.3064306722581,
+          -87.3064306722581
+        ]
+      },
+      "delta_distance_C_to_CQ": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_energy": {
+        "mean": 122.287812025896,
+        "median": 111.50476343172477,
+        "standard_deviation": 136.0267864121677,
+        "positive_task_rate": 0.5,
+        "positive_instance_rate": 0.5,
+        "bootstrap_95_ci": [
+          37.16825447724159,
+          218.19041816872164
+        ],
+        "values": [
+          223.00952686344954,
+          0.0,
+          223.00952686344954,
+          287.7078184284769,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_distance": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "seed2027_c4_v2_tight": {
+      "delta_QR": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_QC": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_energy_C_to_CQ": {
+        "mean": 8.281690941723307,
+        "median": 0.0,
+        "standard_deviation": 20.2859170146516,
+        "positive_task_rate": 0.16666666666666666,
+        "positive_instance_rate": 0.16666666666666666,
+        "bootstrap_95_ci": [
+          0.0,
+          24.84507282516992
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          49.69014565033984
+        ]
+      },
+      "delta_distance_C_to_CQ": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_energy": {
+        "mean": 8.281690941723307,
+        "median": 0.0,
+        "standard_deviation": 20.2859170146516,
+        "positive_task_rate": 0.16666666666666666,
+        "positive_instance_rate": 0.16666666666666666,
+        "bootstrap_95_ci": [
+          0.0,
+          24.84507282516992
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          49.69014565033984
+        ]
+      },
+      "paired_gain_CQ_vs_CR_distance": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "seed2027_c6_v2_tight": {
+      "delta_QR": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_QC": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_energy_C_to_CQ": {
+        "mean": 17.446790049717304,
+        "median": 0.0,
+        "standard_deviation": 42.73573327127415,
+        "positive_task_rate": 0.16666666666666666,
+        "positive_instance_rate": 0.16666666666666666,
+        "bootstrap_95_ci": [
+          0.0,
+          52.34037014915191
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          104.68074029830382,
+          0.0,
+          0.0
+        ]
+      },
+      "delta_distance_C_to_CQ": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_energy": {
+        "mean": 17.446790049717304,
+        "median": 0.0,
+        "standard_deviation": 42.73573327127415,
+        "positive_task_rate": 0.16666666666666666,
+        "positive_instance_rate": 0.16666666666666666,
+        "bootstrap_95_ci": [
+          0.0,
+          52.34037014915191
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          104.68074029830382,
+          0.0,
+          0.0
+        ]
+      },
+      "paired_gain_CQ_vs_CR_distance": {
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "positive_task_rate": 0.0,
+        "positive_instance_rate": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "conclusion": "No task-level C+Q route-distance improvement over C+R was observed. A quantum-source tie-break win is not reported as a route improvement."
+}

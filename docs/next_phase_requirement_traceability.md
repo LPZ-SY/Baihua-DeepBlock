@@ -23,31 +23,33 @@ This audit maps the execution guide's P8-P14 requirements to current repository 
 - Each task has 1024/1024 counts, matching requested/actual backend, identical logical QASM/customer order/threshold hashes, and strict result-store validation.
 - Evidence root: `results/experiments/qrf_cross_backend_smoke_20260801`.
 
-## P11 - Formal 24-task hardware matrix: awaiting explicit confirmation
+## P11 - Formal 24-task hardware matrix: complete
 
-- Submission is intentionally not started. The guide requires showing the dry-run and receiving explicit user confirmation first.
-- Ready evidence schema includes run/task identity, requested/actual backend, timestamps, counts, customer order, QASM and hashes, threshold references, dependency snapshot, queue/poll fields, compile options, optional hardware metadata, redacted raw response, and task-ID-addressable artifacts.
-- `experiments/validate_formal_result_store.py` requires all 24 planned tasks to have terminal status and validates completed evidence against the frozen protocol.
+- The user explicitly confirmed the displayed dry run on 2026-08-02.
+- All 24 predeclared tasks completed on hardware: 8 each on Baihua, Dongling, and Shenglian, with 1024/1024 shots and requested/actual backend equality for every task.
+- The immutable evidence root is `results/experiments/qrf_formal_hardware_matrix_v2`; it includes task identity, timestamps, counts, customer order, QASM and hashes, threshold references, dependency snapshot, queue/poll fields, compile options, optional hardware metadata, redacted raw response, and task-ID-addressable artifacts.
+- Strict validation reports `complete=true`, `valid=true`, 24 observed tasks, and zero errors or warnings.
 
-## P12 - Fair C/C+R/C+Q contribution: implementation verified; formal result pending P11
+## P12 - Fair C/C+R/C+Q contribution: complete
 
-- Equal budgets and shared classical subset are enforced.
-- Quantum bitstrings use the frozen `selected_customer_ids_in_qubit_order`; missing or ineligible measurement evidence makes C+Q `NOT_EVALUABLE`.
-- Outputs include route distances, paired deltas, final source/rank, repair changes, `hybrid_summary.csv`, and overall/backend/instance task-level bootstrap summaries.
-- Corrected P10 sensitivity result: all three `delta_QR` values are zero; this is pipeline evidence, not the formal contribution result.
+- Equal budgets and the shared classical subset were enforced for all 24 hardware-task units.
+- Quantum bitstrings used the frozen `selected_customer_ids_in_qubit_order`; all 24 C+Q comparisons were evaluable.
+- `delta_QR` and `delta_QC` were zero in every task. A quantum candidate won an internal energy/source tie-break in 11/24 tasks, but did not change final route distance.
+- Detailed and stratified evidence is retained in `hybrid_summary.csv` and `hybrid/hybrid_aggregate_summary.json`.
 
-## P13 - Task-level statistics and figures: implementation verified; formal result pending P11/P12
+## P13 - Task-level statistics and figures: complete
 
-- `experiments/generate_paper_artifacts.py` preserves task, instance, backend, and pooled descriptive strata.
-- Required plots exist for the P10 smoke evidence, including paired quantum/random rates, backend distributions, threshold reach versus strict improvement, C+Q versus C+R delta, and backend-separated shot-weighted energy CDF.
-- Final statistics and conclusions must be regenerated from all predeclared formal terminal tasks, including unfavorable and non-evaluable outcomes.
+- `experiments/generate_paper_artifacts.py` generated task-, instance-, backend-, and pooled descriptive strata from all 24 predeclared tasks.
+- Mean measured quality hit rate was 0.161011 versus a 0.226562 random reference; the mean paired difference was -0.065552 with task-bootstrap 95% CI [-0.079427, -0.051514].
+- Feasible-classical threshold reach was positive but low (mean 0.050252); strict improvement was zero in all 24 tasks.
+- Required paired, backend-distribution, threshold, hybrid-delta, convergence, and backend-separated energy-CDF artifacts are present under the formal result root.
 
-## P14 - Interface, documentation, and release: prepared; final release pending P11-P13
+## P14 - Interface, documentation, and release: final release checks in progress
 
 - Dash exposes requested/actual backend, task ID, shots, source, formal `NOT_EVALUABLE`, and task-level history filters.
-- README, protocol, claim boundaries, formal report, hybrid report, and acceptance v2 distinguish smoke, replay, and pending formal evidence.
-- Final experiment commit/tag and Pull Request are prohibited until the formal matrix, analyses, final scan, and integrity validation are complete.
+- README, protocol, claim boundaries, formal report, hybrid report, and acceptance v2 now distinguish smoke/replay evidence from the completed formal result.
+- Final credential scan, test suite, read-only evidence protection, release commit/tag, and Pull Request are the remaining release actions.
 
 ## Current gate
 
-The only authorized next state-changing action is formal hardware execution after the user explicitly confirms the displayed 24-task dry-run. Until then, the project must remain marked as awaiting confirmation and must not claim P11-P14 completion.
+Hardware execution and analysis are complete. No further hardware submission is authorized by this phase; only final local validation, evidence protection, release commit/tag, and Pull Request remain.
