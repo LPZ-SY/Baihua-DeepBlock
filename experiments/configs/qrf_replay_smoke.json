@@ -1,0 +1,21 @@
+{
+  "experiment_id": "qrf_replay_smoke_seeded",
+  "repository": "LPZ-SY/kujinganlai-version",
+  "customers": [4],
+  "vehicles": [2],
+  "capacity_pressure": ["medium"],
+  "seeds": [2026],
+  "shots": 1024,
+  "repeats": 1,
+  "repeat_selected_instances": 0,
+  "repeat_count": 1,
+  "backend": "auto",
+  "quality_tau": 0.2,
+  "near_quality_tau": 0.5,
+  "energy_tolerance": 1e-9,
+  "classical_num_sweeps": 40,
+  "bit_order": "openqasm_high_classical_bit_left",
+  "require_full_quantum_coverage": true,
+  "formal_sources": ["hardware"],
+  "comparison_sources": ["uniform_random", "classical_sa", "ideal_simulator"]
+}

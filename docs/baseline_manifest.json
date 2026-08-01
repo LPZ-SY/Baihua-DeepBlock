@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "repository": "LPZ-SY/kujinganlai-version",
+  "baseline_branch": "main",
+  "baseline_commit": "05aa6dd93fe66d717f5a37d6981af8ff94a63736",
+  "implementation_branch": "codex/complete-qrf-workflow",
+  "audit_date": "2026-08-01",
+  "python_version": "3.12.13",
+  "dependency_install": "repository .venv created from requirements.txt",
+  "baseline_test": {
+    "command": ".venv\\Scripts\\python.exe -m pytest -q",
+    "result": "12 passed",
+    "duration_seconds": 40.84
+  },
+  "evidence_replay": {
+    "source": "results/quarkstudio_candidate_quality_validated/task_evidence.json",
+    "seed": 2026,
+    "customers": 4,
+    "vehicles": 2,
+    "shots": 1024,
+    "task_id": "2608011815107080366",
+    "backend": "Dongling",
+    "threshold": -0.18208246942526785,
+    "quantum_best_bitstring": "1001",
+    "passing_shots": 57,
+    "strictly_improving_shots": 0
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "91c51150b31ee14dffe51d9dd5b3f49ba12a141fd6f87d1158fedf67f64622ef"
+    },
+    {
+      "path": "results/quarkstudio_candidate_quality/frozen_thresholds.json",
+      "sha256": "669fab1c7a7a37b4f970de80666258487558cd481213223518526fae370955d7"
+    },
+    {
+      "path": "results/quarkstudio_candidate_quality/task_evidence.json",
+      "sha256": "cc440d669c7680522365992a2b10a251ad13a42487d1aa024a9e231330651e36"
+    },
+    {
+      "path": "results/quarkstudio_candidate_quality/quantum_candidate_quality_summary.json",
+      "sha256": "58b86ba1d982f19aeb56c01d551d014a1ab7f7bcf0d365618c15702597f7aea0"
+    },
+    {
+      "path": "results/quarkstudio_candidate_quality_validated/frozen_thresholds.json",
+      "sha256": "6a5833b24f8d6a10cac45fbdc282d76cc40b705b06db311171b32e91338b0ad9"
+    },
+    {
+      "path": "results/quarkstudio_candidate_quality_validated/task_evidence.json",
+      "sha256": "cc440d669c7680522365992a2b10a251ad13a42487d1aa024a9e231330651e36"
+    },
+    {
+      "path": "results/quarkstudio_candidate_quality_validated/quantum_candidate_quality_summary.json",
+      "sha256": "012dcda2d4fbd0036a0d9a233db0b9e1cedc4a18ae5e45dc6225193166bd089f"
+    },
+    {
+      "path": "results/quarkstudio_candidate_quality_validated/quantum_closed_loop_summary.json",
+      "sha256": "977c8ceef99935d49a62b65a194d3703f1c4c054067e9037131fe61a126bd348"
+    }
+  ],
+  "security": {
+    "committed_secret_detected": false,
+    "live_authentication_required_for_tests": false,
+    "evidence_contains_authentication_material": false
+  }
+}

@@ -14,7 +14,12 @@ from urllib.parse import urlencode
 from urllib.parse import urlparse
 
 from .geometry import euclidean
-from .models import Customer
+from .models import Customer, QuantumMeasurementResult
+from .quantum_measurements import (
+    BIT_ORDER_OPENQASM,
+    bitstring_to_customer_preferences,
+    measurement_from_payload,
+)
 
 
 @dataclass(frozen=True)
@@ -26,6 +31,12 @@ class QuafuJobResult:
     bitstring: Optional[str] = None
     selected_customer_ids: Optional[list[int]] = None
     endpoint: Optional[str] = None
+    status: str = "unknown"
+    counts: Optional[dict[str, int]] = None
+    shots_requested: int = 0
+    shots_received: int = 0
+    bit_order: str = BIT_ORDER_OPENQASM
+    measurement_result: Optional[QuantumMeasurementResult] = None
 
 
 def _normalize_base_url(base_url: str) -> str:
@@ -295,6 +306,7 @@ def _submit_once_with_sqc(
         task_id = None
 
     bitstring = None
+    measurement = None
     backend_msg = ""
     if requested_backend and requested_backend != backend_name:
         backend_msg = (
@@ -312,6 +324,41 @@ def _submit_once_with_sqc(
             verify_ssl=verify_ssl,
         )
         message = f"{message} {wait_msg}"
+        item = _query_sqc_task_item(
+            task_id=task_id,
+            endpoint=endpoint,
+            access_token=access_token,
+            timeout_sec=timeout_sec,
+            proxy_url=proxy_url,
+            verify_ssl=verify_ssl,
+        )
+        detail = _query_sqc_task_detail(
+            task_id=task_id,
+            endpoint=endpoint,
+            access_token=access_token,
+            timeout_sec=timeout_sec,
+            proxy_url=proxy_url,
+            verify_ssl=verify_ssl,
+        )
+        status_text = "unknown"
+        for payload_part in (detail, item):
+            if isinstance(payload_part, dict) and payload_part.get("status"):
+                status_text = str(payload_part["status"])
+                break
+        measurement = measurement_from_payload(
+            {"detail": detail, "item": item},
+            source="hardware",
+            platform="sqc",
+            status=status_text,
+            task_id=task_id,
+            backend=backend_name,
+            endpoint=endpoint,
+            shots_requested=shots,
+            selected_customer_ids=[c.customer_id for c in selected],
+            circuit=qasm,
+            message=message,
+        )
+        bitstring = measurement.most_frequent_bitstring or bitstring
     elif wait and not task_id:
         message = f"{message} No task_id returned; skip result polling."
 
@@ -323,6 +370,11 @@ def _submit_once_with_sqc(
         bitstring=bitstring,
         selected_customer_ids=[c.customer_id for c in selected],
         endpoint=endpoint,
+        status=measurement.status if measurement else "submitted",
+        counts=measurement.counts if measurement else {},
+        shots_requested=max(100, int(shots)),
+        shots_received=measurement.shots_received if measurement else 0,
+        measurement_result=measurement,
     )
 
 
@@ -694,6 +746,21 @@ def _submit_once_with_sdk(
         if counts:
             bitstring = max(counts.items(), key=lambda kv: kv[1])[0]
 
+        measurement = measurement_from_payload(
+            {"counts": counts or {}, "status": "completed" if counts else "submitted"},
+            source="hardware",
+            platform="pyquafu",
+            status="completed" if counts else "submitted",
+            task_id=getattr(result, "taskid", None),
+            backend=backend_name,
+            endpoint=endpoint,
+            shots_requested=max(100, int(shots)),
+            selected_customer_ids=[c.customer_id for c in selected],
+            circuit=None,
+            message="Submitted to Quafu successfully.",
+        )
+        bitstring = measurement.most_frequent_bitstring or bitstring
+
         return QuafuJobResult(
             ok=True,
             message="Submitted to Quafu successfully.",
@@ -702,6 +769,11 @@ def _submit_once_with_sdk(
             bitstring=bitstring,
             selected_customer_ids=[c.customer_id for c in selected],
             endpoint=endpoint,
+            status=measurement.status,
+            counts=measurement.counts,
+            shots_requested=measurement.shots_requested,
+            shots_received=measurement.shots_received,
+            measurement_result=measurement,
         )
     finally:
         ClientWrapper.post = original_post
@@ -805,6 +877,12 @@ def submit_quafu_partition_job(
                 bitstring=result.bitstring,
                 selected_customer_ids=result.selected_customer_ids,
                 endpoint=endpoint,
+                status=result.status,
+                counts=result.counts,
+                shots_requested=result.shots_requested,
+                shots_received=result.shots_received,
+                bit_order=result.bit_order,
+                measurement_result=result.measurement_result,
             )
         except Exception as exc:  # pragma: no cover - network/runtime dependent
             err = f"{type(exc).__name__}: {exc}"
@@ -871,6 +949,32 @@ def fetch_quafu_task_bitstring(
             backend = None
             if item:
                 backend = str(item.get("chipName") or item.get("chip") or "").strip() or None
+            detail = _query_sqc_task_detail(
+                task_id=task_id,
+                endpoint=endpoint,
+                access_token=api_token,
+                timeout_sec=timeout_sec,
+                proxy_url=proxy_url,
+                verify_ssl=verify_ssl,
+            )
+            status_text = "unknown"
+            for payload_part in (detail, item):
+                if isinstance(payload_part, dict) and payload_part.get("status"):
+                    status_text = str(payload_part["status"])
+                    break
+            measurement = measurement_from_payload(
+                {"detail": detail, "item": item},
+                source="hardware",
+                platform="sqc",
+                status=status_text,
+                task_id=task_id,
+                backend=backend,
+                endpoint=endpoint,
+                shots_requested=0,
+                selected_customer_ids=[],
+                message=msg,
+            )
+            bitstring = measurement.most_frequent_bitstring or bitstring
             return QuafuJobResult(
                 ok=bitstring is not None,
                 message=f"{msg} | Endpoint={endpoint} | {dns_hint}",
@@ -879,6 +983,11 @@ def fetch_quafu_task_bitstring(
                 bitstring=bitstring,
                 selected_customer_ids=None,
                 endpoint=endpoint,
+                status=measurement.status,
+                counts=measurement.counts,
+                shots_requested=measurement.shots_requested,
+                shots_received=measurement.shots_received,
+                measurement_result=measurement,
             )
         except Exception as exc:  # pragma: no cover - network/runtime dependent
             err = f"{type(exc).__name__}: {exc}"
@@ -905,13 +1014,9 @@ def bitstring_to_vehicle_hints(
     if num_vehicles <= 1:
         return {}
 
-    hints: dict[int, int] = {}
     ordered = list(selected_customers)
-    for idx, customer in enumerate(ordered):
-        # Quafu bitstring order can differ by backend mapping; this mirror mapping keeps deterministic behavior.
-        bit_index = len(bitstring) - 1 - idx
-        bit = "0"
-        if 0 <= bit_index < len(bitstring):
-            bit = bitstring[bit_index]
-        hints[customer.customer_id] = 0 if bit == "0" else 1
-    return hints
+    return bitstring_to_customer_preferences(
+        bitstring,
+        [customer.customer_id for customer in ordered],
+        bit_order=BIT_ORDER_OPENQASM,
+    )

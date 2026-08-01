@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "source": "replay",
+  "platform": "quarkstudio",
+  "task_id": "2608011815107080366",
+  "backend": "Dongling",
+  "status": "completed",
+  "shots": 1024,
+  "shots_received": 1024,
+  "counts": {
+    "0000": 151,
+    "0001": 43,
+    "0010": 103,
+    "0011": 37,
+    "0100": 47,
+    "0101": 64,
+    "0110": 28,
+    "0111": 41,
+    "1000": 39,
+    "1001": 29,
+    "1010": 73,
+    "1011": 41,
+    "1100": 36,
+    "1101": 74,
+    "1110": 58,
+    "1111": 160
+  },
+  "selected_customer_ids": [
+    3,
+    4,
+    1,
+    2
+  ],
+  "bit_order": "openqasm_high_classical_bit_left",
+  "circuit": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[4];\ncreg meas[4];\nh q[0];\nh q[1];\nh q[2];\nh q[3];\nrzz(0.40437409394004337) q[0],q[1];\nrzz(0.96851919119164021) q[0],q[2];\nrzz(0.70920387244242999) q[0],q[3];\nrzz(0.27500000000000002) q[1],q[2];\nrzz(0.79409709747651691) q[1],q[3];\nrzz(0.57877482724582197) q[2],q[3];\nrx(0.80000000000000004) q[0];\nrx(0.80000000000000004) q[1];\nrx(0.80000000000000004) q[2];\nrx(0.80000000000000004) q[3];\nmeasure q[0] -> meas[0];\nmeasure q[1] -> meas[1];\nmeasure q[2] -> meas[2];\nmeasure q[3] -> meas[3];\n",
+  "circuit_hash": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17",
+  "threshold_hash": "0f6204b59ef8924a766827198180f12e77d17eace002ab92a6297473460c515d",
+  "raw_payload_sha256": "26b7a92e1e70b4a87d44b151eb8fa0444a2e8733daa9f3c6c4f9501707fc588c",
+  "warnings": []
+}
