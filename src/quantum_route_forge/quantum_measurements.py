@@ -314,7 +314,11 @@ def measurement_from_evidence(
         bit_order=bit_order,
         circuit=payload.get("circuit") if isinstance(payload, Mapping) else None,
         evidence_path=str(evidence_path),
-        message="Loaded from evidence replay.",
+        message=(
+            "Loaded from stored fresh-hardware evidence."
+            if source == "hardware"
+            else "Loaded from evidence replay."
+        ),
         submitted_at=payload.get("submitted_at") if isinstance(payload, Mapping) else None,
         completed_at=(payload.get("completed_at") or payload.get("result_received_at"))
         if isinstance(payload, Mapping)

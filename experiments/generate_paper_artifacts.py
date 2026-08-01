@@ -5,8 +5,9 @@ import csv
 import json
 import math
 import random
+import statistics
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Mapping
 
 import matplotlib
 
@@ -35,6 +36,15 @@ def _float(value: Any) -> float | None:
     return result if math.isfinite(result) else None
 
 
+def _task_label(row: Mapping[str, Any], index: int) -> str:
+    backend = str(row.get("backend_actual") or row.get("backend") or "task")
+    repeat = row.get("repeat_index")
+    execution = row.get("execution_index")
+    prefix = f"{execution}: " if execution not in {None, ""} else ""
+    suffix = f" R{repeat}" if repeat not in {None, ""} else ""
+    return f"{prefix}{backend}{suffix}"
+
+
 def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     if not rows:
         path.write_text("", encoding="utf-8")
@@ -47,7 +57,10 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def _paper_table(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     fields = [
+        ("task_id", "Task ID"),
         ("instance_id", "Instance"),
+        ("backend_actual", "Backend"),
+        ("repeat_index", "Repeat"),
         ("source", "Source"),
         ("shots_received", "Shots"),
         ("raw_feasible_rate", "Raw feasible"),
@@ -58,6 +71,101 @@ def _paper_table(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         ("best_gap", "Best gap"),
     ]
     return [{label: row.get(key, "") for key, label in fields} for row in rows]
+
+
+def _bootstrap_summary(values: Iterable[float], seed: int = 2026) -> dict[str, Any] | None:
+    data = [float(value) for value in values if math.isfinite(float(value))]
+    if not data:
+        return None
+    rng = random.Random(seed)
+    means = sorted(
+        statistics.fmean(rng.choice(data) for _ in range(len(data)))
+        for _ in range(2000)
+    )
+    return {
+        "n_tasks": len(data),
+        "mean": statistics.fmean(data),
+        "median": statistics.median(data),
+        "standard_deviation": statistics.stdev(data) if len(data) > 1 else 0.0,
+        "bootstrap_95_ci": [
+            means[int(0.025 * len(means))],
+            means[int(0.975 * len(means)) - 1],
+        ],
+    }
+
+
+def _task_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    fields = [
+        "execution_index",
+        "task_key",
+        "task_id",
+        "instance_id",
+        "backend_requested",
+        "backend_actual",
+        "repeat_index",
+        "status",
+        "source",
+        "shots_received",
+        "raw_feasible_rate",
+        "quality_hit_rate",
+        "random_quality_hit_rate",
+        "quality_hit_gain",
+        "classical_reach_feasible_rate",
+        "strict_improvement_rate",
+        "best_gap",
+        "decision",
+    ]
+    return [{field: row.get(field, "") for field in fields} for row in rows]
+
+
+def _statistics(rows: list[dict[str, Any]]) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    evaluable = [row for row in rows if str(row.get("decision")) in {"PASS", "FAIL"}]
+    metrics = [
+        "quality_hit_rate",
+        "random_quality_hit_rate",
+        "quality_hit_gain",
+        "classical_reach_feasible_rate",
+        "strict_improvement_rate",
+        "raw_feasible_rate",
+        "best_gap",
+    ]
+    backends = sorted({str(row.get("backend_actual") or row.get("backend")) for row in evaluable})
+    by_backend: dict[str, Any] = {}
+    backend_rows: list[dict[str, Any]] = []
+    for backend in backends:
+        subset = [row for row in evaluable if str(row.get("backend_actual") or row.get("backend")) == backend]
+        by_backend[backend] = {}
+        for metric in metrics:
+            values = [_float(row.get(metric)) for row in subset]
+            summary = _bootstrap_summary(value for value in values if value is not None)
+            by_backend[backend][metric] = summary
+            if summary:
+                backend_rows.append({"backend": backend, "metric": metric, **summary})
+    overall = {
+        metric: _bootstrap_summary(
+            value
+            for value in (_float(row.get(metric)) for row in evaluable)
+            if value is not None
+        )
+        for metric in metrics
+    }
+    return (
+        {
+            "schema_version": 1,
+            "statistical_unit": "hardware task",
+            "shots_are_not_independent_replicates": True,
+            "planned_or_observed_tasks": len(rows),
+            "evaluable_tasks": len(evaluable),
+            "not_evaluable_tasks": len(rows) - len(evaluable),
+            "overall": overall,
+            "by_backend": by_backend,
+            "pooled_result_caveat": (
+                "Pooled summaries are descriptive only; backend-specific results retain "
+                "the hardware heterogeneity needed for interpretation."
+            ),
+        },
+        backend_rows,
+    )
 
 
 def _latex_table(rows: list[dict[str, Any]]) -> str:
@@ -123,6 +231,90 @@ def _hit_rates(rows: list[dict[str, Any]], output: Path) -> None:
         ax.legend()
     else:
         ax.text(0.5, 0.5, "No instance summaries", ha="center", va="center", transform=ax.transAxes)
+    fig.tight_layout()
+    fig.savefig(output)
+    plt.close(fig)
+
+
+def _paired_quantum_random(rows: list[dict[str, Any]], output: Path) -> None:
+    evaluable = [row for row in rows if _float(row.get("quality_hit_rate")) is not None and _float(row.get("random_quality_hit_rate")) is not None]
+    fig, (top, bottom) = plt.subplots(2, 1, figsize=(8.2, 7.0), dpi=160, sharex=True)
+    x = list(range(1, len(evaluable) + 1))
+    quantum = [float(row["quality_hit_rate"]) for row in evaluable]
+    random_rates = [float(row["random_quality_hit_rate"]) for row in evaluable]
+    differences = [q - r for q, r in zip(quantum, random_rates)]
+    top.plot(x, quantum, "o-", label="Quantum measured")
+    top.plot(x, random_rates, "s--", label="Uniform random reference")
+    top.set_ylabel("Quality hit rate")
+    top.legend()
+    top.grid(alpha=0.25)
+    colors = ["#1a8f5b" if value > 0 else "#b54a4a" for value in differences]
+    bottom.bar(x, differences, color=colors)
+    bottom.axhline(0.0, color="black", linewidth=1)
+    bottom.set_xlabel("Hardware task (statistical unit)")
+    bottom.set_ylabel("Quantum - Random")
+    bottom.grid(axis="y", alpha=0.25)
+    fig.suptitle("Task-level quantum versus random quality hit rate")
+    fig.tight_layout()
+    fig.savefig(output)
+    plt.close(fig)
+
+
+def _backend_distribution(rows: list[dict[str, Any]], output: Path) -> None:
+    evaluable = [row for row in rows if _float(row.get("quality_hit_rate")) is not None]
+    backends = sorted({str(row.get("backend_actual") or row.get("backend")) for row in evaluable})
+    fig, ax = plt.subplots(figsize=(7.6, 4.8), dpi=160)
+    rng = random.Random(2026)
+    for index, backend in enumerate(backends):
+        values = [float(row["quality_hit_rate"]) for row in evaluable if str(row.get("backend_actual") or row.get("backend")) == backend]
+        jitter = [index + rng.uniform(-0.08, 0.08) for _ in values]
+        ax.scatter(jitter, values, s=38, alpha=0.8)
+        if values:
+            ax.hlines(statistics.median(values), index - 0.22, index + 0.22, linewidth=2)
+    ax.set_xticks(range(len(backends)), backends)
+    ax.set_ylabel("Quality hit rate")
+    ax.set_title("Task-level hit-rate distribution by backend")
+    ax.grid(axis="y", alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(output)
+    plt.close(fig)
+
+
+def _threshold_reach(rows: list[dict[str, Any]], output: Path) -> None:
+    labels = [_task_label(row, index) for index, row in enumerate(rows)]
+    reach = [_float(row.get("classical_reach_feasible_rate")) or 0.0 for row in rows]
+    strict = [_float(row.get("strict_improvement_rate")) or 0.0 for row in rows]
+    x = list(range(len(rows)))
+    width = 0.38
+    fig, ax = plt.subplots(figsize=(max(7.5, len(rows) * 0.45), 4.8), dpi=160)
+    ax.bar([value - width / 2 for value in x], reach, width, label="Classical threshold reach")
+    ax.bar([value + width / 2 for value in x], strict, width, label="Strict improvement")
+    ax.set_xticks(x, labels, rotation=45, ha="right")
+    ax.set_ylabel("Rate")
+    ax.set_title("Classical-threshold reach and strict improvement are distinct")
+    ax.legend()
+    ax.grid(axis="y", alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(output)
+    plt.close(fig)
+
+
+def _hybrid_delta(experiment_dir: Path, output: Path) -> None:
+    path = experiment_dir / "hybrid" / "hybrid_instance_summary.json"
+    rows = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    evaluable = [row for row in rows if row.get("decision") != "NOT_EVALUABLE" and _float(row.get("delta_QR")) is not None]
+    values = [float(row["delta_QR"]) for row in evaluable]
+    labels = [_task_label(row, index) for index, row in enumerate(evaluable)]
+    fig, ax = plt.subplots(figsize=(max(7.2, len(values) * 0.45), 4.6), dpi=160)
+    colors = ["#1a8f5b" if value > 0 else "#b54a4a" for value in values]
+    ax.bar(range(len(values)), values, color=colors)
+    ax.axhline(0.0, color="black", linewidth=1)
+    ax.set_xticks(range(len(values)), labels, rotation=45, ha="right")
+    ax.set_ylabel("Delta_QR = D(C+R) - D(C+Q)")
+    ax.set_title("Task-level C+Q versus C+R route contribution")
+    if not values:
+        ax.text(0.5, 0.5, "Hybrid results not available", ha="center", va="center", transform=ax.transAxes)
+    ax.grid(axis="y", alpha=0.25)
     fig.tight_layout()
     fig.savefig(output)
     plt.close(fig)
@@ -196,10 +388,22 @@ def main() -> None:
     summaries = _read_csv(experiment_dir / "instance_summary.csv")
     candidates = _read_jsonl(experiment_dir / "candidates.jsonl")
     table = _paper_table(summaries)
+    tasks = _task_rows(summaries)
+    statistics_payload, backend_rows = _statistics(summaries)
     _write_csv(figures / "candidate_quality_table.csv", table)
+    _write_csv(experiment_dir / "candidate_quality_summary.csv", tasks)
+    _write_csv(experiment_dir / "cross_backend_summary.csv", backend_rows)
+    (experiment_dir / "statistics_summary.json").write_text(
+        json.dumps(statistics_payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
     (figures / "candidate_quality_table.tex").write_text(_latex_table(table), encoding="utf-8")
     _energy_cdf(candidates, figures / "energy_cdf.png")
     _hit_rates(summaries, figures / "quality_hit_rates.png")
+    _paired_quantum_random(summaries, figures / "quantum_vs_random_task.png")
+    _backend_distribution(summaries, figures / "backend_hit_rate_distribution.png")
+    _threshold_reach(summaries, figures / "classical_reach_vs_strict.png")
+    _hybrid_delta(experiment_dir, figures / "hybrid_cq_vs_cr_route_delta.png")
     _resampling_convergence(candidates, figures / "shot_resampling_convergence.png")
     conclusion = _conclusion(summaries)
     (figures / "paper_conclusions.md").write_text(

@@ -1,4 +1,6 @@
-# Quantum Route Forge final acceptance record
+# Quantum Route Forge P0-P7 acceptance record
+
+Historical scope: this file records the earlier P0-P7 acceptance state. Current P8-P14 status is tracked in `docs/final_acceptance_v2.md`; the 28-test count below is not the current suite total.
 
 Date: 2026-08-01  
 Repository: `LPZ-SY/kujinganlai-version`  

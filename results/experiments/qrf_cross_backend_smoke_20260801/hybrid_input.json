@@ -1,0 +1,2685 @@
+{
+  "schema_version": 1,
+  "source_experiment_id": "qrf_cross_backend_smoke_20260801",
+  "source_config_sha256": "6746a5002a9a21190d284b6f4c27baccf8965f9cde9dffafcd42f4d8155383ad",
+  "candidate_budget": 20,
+  "two_opt_rounds": 2,
+  "formal_quantum_sources": [
+    "hardware"
+  ],
+  "instances": [
+    {
+      "instance_id": "seed2026_c4_v2_medium",
+      "task_key": "63bf003c200b1a23efbef71ad1810f5c3aa87ed71fe027da7718392ac9049d41",
+      "task_id": "2608012251527123036",
+      "backend": "Baihua",
+      "repeat_index": 1,
+      "seed": 2026,
+      "customers": 4,
+      "vehicles": 2,
+      "capacity": 6,
+      "measurement_source": "hardware",
+      "measurement_status": "completed",
+      "classical": [
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        }
+      ],
+      "random": [
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        }
+      ],
+      "quantum": [
+        {
+          "bitstring": "0000",
+          "count": 232,
+          "probability": 0.2265625,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "1111",
+          "count": 119,
+          "probability": 0.1162109375,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "0100",
+          "count": 72,
+          "probability": 0.0703125,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "0101",
+          "count": 65,
+          "probability": 0.0634765625,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "1101",
+          "count": 64,
+          "probability": 0.0625,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "0010",
+          "count": 63,
+          "probability": 0.0615234375,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "1011",
+          "count": 60,
+          "probability": 0.05859375,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "0001",
+          "count": 56,
+          "probability": 0.0546875,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "1010",
+          "count": 47,
+          "probability": 0.0458984375,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "1000",
+          "count": 42,
+          "probability": 0.041015625,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "1001",
+          "count": 42,
+          "probability": 0.041015625,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "0111",
+          "count": 41,
+          "probability": 0.0400390625,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "0011",
+          "count": 40,
+          "probability": 0.0390625,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "1110",
+          "count": 34,
+          "probability": 0.033203125,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "1100",
+          "count": 28,
+          "probability": 0.02734375,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        },
+        {
+          "bitstring": "0110",
+          "count": 19,
+          "probability": 0.0185546875,
+          "task_id": "2608012251527123036",
+          "backend": "Baihua"
+        }
+      ]
+    },
+    {
+      "instance_id": "seed2026_c4_v2_medium",
+      "task_key": "f1e0f47e90745974c43cd9497317723f577578227990c20b6c646b0bda9d7569",
+      "task_id": "2608012253199368389",
+      "backend": "Dongling",
+      "repeat_index": 1,
+      "seed": 2026,
+      "customers": 4,
+      "vehicles": 2,
+      "capacity": 6,
+      "measurement_source": "hardware",
+      "measurement_status": "completed",
+      "classical": [
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        }
+      ],
+      "random": [
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        }
+      ],
+      "quantum": [
+        {
+          "bitstring": "0000",
+          "count": 132,
+          "probability": 0.12890625,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "1001",
+          "count": 100,
+          "probability": 0.09765625,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "1101",
+          "count": 96,
+          "probability": 0.09375,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "0100",
+          "count": 79,
+          "probability": 0.0771484375,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "1000",
+          "count": 74,
+          "probability": 0.072265625,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "1100",
+          "count": 62,
+          "probability": 0.060546875,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "0001",
+          "count": 61,
+          "probability": 0.0595703125,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "1111",
+          "count": 60,
+          "probability": 0.05859375,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "0111",
+          "count": 55,
+          "probability": 0.0537109375,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "0101",
+          "count": 53,
+          "probability": 0.0517578125,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "0011",
+          "count": 47,
+          "probability": 0.0458984375,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "0010",
+          "count": 45,
+          "probability": 0.0439453125,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "1010",
+          "count": 44,
+          "probability": 0.04296875,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "0110",
+          "count": 43,
+          "probability": 0.0419921875,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "1011",
+          "count": 39,
+          "probability": 0.0380859375,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        },
+        {
+          "bitstring": "1110",
+          "count": 34,
+          "probability": 0.033203125,
+          "task_id": "2608012253199368389",
+          "backend": "Dongling"
+        }
+      ]
+    },
+    {
+      "instance_id": "seed2026_c4_v2_medium",
+      "task_key": "be6a609e34695dddf1c7a06c4eef738e5bf27c9867898da41b78df7d4f898826",
+      "task_id": "2608012254449770289",
+      "backend": "Shenglian",
+      "repeat_index": 1,
+      "seed": 2026,
+      "customers": 4,
+      "vehicles": 2,
+      "capacity": 6,
+      "measurement_source": "hardware",
+      "measurement_status": "completed",
+      "classical": [
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0,
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0
+          },
+          "generation": "same_budget_classical_sa"
+        },
+        {
+          "sample": {
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1,
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1
+          },
+          "generation": "same_budget_classical_sa"
+        }
+      ],
+      "random": [
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 1,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 0,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 1,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 0
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 0,
+            "x_c2_v0": 1,
+            "x_c2_v1": 0,
+            "x_c3_v0": 0,
+            "x_c3_v1": 1,
+            "x_c4_v0": 1,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 0,
+            "x_c1_v1": 1,
+            "x_c2_v0": 1,
+            "x_c2_v1": 1,
+            "x_c3_v0": 1,
+            "x_c3_v1": 1,
+            "x_c4_v0": 0,
+            "x_c4_v1": 1,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 1,
+            "slack_cap_v0_2": 1,
+            "slack_cap_v1_0": 1,
+            "slack_cap_v1_1": 0,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        },
+        {
+          "sample": {
+            "x_c1_v0": 1,
+            "x_c1_v1": 1,
+            "x_c2_v0": 0,
+            "x_c2_v1": 1,
+            "x_c3_v0": 0,
+            "x_c3_v1": 0,
+            "x_c4_v0": 0,
+            "x_c4_v1": 0,
+            "slack_cap_v0_0": 0,
+            "slack_cap_v0_1": 0,
+            "slack_cap_v0_2": 0,
+            "slack_cap_v1_0": 0,
+            "slack_cap_v1_1": 1,
+            "slack_cap_v1_2": 1
+          },
+          "generation": "uniform_random_bqm_assignment"
+        }
+      ],
+      "quantum": [
+        {
+          "bitstring": "0010",
+          "count": 190,
+          "probability": 0.185546875,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "1111",
+          "count": 177,
+          "probability": 0.1728515625,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "1101",
+          "count": 119,
+          "probability": 0.1162109375,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "0000",
+          "count": 106,
+          "probability": 0.103515625,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "1010",
+          "count": 90,
+          "probability": 0.087890625,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "1011",
+          "count": 50,
+          "probability": 0.048828125,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "0101",
+          "count": 44,
+          "probability": 0.04296875,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "0011",
+          "count": 37,
+          "probability": 0.0361328125,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "1001",
+          "count": 37,
+          "probability": 0.0361328125,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "1110",
+          "count": 32,
+          "probability": 0.03125,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "1000",
+          "count": 31,
+          "probability": 0.0302734375,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "0110",
+          "count": 26,
+          "probability": 0.025390625,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "0001",
+          "count": 25,
+          "probability": 0.0244140625,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "0111",
+          "count": 24,
+          "probability": 0.0234375,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "1100",
+          "count": 21,
+          "probability": 0.0205078125,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        },
+        {
+          "bitstring": "0100",
+          "count": 15,
+          "probability": 0.0146484375,
+          "task_id": "2608012254449770289",
+          "backend": "Shenglian"
+        }
+      ]
+    }
+  ]
+}

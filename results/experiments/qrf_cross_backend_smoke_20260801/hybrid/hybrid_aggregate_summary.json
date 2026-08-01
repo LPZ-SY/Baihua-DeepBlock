@@ -1,0 +1,99 @@
+{
+  "tasks": 3,
+  "evaluable_tasks": 3,
+  "not_evaluable_tasks": 0,
+  "quantum_source_win_rate": 0.6666666666666666,
+  "metrics": {
+    "delta_QR": {
+      "mean": -4.827180941160819,
+      "median": 0.0,
+      "standard_deviation": 8.36092264741869,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        -14.481542823482457,
+        0.0
+      ],
+      "values": [
+        -14.481542823482457,
+        0.0,
+        0.0
+      ]
+    },
+    "delta_QC": {
+      "mean": -4.827180941160819,
+      "median": 0.0,
+      "standard_deviation": 8.36092264741869,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        -14.481542823482457,
+        0.0
+      ],
+      "values": [
+        -14.481542823482457,
+        0.0,
+        0.0
+      ]
+    },
+    "delta_energy_C_to_CQ": {
+      "mean": -17.378351697540438,
+      "median": 0.0,
+      "standard_deviation": 30.100188091940886,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        -52.135055092621315,
+        0.0
+      ],
+      "values": [
+        -52.135055092621315,
+        0.0,
+        0.0
+      ]
+    },
+    "delta_distance_C_to_CQ": {
+      "mean": -4.827180941160819,
+      "median": 0.0,
+      "standard_deviation": 8.36092264741869,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        -14.481542823482457,
+        0.0
+      ],
+      "values": [
+        -14.481542823482457,
+        0.0,
+        0.0
+      ]
+    },
+    "paired_gain_CQ_vs_CR_energy": {
+      "mean": 256.4183491075062,
+      "median": 273.7967008050466,
+      "standard_deviation": 30.100188091940886,
+      "positive_instance_rate": 1.0,
+      "bootstrap_95_ci": [
+        221.6616457124253,
+        273.7967008050466
+      ],
+      "values": [
+        221.6616457124253,
+        273.7967008050466,
+        273.7967008050466
+      ]
+    },
+    "paired_gain_CQ_vs_CR_distance": {
+      "mean": -4.827180941160819,
+      "median": 0.0,
+      "standard_deviation": 8.36092264741869,
+      "positive_instance_rate": 0.0,
+      "bootstrap_95_ci": [
+        -14.481542823482457,
+        0.0
+      ],
+      "values": [
+        -14.481542823482457,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "conclusion": "No task-level C+Q route-distance improvement over C+R was observed. A quantum-source tie-break win is not reported as a route improvement."
+}

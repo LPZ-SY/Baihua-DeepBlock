@@ -28,7 +28,16 @@ def _component_ids(component):
 
 def test_app_exposes_four_platform_tabs_and_hides_quantum_controls_in_classical_mode():
     ids = _component_ids(web_app.app.layout)
-    assert {"main-tabs", "cq-load-btn", "batch-preview-btn", "history-refresh-btn"} <= ids
+    assert {
+        "main-tabs",
+        "cq-load-btn",
+        "batch-preview-btn",
+        "history-refresh-btn",
+        "history-instance-filter",
+        "history-backend-filter",
+        "history-status-filter",
+        "history-source-filter",
+    } <= ids
     assert web_app.toggle_quantum_connection("classical")["display"] == "none"
     assert "display" not in web_app.toggle_quantum_connection("quantum")
 
@@ -70,3 +79,48 @@ def test_candidate_quality_page_can_replay_checked_in_evidence():
     assert len(rows) == 16
     assert columns
     assert conclusion.startswith("REPLAY")
+
+
+def test_candidate_quality_page_preserves_fresh_hardware_provenance():
+    evidence = (
+        ROOT
+        / "results"
+        / "experiments"
+        / "qrf_cross_backend_smoke_20260801"
+        / "raw_evidence"
+        / "63bf003c200b1a23efbef71ad1810f5c3aa87ed71fe027da7718392ac9049d41.json"
+    )
+    thresholds = (
+        ROOT
+        / "experiments"
+        / "configs"
+        / "formal_hardware_matrix_v2_thresholds.json"
+    )
+    cards, _figure, conclusion, rows, _columns = web_app.load_candidate_quality(
+        1,
+        str(evidence),
+        str(thresholds),
+        2026,
+        4,
+        "medium",
+    )
+    assert len(cards) == 8
+    assert len(rows) == 16
+    assert conclusion.startswith("FRESH HARDWARE EVIDENCE")
+    assert "backend=Baihua" in conclusion
+    assert "task_id=2608012251527123036" in conclusion
+
+
+def test_history_can_filter_task_level_hardware_rows_by_backend():
+    rows, columns = web_app.refresh_history(
+        1,
+        str(ROOT / "results" / "experiments"),
+        "seed2026_c4_v2_medium",
+        "Dongling",
+        "completed",
+        "hardware",
+    )
+    assert columns
+    assert rows
+    assert all(row["backend_actual"] == "Dongling" for row in rows)
+    assert all(row["source"] == "hardware" for row in rows)

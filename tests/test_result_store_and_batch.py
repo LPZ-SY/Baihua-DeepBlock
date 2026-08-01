@@ -14,10 +14,12 @@ for path in (SRC_DIR, EXPERIMENTS_DIR):
 from batch_candidate_quality import (  # noqa: E402
     BatchRunner,
     BatchTaskSpec,
+    build_dry_run_manifest,
     collect_stored_summaries,
     expand_matrix,
 )
 from quantum_route_forge.result_store import ResultStore  # noqa: E402
+from validate_formal_result_store import validate_result_store  # noqa: E402
 
 
 def _spec() -> BatchTaskSpec:
@@ -155,6 +157,13 @@ def test_formal_matrix_v2_is_balanced_fixed_and_unique():
             {spec.selected_customer_ids_in_qubit_order for spec in instance_specs}
         ) == 1
 
+    manifest = build_dry_run_manifest(config, specs)
+    assert manifest["hardware_accessed"] is False
+    assert manifest["task_count"] == manifest["unique_task_keys"] == 24
+    assert manifest["total_requested_shots"] == 24576
+    assert manifest["contains_backend_auto"] is False
+    assert set(manifest["instance_task_counts"].values()) == {6}
+
 
 def test_formal_matrix_rejects_backend_auto():
     config_path = ROOT / "experiments" / "configs" / "formal_hardware_matrix_v2.json"
@@ -181,3 +190,14 @@ def test_cross_backend_smoke_changes_only_the_requested_backend():
     assert len({spec.logical_qasm_sha256 for spec in specs}) == 1
     assert len({spec.threshold_sha256 for spec in specs}) == 1
     assert len({spec.selected_customer_ids_in_qubit_order for spec in specs}) == 1
+
+
+def test_checked_in_cross_backend_smoke_store_passes_strict_validation():
+    config_path = ROOT / "experiments" / "configs" / "cross_backend_smoke_v1.json"
+    result_dir = ROOT / "results" / "experiments" / "qrf_cross_backend_smoke_20260801"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    report = validate_result_store(config, result_dir)
+    assert report["valid"] is True
+    assert report["complete"] is True
+    assert report["planned_task_count"] == report["observed_task_count"] == 3
+    assert report["errors"] == []

@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from typing import Any
 
 from dash import Dash, Input, Output, State, ctx, dash_table, dcc, html
 import plotly.graph_objects as go
@@ -29,7 +30,11 @@ EXPERIMENTS_DIR = ROOT / "experiments"
 if str(EXPERIMENTS_DIR) not in sys.path:
     sys.path.insert(0, str(EXPERIMENTS_DIR))
 
-from batch_candidate_quality import expand_matrix  # noqa: E402
+from batch_candidate_quality import (  # noqa: E402
+    _load_frozen_protocol_thresholds,
+    build_dry_run_manifest,
+    expand_matrix,
+)
 
 
 COLORS = [
@@ -351,8 +356,10 @@ def _generate_outputs(
     used = result.metadata.used_mode
     msg = result.metadata.message
     qmeta = []
+    if str(mode).lower() in {"quantum", "quafu"}:
+        qmeta.append(f"backend_requested={quafu_backend or 'unspecified'}")
     if result.metadata.quantum_backend:
-        qmeta.append(f"backend={result.metadata.quantum_backend}")
+        qmeta.append(f"backend_actual={result.metadata.quantum_backend}")
     if result.metadata.quantum_task_id:
         qmeta.append(f"task_id={result.metadata.quantum_task_id}")
     if result.metadata.quantum_bitstring:
@@ -362,8 +369,27 @@ def _generate_outputs(
     qmeta_text = f" | Quafu: {', '.join(qmeta)}" if qmeta else ""
     measurement = result.metadata.quantum_measurement_summary or {}
     source = measurement.get("source")
+    shots_requested = measurement.get("shots_requested", 0)
     shots_received = measurement.get("shots_received", 0)
-    source_text = f" | source={source}, shots_received={shots_received}" if source else ""
+    source_text = (
+        f" | source={source}, shots_requested={shots_requested}, shots_received={shots_received}"
+        if source
+        else ""
+    )
+    counts = measurement.get("counts") or {}
+    formal_evaluable = (
+        source == "hardware"
+        and shots_received > 0
+        and isinstance(counts, dict)
+        and sum(counts.values()) == shots_received
+    )
+    provenance_text = ""
+    if str(mode).lower() in {"quantum", "quafu"}:
+        provenance_text = (
+            "FORMAL-EVALUABLE HARDWARE | "
+            if formal_evaluable
+            else "NOT_EVALUABLE FOR FORMAL STATISTICS | "
+        )
     coverage = min(quafu_max_qubits, len(instance.customers)) / len(instance.customers)
     coverage_text = (
         f" | quantum coverage={min(quafu_max_qubits, len(instance.customers))}/"
@@ -372,7 +398,7 @@ def _generate_outputs(
         else ""
     )
     status = (
-        f"Requested solver: {mode} | Used: {used} | Classical full-assignment energy: "
+        f"{provenance_text}Requested solver: {mode} | Used: {used} | Classical full-assignment energy: "
         f"{result.metadata.energy:.3f}{qmeta_text}{source_text}{coverage_text} | {msg}"
     )
     total_load = sum(r.load for r in result.routes)
@@ -512,6 +538,10 @@ def _history_layout():
                         span=2,
                     ),
                     _field("Refresh", html.Button("Refresh History", id="history-refresh-btn", n_clicks=0, style=BUTTON_STYLE)),
+                    _field("Instance filter", dcc.Input(id="history-instance-filter", value="", style=INPUT_STYLE)),
+                    _field("Backend filter", dcc.Input(id="history-backend-filter", value="", style=INPUT_STYLE)),
+                    _field("Status filter", dcc.Input(id="history-status-filter", value="", style=INPUT_STYLE)),
+                    _field("Source filter", dcc.Input(id="history-source-filter", value="", style=INPUT_STYLE)),
                 ],
                 style={**GRID_STYLE, **PANEL_STYLE, "marginBottom": "12px"},
             ),
@@ -519,6 +549,7 @@ def _history_layout():
                 id="history-table",
                 page_size=15,
                 sort_action="native",
+                filter_action="native",
                 style_table={"overflowX": "auto"},
                 style_cell={"fontFamily": "Segoe UI", "fontSize": 12, "padding": "7px", "textAlign": "left"},
                 style_header={"fontWeight": "700", "backgroundColor": "#eaf3ff"},
@@ -964,9 +995,11 @@ def load_candidate_quality(_clicks, evidence_path, threshold_path, seed, custome
         instance = generate_dispatch_instance(seed, customers, 2, capacity)
         selected = sorted(instance.customers, key=lambda customer: (-customer.demand, customer.customer_id))
         selected_ids = [customer.customer_id for customer in selected]
+        evidence_payload = json.loads(Path(str(evidence_path)).read_text(encoding="utf-8"))
+        evidence_source = str(evidence_payload.get("source") or "replay")
         measurement = measurement_from_evidence(
             Path(str(evidence_path)),
-            source="replay",
+            source=evidence_source,
             selected_customer_ids=selected_ids,
         )
         bqm = build_assignment_bqm(instance)
@@ -1051,7 +1084,16 @@ def load_candidate_quality(_clicks, evidence_path, threshold_path, seed, custome
         )
         columns = [{"name": key.replace("_", " ").title(), "id": key} for key in rows[0]] if rows else []
         source_label = measurement.source.upper().replace("_", " ")
-        conclusion = f"{source_label} | {summary.decision}: {summary.conclusion}"
+        provenance = (
+            "FRESH HARDWARE EVIDENCE"
+            if measurement.source == "hardware"
+            else source_label
+        )
+        conclusion = (
+            f"{provenance} | backend={measurement.backend or 'unknown'} | "
+            f"task_id={measurement.task_id or 'none'} | shots={measurement.shots_received} | "
+            f"{summary.decision}: {summary.conclusion}"
+        )
         return cards, figure, conclusion, rows, columns
     except Exception as exc:
         figure = go.Figure()
@@ -1091,9 +1133,14 @@ def control_batch(
         trigger = ctx.triggered_id
         if trigger == "batch-preview-btn":
             specs = expand_matrix(config)
+            _load_frozen_protocol_thresholds(config)
+            manifest = build_dry_run_manifest(config, specs)
             return (
-                f"DRY RUN: {len(specs)} tasks, {sum(spec.shots for spec in specs)} requested shots. "
-                f"Fixed backends: {', '.join(sorted({spec.backend for spec in specs}))}. "
+                f"DRY RUN: {manifest['task_count']} tasks, "
+                f"{manifest['unique_task_keys']} unique keys, "
+                f"{manifest['total_requested_shots']} requested shots. "
+                f"Fixed backends: {', '.join(manifest['backends'])}. "
+                f"Config SHA-256: {manifest['config_sha256']}. "
                 f"No hardware task was submitted."
             )
         pause_path = store.path / ".pause"
@@ -1157,9 +1204,79 @@ def refresh_batch_progress(_interval, config_path, results_root):
     Output("history-table", "columns"),
     Input("history-refresh-btn", "n_clicks"),
     State("history-results-root", "value"),
+    State("history-instance-filter", "value"),
+    State("history-backend-filter", "value"),
+    State("history-status-filter", "value"),
+    State("history-source-filter", "value"),
 )
-def refresh_history(_clicks, results_root):
-    rows = list_experiments(Path(str(results_root)))
+def refresh_history(
+    _clicks,
+    results_root,
+    instance_filter="",
+    backend_filter="",
+    status_filter="",
+    source_filter="",
+):
+    root = Path(str(results_root))
+    rows: list[dict[str, Any]] = []
+    for experiment in list_experiments(root):
+        experiment_id = str(experiment["experiment_id"])
+        try:
+            store = ResultStore(root, experiment_id)
+            latest = sorted(
+                store.latest_tasks_by_hash().values(),
+                key=lambda row: int(row.get("execution_index", 0)),
+            )
+        except (OSError, ValueError):
+            latest = []
+        if not latest:
+            rows.append(
+                {
+                    "experiment_id": experiment_id,
+                    "instance_id": "",
+                    "backend_requested": "",
+                    "backend_actual": "",
+                    "status": "incomplete_store" if not experiment.get("complete") else "no_tasks",
+                    "source": "",
+                    "task_id": "",
+                    "task_key": "",
+                    "repeat_index": "",
+                    "integrity_complete": experiment.get("complete"),
+                }
+            )
+            continue
+        for row in latest:
+            rows.append(
+                {
+                    "experiment_id": experiment_id,
+                    "instance_id": row.get("instance_id", ""),
+                    "backend_requested": row.get("backend_requested", row.get("backend", "")),
+                    "backend_actual": row.get("backend_actual", ""),
+                    "status": row.get("status", ""),
+                    "source": row.get("source", ""),
+                    "task_id": row.get("task_id", ""),
+                    "task_key": row.get("task_key", row.get("config_hash", "")),
+                    "repeat_index": row.get("repeat_index", row.get("repeat", "")),
+                    "integrity_complete": experiment.get("complete"),
+                }
+            )
+    filters = {
+        "instance_id": str(instance_filter or "").strip().lower(),
+        "backend_actual": str(backend_filter or "").strip().lower(),
+        "status": str(status_filter or "").strip().lower(),
+        "source": str(source_filter or "").strip().lower(),
+    }
+    for key, value in filters.items():
+        if value:
+            if key == "backend_actual":
+                rows = [
+                    row
+                    for row in rows
+                    if value
+                    in str(row.get("backend_actual") or row.get("backend_requested", "")).lower()
+                ]
+            else:
+                rows = [row for row in rows if value in str(row.get(key, "")).lower()]
     columns = [{"name": key.replace("_", " ").title(), "id": key} for key in rows[0]] if rows else []
     return rows, columns
 

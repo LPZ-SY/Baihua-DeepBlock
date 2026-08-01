@@ -19,10 +19,13 @@ Accordingly, the value displayed as **Classical full-assignment energy** in Sing
 app.py                                  Four-tab Dash experiment platform
 run_cli.py                              Compatible single-run CLI
 experiments/
-  configs/qrf_hw_quality_v2.json        Formal hardware matrix
+  configs/qrf_hw_quality_v2.json        Historical unbalanced/auto matrix (audit only)
+  configs/formal_hardware_matrix_v2.json Frozen balanced 4x3x2 protocol
   run_quantum_candidate_quality.py      CSV compatibility CLI using schema-v2 thresholds
   run_quarkstudio_candidate_quality.py  Single live/replay closed loop
   batch_candidate_quality.py            Resumable, quota-aware batch runner
+  validate_formal_result_store.py       Strict task/evidence/provenance validator
+  prepare_hybrid_input.py               Reproducible task-level fair-pool input builder
   hybrid_contribution.py                Fair C / C+R / C+Q comparison
   generate_paper_artifacts.py           Tables, CDFs, hit rates, convergence, conclusions
 src/quantum_route_forge/
@@ -36,6 +39,9 @@ tests/                                  Offline unit, integration, replay, batch
 docs/
   current_state_audit.md                Frozen baseline audit
   baseline_manifest.json                Baseline hashes and replay result
+  formal_experiment_protocol.md         Frozen matrix protocol and submission gates
+  formal_24_task_dry_run.json           Exact 24-task manifest; no hardware access
+  cross_backend_smoke_report.md         P10 Baihua/Dongling/Shenglian evidence report
 results/experiments/<experiment_id>/    Reproducible experiment stores
 ```
 
@@ -62,10 +68,10 @@ Open `http://127.0.0.1:8050`.
 
 The application provides four tabs:
 
-- **Single Run** — defaults to a feasible 8-customer, 2-vehicle classical scenario; shows a compact capacity diagnostic, auto capacity, quantum coverage, source, received shots, and clearly separated submit/query/manual-debug actions. Quantum credentials are hidden in classical mode.
-- **Candidate Quality** — loads evidence and frozen thresholds, evaluates complete counts, and displays weighted gate metrics, per-bitstring energy/probability, exact gap, feasibility, and conclusion text.
-- **Batch Experiment** — previews the formal matrix, starts/resumes a background CLI runner, requests pause after the current task, and reads progress from JSONL state.
-- **Experiment History** — lists experiment integrity, task/candidate/evidence counts, and required artifact presence.
+- **Single Run** — defaults to a feasible 8-customer, 2-vehicle classical scenario; shows requested/actual backend, task ID, source, requested/received shots, capacity, and quantum coverage. Incomplete, replay, manual, or fallback measurements are explicitly not evaluable for formal statistics.
+- **Candidate Quality** — preserves fresh-hardware versus replay provenance, evaluates complete counts, and displays absolute quality, random reference, classical-threshold reach, strict improvement, exact gap, and feasibility separately.
+- **Batch Experiment** — previews the fixed-backend formal matrix, verifies its frozen threshold hash, caps the UI at one fresh task per invocation, requires an explicit confirmation checkbox, and supports resume/pause.
+- **Experiment History** — lists task-level instance/backend/status/source provenance with dedicated filters and the result-store integrity state.
 
 Manual bitstrings are always labeled `manual_debug` and are excluded from formal hardware statistics.
 
@@ -202,7 +208,16 @@ engineering demonstrations and are not mixed with the 100%-coverage main candida
 - `C+Q`: `N/2` classical plus `N/2` measured quantum candidates;
 - `Q-only`: diagnostic only.
 
-All groups use the same total budget, evaluator, capacity repair, nearest-neighbor construction, 2-opt rounds, and final selection rule. Results include candidate energy, raw feasibility, repair-moved customer count, final route distance, paired C+Q versus C+R gains, and quantum-source win rate. `--deduplicate-quantum` provides the required unique-candidate sensitivity check.
+All groups use the same total budget, evaluator, capacity repair, nearest-neighbor construction, 2-opt rounds, and final selection rule. C+R and C+Q reuse the exact same classical subset; only the added random versus measured-quantum half differs. Missing/non-hardware measured candidates make C+Q `NOT_EVALUABLE` instead of silently degrading to a classical pool. Results include `D_C`, `D_C_plus_R`, `D_C_plus_Q`, `delta_QR`, `delta_QC`, final winner source/rank, repair changes, and task-level bootstrap intervals. `--deduplicate-quantum` provides the required unique-candidate sensitivity check.
+
+Prepare input directly from a complete validated result store:
+
+```powershell
+.\.venv\Scripts\python.exe experiments\prepare_hybrid_input.py `
+  --config experiments\configs\formal_hardware_matrix_v2.json `
+  --experiment-dir results\experiments\qrf_formal_hardware_matrix_v2 `
+  --output results\experiments\qrf_formal_hardware_matrix_v2\hybrid_input.json
+```
 
 ## Result store
 
@@ -235,6 +250,8 @@ After an experiment:
 
 The `figures/` directory receives a CSV/LaTeX instance table, candidate-energy CDF, measured-versus-random hit-rate chart, empirical shot-resampling convergence chart, and data-derived conclusion text. Neutral or `NOT_EVALUABLE` wording is generated when evidence is incomplete.
 
+It also writes task-level candidate-quality and cross-backend CSVs, `statistics_summary.json`, separate classical-reach/strict-improvement bars, a backend distribution plot, and the `C+Q` versus `C+R` route-delta plot. Statistical inference uses the hardware task as the repeat unit; shots are never treated as independent experiments.
+
 ## Testing and CI
 
 ```powershell
@@ -243,7 +260,7 @@ The `figures/` directory receives a CSV/LaTeX instance table, candidate-energy C
 
 The offline suite covers dual thresholds, equality/strict comparisons, zero normalization denominators, nested/probability counts, shot mismatches, bit order, evidence-source isolation, exact evaluation, result-store idempotence, batch resume, fair candidate budgets, app tabs, capacity behavior, and checked-in evidence replay.
 
-Live hardware is a manual acceptance gate, not a pytest dependency. A valid live acceptance record must contain task ID, backend, completed status, complete counts, received shots, circuit/customer/bit-order evidence, a threshold timestamp/hash predating result evaluation, and a non-debug source. Until a fresh task satisfying these conditions is supplied, the project records live acceptance as pending rather than inventing evidence.
+Fresh P10 smoke evidence is checked in for Baihua task `2608012251527123036`, Dongling task `2608012253199368389`, and Shenglian task `2608012254449770289`; each has 1024/1024 counts and matching requested/actual backend, QASM, thresholds, customer order, and code commit. These three tasks validate the pipeline only. The formal 24-task matrix remains unsubmitted until explicit user confirmation, and no replay/manual/fallback data is substituted for it.
 
 ## Network troubleshooting
 

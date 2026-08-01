@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "experiment_id": "qrf_cross_backend_smoke_20260801",
+  "protocol_version": "cross-backend-smoke-v1",
+  "config_sha256": "6746a5002a9a21190d284b6f4c27baccf8965f9cde9dffafcd42f4d8155383ad",
+  "experiment_dir": "results\\experiments\\qrf_cross_backend_smoke_20260801",
+  "planned_task_count": 3,
+  "observed_task_count": 3,
+  "complete": true,
+  "valid": true,
+  "allow_partial": false,
+  "status_counts": {
+    "completed": 3
+  },
+  "actual_git_commits": [
+    "6d48a2c5f0c365f6da373cf97aacb6117ae4367e"
+  ],
+  "errors": [],
+  "warnings": [],
+  "tasks": [
+    {
+      "execution_index": 1,
+      "task_key": "63bf003c200b1a23efbef71ad1810f5c3aa87ed71fe027da7718392ac9049d41",
+      "task_id": "2608012251527123036",
+      "instance_id": "seed2026_c4_v2_medium",
+      "backend_requested": "Baihua",
+      "backend_actual": "Baihua",
+      "repeat_index": 1,
+      "status": "completed",
+      "source": "hardware",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "execution_index": 2,
+      "task_key": "f1e0f47e90745974c43cd9497317723f577578227990c20b6c646b0bda9d7569",
+      "task_id": "2608012253199368389",
+      "instance_id": "seed2026_c4_v2_medium",
+      "backend_requested": "Dongling",
+      "backend_actual": "Dongling",
+      "repeat_index": 1,
+      "status": "completed",
+      "source": "hardware",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "execution_index": 3,
+      "task_key": "be6a609e34695dddf1c7a06c4eef738e5bf27c9867898da41b78df7d4f898826",
+      "task_id": "2608012254449770289",
+      "instance_id": "seed2026_c4_v2_medium",
+      "backend_requested": "Shenglian",
+      "backend_actual": "Shenglian",
+      "repeat_index": 1,
+      "status": "completed",
+      "source": "hardware",
+      "valid": true,
+      "errors": []
+    }
+  ]
+}

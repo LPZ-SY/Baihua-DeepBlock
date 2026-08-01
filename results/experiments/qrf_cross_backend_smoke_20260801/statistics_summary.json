@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "statistical_unit": "hardware task",
+  "shots_are_not_independent_replicates": true,
+  "planned_or_observed_tasks": 3,
+  "evaluable_tasks": 3,
+  "not_evaluable_tasks": 0,
+  "overall": {
+    "quality_hit_rate": {
+      "n_tasks": 3,
+      "mean": 0.27734375,
+      "median": 0.2568359375,
+      "standard_deviation": 0.04335541578207639,
+      "bootstrap_95_ci": [
+        0.248046875,
+        0.3271484375
+      ]
+    },
+    "random_quality_hit_rate": {
+      "n_tasks": 3,
+      "mean": 0.375,
+      "median": 0.375,
+      "standard_deviation": 0.0,
+      "bootstrap_95_ci": [
+        0.375,
+        0.375
+      ]
+    },
+    "quality_hit_gain": {
+      "n_tasks": 3,
+      "mean": -0.09765625,
+      "median": -0.1181640625,
+      "standard_deviation": 0.04335541578207639,
+      "bootstrap_95_ci": [
+        -0.126953125,
+        -0.0478515625
+      ]
+    },
+    "classical_reach_feasible_rate": {
+      "n_tasks": 3,
+      "mean": 0.0869140625,
+      "median": 0.0615234375,
+      "standard_deviation": 0.04567974829502539,
+      "bootstrap_95_ci": [
+        0.0595703125,
+        0.1396484375
+      ]
+    },
+    "strict_improvement_rate": {
+      "n_tasks": 3,
+      "mean": 0.0,
+      "median": 0.0,
+      "standard_deviation": 0.0,
+      "bootstrap_95_ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "raw_feasible_rate": {
+      "n_tasks": 3,
+      "mean": 0.27734375,
+      "median": 0.2568359375,
+      "standard_deviation": 0.04335541578207639,
+      "bootstrap_95_ci": [
+        0.248046875,
+        0.3271484375
+      ]
+    },
+    "best_gap": {
+      "n_tasks": 3,
+      "mean": 0.0,
+      "median": 0.0,
+      "standard_deviation": 0.0,
+      "bootstrap_95_ci": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "by_backend": {
+    "Baihua": {
+      "quality_hit_rate": {
+        "n_tasks": 1,
+        "mean": 0.2568359375,
+        "median": 0.2568359375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.2568359375,
+          0.2568359375
+        ]
+      },
+      "random_quality_hit_rate": {
+        "n_tasks": 1,
+        "mean": 0.375,
+        "median": 0.375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.375,
+          0.375
+        ]
+      },
+      "quality_hit_gain": {
+        "n_tasks": 1,
+        "mean": -0.1181640625,
+        "median": -0.1181640625,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          -0.1181640625,
+          -0.1181640625
+        ]
+      },
+      "classical_reach_feasible_rate": {
+        "n_tasks": 1,
+        "mean": 0.0595703125,
+        "median": 0.0595703125,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.0595703125,
+          0.0595703125
+        ]
+      },
+      "strict_improvement_rate": {
+        "n_tasks": 1,
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ]
+      },
+      "raw_feasible_rate": {
+        "n_tasks": 1,
+        "mean": 0.2568359375,
+        "median": 0.2568359375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.2568359375,
+          0.2568359375
+        ]
+      },
+      "best_gap": {
+        "n_tasks": 1,
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "Dongling": {
+      "quality_hit_rate": {
+        "n_tasks": 1,
+        "mean": 0.3271484375,
+        "median": 0.3271484375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.3271484375,
+          0.3271484375
+        ]
+      },
+      "random_quality_hit_rate": {
+        "n_tasks": 1,
+        "mean": 0.375,
+        "median": 0.375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.375,
+          0.375
+        ]
+      },
+      "quality_hit_gain": {
+        "n_tasks": 1,
+        "mean": -0.0478515625,
+        "median": -0.0478515625,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          -0.0478515625,
+          -0.0478515625
+        ]
+      },
+      "classical_reach_feasible_rate": {
+        "n_tasks": 1,
+        "mean": 0.1396484375,
+        "median": 0.1396484375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.1396484375,
+          0.1396484375
+        ]
+      },
+      "strict_improvement_rate": {
+        "n_tasks": 1,
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ]
+      },
+      "raw_feasible_rate": {
+        "n_tasks": 1,
+        "mean": 0.3271484375,
+        "median": 0.3271484375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.3271484375,
+          0.3271484375
+        ]
+      },
+      "best_gap": {
+        "n_tasks": 1,
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "Shenglian": {
+      "quality_hit_rate": {
+        "n_tasks": 1,
+        "mean": 0.248046875,
+        "median": 0.248046875,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.248046875,
+          0.248046875
+        ]
+      },
+      "random_quality_hit_rate": {
+        "n_tasks": 1,
+        "mean": 0.375,
+        "median": 0.375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.375,
+          0.375
+        ]
+      },
+      "quality_hit_gain": {
+        "n_tasks": 1,
+        "mean": -0.126953125,
+        "median": -0.126953125,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          -0.126953125,
+          -0.126953125
+        ]
+      },
+      "classical_reach_feasible_rate": {
+        "n_tasks": 1,
+        "mean": 0.0615234375,
+        "median": 0.0615234375,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.0615234375,
+          0.0615234375
+        ]
+      },
+      "strict_improvement_rate": {
+        "n_tasks": 1,
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ]
+      },
+      "raw_feasible_rate": {
+        "n_tasks": 1,
+        "mean": 0.248046875,
+        "median": 0.248046875,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.248046875,
+          0.248046875
+        ]
+      },
+      "best_gap": {
+        "n_tasks": 1,
+        "mean": 0.0,
+        "median": 0.0,
+        "standard_deviation": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "pooled_result_caveat": "Pooled summaries are descriptive only; backend-specific results retain the hardware heterogeneity needed for interpretation."
+}

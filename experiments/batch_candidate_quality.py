@@ -265,6 +265,35 @@ def expand_matrix(config: Mapping[str, Any]) -> list[BatchTaskSpec]:
     )
 
 
+def build_dry_run_manifest(
+    config: Mapping[str, Any],
+    specs: Iterable[BatchTaskSpec],
+) -> dict[str, Any]:
+    rows = list(specs)
+    instance_counts: dict[str, int] = {}
+    for spec in rows:
+        instance_counts[spec.instance_id] = instance_counts.get(spec.instance_id, 0) + 1
+    return {
+        "schema_version": 1,
+        "mode": "dry_run",
+        "hardware_accessed": False,
+        "experiment_id": config["experiment_id"],
+        "protocol_version": config.get("protocol_version"),
+        "frozen_git_commit": config.get("frozen_git_commit"),
+        "frozen_git_tag": config.get("frozen_git_tag"),
+        "config_sha256": canonical_sha256(config),
+        "threshold_file": config.get("threshold_file"),
+        "threshold_sha256": config.get("threshold_sha256"),
+        "task_count": len(rows),
+        "unique_task_keys": len({spec.task_key for spec in rows}),
+        "total_requested_shots": sum(spec.shots for spec in rows),
+        "backends": sorted({spec.backend for spec in rows}),
+        "instance_task_counts": instance_counts,
+        "contains_backend_auto": any(spec.backend.lower() == "auto" for spec in rows),
+        "tasks": [spec.to_dict() for spec in rows],
+    }
+
+
 def bootstrap_ci(
     values: Iterable[float],
     *,
@@ -615,6 +644,12 @@ def main() -> None:
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--results-root", type=Path, default=ROOT / "results" / "experiments")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--dry-run-output",
+        type=Path,
+        default=None,
+        help="Optional JSON path for the exact dry-run manifest.",
+    )
     parser.add_argument("--max-hardware-tasks", type=int, default=1)
     parser.add_argument(
         "--confirm-live",
@@ -629,18 +664,12 @@ def main() -> None:
     specs = expand_matrix(config)
     frozen_protocol = _load_frozen_protocol_thresholds(config)
     if args.dry_run:
-        print(
-            json.dumps(
-                {
-                    "experiment_id": config["experiment_id"],
-                    "task_count": len(specs),
-                    "total_requested_shots": sum(spec.shots for spec in specs),
-                    "instances": [spec.to_dict() for spec in specs],
-                },
-                ensure_ascii=False,
-                indent=2,
-            )
-        )
+        manifest = build_dry_run_manifest(config, specs)
+        text = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+        if args.dry_run_output is not None:
+            args.dry_run_output.parent.mkdir(parents=True, exist_ok=True)
+            args.dry_run_output.write_text(text, encoding="utf-8")
+        print(text, end="")
         return
     if not args.dry_run and args.reuse_evidence is None and not args.confirm_live:
         raise SystemExit(
