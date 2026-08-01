@@ -182,7 +182,13 @@ class ResultStore:
         if not rows:
             _atomic_text(path, "")
             return path
-        fieldnames = list(dict(rows[0]))
+        fieldnames: list[str] = []
+        seen: set[str] = set()
+        for row in rows:
+            for key in row:
+                if key not in seen:
+                    fieldnames.append(key)
+                    seen.add(key)
         handle, temp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
         try:
             with os.fdopen(handle, "w", encoding="utf-8-sig", newline="") as stream:

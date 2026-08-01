@@ -11,7 +11,12 @@ for path in (SRC_DIR, EXPERIMENTS_DIR):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from batch_candidate_quality import BatchRunner, BatchTaskSpec, expand_matrix  # noqa: E402
+from batch_candidate_quality import (  # noqa: E402
+    BatchRunner,
+    BatchTaskSpec,
+    collect_stored_summaries,
+    expand_matrix,
+)
 from quantum_route_forge.result_store import ResultStore  # noqa: E402
 
 
@@ -83,6 +88,30 @@ def test_batch_resume_does_not_implicitly_retry_failed_task(tmp_path):
     assert len(calls) == 2
 
 
+def test_cumulative_summary_rebuild_keeps_completed_tasks_after_resume(tmp_path):
+    store = ResultStore(tmp_path, "experiment")
+    store.initialize_config({"experiment_id": "experiment"})
+    first = _spec()
+    second = BatchTaskSpec(**{**first.__dict__, "backend": "Baihua"})
+    for spec, rate in ((first, 0.25), (second, 0.5)):
+        summary_dir = store.path / "instances" / spec.config_hash
+        summary_dir.mkdir(parents=True, exist_ok=True)
+        (summary_dir / "quantum_candidate_quality_summary.json").write_text(
+            '{"decision": "PASS", "quality_hit_rate": ' + str(rate) + "}",
+            encoding="utf-8",
+        )
+        store.append_task(
+            {
+                **spec.to_dict(),
+                "status": "completed",
+                "evidence_sha256": spec.config_hash,
+            }
+        )
+
+    rows = collect_stored_summaries(store, [first, second])
+    assert [row["quality_hit_rate"] for row in rows] == [0.25, 0.5]
+
+
 def test_matrix_expansion_honors_repeated_selected_instances():
     config = {
         "experiment_id": "matrix",
@@ -137,3 +166,18 @@ def test_formal_matrix_rejects_backend_auto():
         assert "forbids backend=auto" in str(exc)
     else:
         raise AssertionError("formal matrix accepted backend=auto")
+
+
+def test_cross_backend_smoke_changes_only_the_requested_backend():
+    config_path = ROOT / "experiments" / "configs" / "cross_backend_smoke_v1.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    specs = expand_matrix(config)
+
+    assert len(specs) == 3
+    assert [spec.backend for spec in specs] == ["Baihua", "Dongling", "Shenglian"]
+    assert len({spec.task_key for spec in specs}) == 3
+    assert len({spec.instance_id for spec in specs}) == 1
+    assert len({spec.shots for spec in specs}) == 1
+    assert len({spec.logical_qasm_sha256 for spec in specs}) == 1
+    assert len({spec.threshold_sha256 for spec in specs}) == 1
+    assert len({spec.selected_customer_ids_in_qubit_order for spec in specs}) == 1

@@ -366,9 +366,20 @@ Executor = Callable[[BatchTaskSpec], Mapping[str, Any]]
 
 
 class BatchRunner:
-    def __init__(self, store: ResultStore, executor: Executor):
+    def __init__(
+        self,
+        store: ResultStore,
+        executor: Executor,
+        *,
+        formal_sources: Optional[Iterable[str]] = None,
+    ):
         self.store = store
         self.executor = executor
+        self.formal_sources = (
+            {str(value) for value in formal_sources}
+            if formal_sources is not None
+            else None
+        )
 
     def run(
         self,
@@ -406,9 +417,16 @@ class BatchRunner:
                     summary.get("source") == "hardware"
                     and backend_actual != spec.backend
                 )
-                if backend_mismatch:
+                source_ineligible = (
+                    self.formal_sources is not None
+                    and summary.get("source") not in self.formal_sources
+                )
+                if backend_mismatch or source_ineligible:
                     summary["decision"] = "NOT_EVALUABLE"
-                    summary["backend_mismatch"] = True
+                    if backend_mismatch:
+                        summary["backend_mismatch"] = True
+                    if source_ineligible:
+                        summary["source_ineligible_for_formal_statistics"] = True
                 evidence_path = None
                 evidence_hash = None
                 if evidence is not None:
@@ -433,6 +451,8 @@ class BatchRunner:
                 }
                 if backend_mismatch:
                     task_row["backend_mismatch"] = True
+                if source_ineligible:
+                    task_row["source_ineligible_for_formal_statistics"] = True
                 self.store.append_task(task_row)
                 summaries.append({**spec.to_dict(), **summary})
             except Exception as exc:  # task-level fault isolation is intentional
@@ -460,15 +480,25 @@ def aggregate_summaries(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
         "strict_improvement_rate",
         "best_gap",
     ]
+    eligible_rows = [
+        row
+        for row in rows
+        if row.get("decision") != "NOT_EVALUABLE"
+    ]
     return {
-        "instances": len(rows),
+        "tasks": len(rows),
+        "instances": len({str(row.get("instance_id", "")) for row in rows}),
         "decisions": {
             decision: sum(row.get("decision") == decision for row in rows)
             for decision in ("PASS", "FAIL", "NOT_EVALUABLE")
         },
         "metrics": {
             metric: bootstrap_ci(
-                [float(row[metric]) for row in rows if row.get(metric) not in {None, ""}]
+                [
+                    float(row[metric])
+                    for row in eligible_rows
+                    if row.get(metric) not in {None, ""}
+                ]
             )
             for metric in metrics
         },
@@ -477,6 +507,44 @@ def aggregate_summaries(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
             "they are not a claim of universal quantum or speed advantage."
         ),
     }
+
+
+def collect_stored_summaries(
+    store: ResultStore,
+    specs: Iterable[BatchTaskSpec],
+) -> list[dict[str, Any]]:
+    """Rebuild cumulative summaries from immutable per-task artifacts after resume."""
+    latest = store.latest_tasks_by_hash()
+    rows: list[dict[str, Any]] = []
+    for spec in specs:
+        task = latest.get(spec.config_hash)
+        if task is None:
+            continue
+        summary_path = (
+            store.path
+            / "instances"
+            / spec.config_hash
+            / "quantum_candidate_quality_summary.json"
+        )
+        if summary_path.exists():
+            summary = json.loads(summary_path.read_text(encoding="utf-8"))
+            rows.append({**spec.to_dict(), **summary})
+            continue
+        rows.append(
+            {
+                **spec.to_dict(),
+                "decision": (
+                    "NOT_EVALUABLE"
+                    if task.get("status") in {"failed", "not_evaluable"}
+                    else task.get("evaluation_decision")
+                ),
+                "task_id": task.get("task_id"),
+                "source": task.get("source"),
+                "backend_actual": task.get("backend_actual"),
+                "error": task.get("error"),
+            }
+        )
+    return rows
 
 
 def _subprocess_executor(
@@ -594,13 +662,15 @@ def main() -> None:
     runner = BatchRunner(
         store,
         _subprocess_executor(Path(sys.executable), frozen_path, args.reuse_evidence, store),
+        formal_sources=config.get("formal_sources"),
     )
-    summaries = runner.run(
+    runner.run(
         specs,
         max_hardware_tasks=args.max_hardware_tasks,
         resume=args.resume,
         retry_failed=args.retry_failed,
     )
+    summaries = collect_stored_summaries(store, specs)
     store.write_instance_summary(summaries)
     aggregate = aggregate_summaries(summaries)
     store.write_aggregate_summary(aggregate)

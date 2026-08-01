@@ -278,6 +278,7 @@ def main() -> None:
 
     # Stage 2: hardware result or offline evidence replay. Replay never needs a token.
     backend_snapshot: dict[str, Any]
+    raw_response: Any
     if args.reuse_evidence is not None:
         measurement = measurement_from_evidence(
             args.reuse_evidence,
@@ -286,6 +287,7 @@ def main() -> None:
             selected_customer_ids=selected_ids,
         )
         raw_evidence = json.loads(args.reuse_evidence.read_text(encoding="utf-8"))
+        raw_response = raw_evidence
         qasm = str(raw_evidence.get("circuit") or qasm)
         backend_snapshot = {"reused_evidence": True}
         submission_time = raw_evidence.get("submitted_at")
@@ -338,6 +340,7 @@ def main() -> None:
         result = manager.result(task_id, timeout=180.0)
         if not isinstance(result, dict):
             result = {"status": "failed", "error": f"Unexpected result type: {type(result).__name__}"}
+        raw_response = result
         measurement = measurement_from_payload(
             result,
             source="hardware",
@@ -435,6 +438,7 @@ def main() -> None:
         "shots": measurement.shots_requested,
         "shots_received": measurement.shots_received,
         "counts": measurement.counts,
+        "raw_response": redact_payload(raw_response),
         "selected_customer_ids": selected_ids,
         "bit_order": measurement.bit_order,
         "circuit": qasm,
@@ -445,6 +449,15 @@ def main() -> None:
         "threshold_created_at": frozen.get("created_at"),
         "submitted_at": measurement.submitted_at or submission_time,
         "completed_at": measurement.completed_at,
+        "backend_queue_snapshot_before_submit": backend_snapshot,
+        "compile_options": {
+            "compile": True,
+            "compiler": "quarkcircuit",
+            "correct": False,
+            "open_dd": None,
+            "target_qubits": [],
+        },
+        "qubit_count": len(selected_ids),
         "warnings": measurement.warnings,
     }
     _write_json(args.outdir / "task_evidence.json", redact_payload(evidence_payload))
