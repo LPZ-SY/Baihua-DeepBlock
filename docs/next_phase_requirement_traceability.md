@@ -48,7 +48,7 @@ This audit maps the execution guide's P8-P14 requirements to current repository 
 
 - Dash exposes requested/actual backend, task ID, shots, source, formal `NOT_EVALUABLE`, and task-level history filters.
 - README, protocol, claim boundaries, formal report, hybrid report, and acceptance v2 now distinguish smoke/replay evidence from the completed formal result.
-- Final credential scan found zero matches, the full suite passed 44 tests, 415 formal-result files were protected read-only, the formal result was committed, and Pull Request #1 was opened against `main` with release tag `qrf-final-experiment-v2`.
+- Final credential scan found zero matches, the full suite passed 44 tests, 415 formal-result files were protected read-only, the formal result was committed, and Pull Request #1 was opened against `main` with release tag `qrf-final-experiment-v2.1`.
 
 ## Current gate
 

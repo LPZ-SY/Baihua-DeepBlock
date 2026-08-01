@@ -32,7 +32,7 @@ The explicit hardware confirmation gate was satisfied on 2026-08-02.
 
 - Branch: `codex/complete-qrf-workflow`.
 - Formal-result commit: `8a1d4ee` (`Complete formal 24-task hardware experiment`).
-- Final release tag: `qrf-final-experiment-v2`.
+- Final release tag: `qrf-final-experiment-v2.1` (the earlier `qrf-final-experiment-v2` data-acceptance tag is retained; v2.1 adds cross-platform CI reproducibility).
 - Pull Request: `LPZ-SY/kujinganlai-version#1` targeting `main`.
 - Strict integrity validation: 24/24 planned tasks observed, `complete=true`, `valid=true`, zero errors and warnings.
 - Regression validation: compileall passed, 44 tests passed, and the classical CLI smoke passed.
