@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-08-01T18:15:08.729724+08:00",
+  "criterion": "quantum candidate energy < frozen threshold",
+  "threshold_method": "best classical BQM energy under the same fixed budget",
+  "feasibility_policy": "reported separately; not part of the primary energy gate",
+  "strict_inequality": true,
+  "budget_shots_per_instance": 1024,
+  "instances": {
+    "seed2026_c4_v2": {
+      "threshold": -0.18208246942549522,
+      "observed_baseline_shots": 1024,
+      "feasible_baseline_shots": 93,
+      "status": "ready",
+      "reason": "阈值已按固定预算冻结。"
+    }
+  }
+}

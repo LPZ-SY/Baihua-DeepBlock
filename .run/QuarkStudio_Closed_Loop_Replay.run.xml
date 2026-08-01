@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="QuarkStudio Closed Loop Replay" type="PythonConfigurationType" factoryName="Python">
+    <module name="项目源码" />
+    <option name="ENV_FILES" value="" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+    </envs>
+    <option name="SDK_HOME" value="" />
+    <option name="SDK_NAME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/experiments/run_quarkstudio_candidate_quality.py" />
+    <option name="PARAMETERS" value="--seed 2026 --customers 4 --vehicles 2 --shots 1024 --reuse-evidence &quot;$PROJECT_DIR$/results/quarkstudio_candidate_quality/task_evidence.json&quot; --outdir &quot;$PROJECT_DIR$/results/quarkstudio_candidate_quality_validated&quot;" />
+    <method v="2" />
+  </configuration>
+</component>

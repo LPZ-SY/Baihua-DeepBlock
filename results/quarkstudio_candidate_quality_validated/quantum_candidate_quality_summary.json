@@ -1,0 +1,41 @@
+{
+  "instance_id": "seed2026_c4_v2",
+  "task_id": 2608011815107080366,
+  "backend": "Dongling",
+  "backend_queue_snapshot_before_submit": {
+    "reused_evidence": true
+  },
+  "status": "Finished",
+  "shots": 1024,
+  "selected_customer_ids_in_qubit_order": [
+    3,
+    4,
+    1,
+    2
+  ],
+  "customer_demands": {
+    "1": 2,
+    "2": 1,
+    "3": 4,
+    "4": 3
+  },
+  "vehicle_capacity": 6,
+  "threshold": -0.18208246942526785,
+  "threshold_method": "best classical BQM energy under the same fixed budget",
+  "energy_tolerance": 1e-09,
+  "exact_optimum_energy": -0.18208246942526785,
+  "top_bitstring": "1111",
+  "top_bitstring_count": 160,
+  "top_bitstring_energy": 779.2130623708881,
+  "top_bitstring_meets_quality_threshold": false,
+  "quantum_best_bitstring": "1001",
+  "quantum_best_energy": -0.18208246942526785,
+  "quantum_best_count": 29,
+  "passing_shots": 57,
+  "passing_rate": 0.0556640625,
+  "decision": "PASS",
+  "strictly_improving_shots": 0,
+  "strict_improvement_rate": 0.0,
+  "strict_improvement_decision": "FAIL",
+  "claim_scope": "候选 BQM 能量层面的门槛判定，不等同于最终路径优势或广义量子优势。"
+}
