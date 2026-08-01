@@ -1,0 +1,62 @@
+{
+  "experiment_id": "qrf_cross_backend_smoke_20260801",
+  "repository": "LPZ-SY/kujinganlai-version",
+  "protocol_version": "cross-backend-smoke-v1",
+  "frozen_git_commit": "6f417d6c3c3e8a16132cd3a472567f9090edab85",
+  "frozen_git_tag": "qrf-formal-protocol-v2",
+  "purpose": "P10 pipeline smoke test only; not a substitute for the formal 24-task matrix",
+  "shots": 1024,
+  "repeats": 1,
+  "backends": [
+    "Baihua",
+    "Dongling",
+    "Shenglian"
+  ],
+  "classical_num_sweeps": 40,
+  "gamma": 1.1,
+  "beta": 0.8,
+  "quality_tau": 0.2,
+  "near_quality_tau": 0.5,
+  "energy_tolerance": 1e-09,
+  "bit_order": "openqasm_high_classical_bit_left",
+  "require_full_quantum_coverage": true,
+  "formal_sources": [
+    "hardware"
+  ],
+  "threshold_file": "experiments/configs/formal_hardware_matrix_v2_thresholds.json",
+  "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
+  "instances": [
+    {
+      "instance_id": "seed2026_c4_v2_medium",
+      "seed": 2026,
+      "customers": 4,
+      "vehicles": 2,
+      "capacity": 6,
+      "capacity_pressure": "medium",
+      "selected_customer_ids_in_qubit_order": [
+        3,
+        4,
+        1,
+        2
+      ],
+      "logical_qasm_sha256": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17"
+    }
+  ],
+  "execution_order": [
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Baihua", "repeat_index": 1},
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Dongling", "repeat_index": 1},
+    {"instance_id": "seed2026_c4_v2_medium", "backend_requested": "Shenglian", "repeat_index": 1}
+  ],
+  "live_submission": {
+    "max_tasks_per_invocation": 1,
+    "require_explicit_confirmation": true,
+    "allow_backend_fallback": false
+  },
+  "eligibility": {
+    "required_source": "hardware",
+    "require_backend_requested_equals_actual": true,
+    "require_counts_sum_equals_shots_received": true,
+    "missing_or_untrusted_counts_decision": "NOT_EVALUABLE",
+    "exclude_replay_manual_and_fallback_from_formal_statistics": true
+  }
+}

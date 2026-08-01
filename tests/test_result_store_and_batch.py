@@ -65,6 +65,24 @@ def test_batch_resume_does_not_repeat_completed_config_hash(tmp_path):
     assert len(store.tasks()) == 1
 
 
+def test_batch_resume_does_not_implicitly_retry_failed_task(tmp_path):
+    store = ResultStore(tmp_path, "experiment")
+    store.initialize_config({"experiment_id": "experiment"})
+    calls = []
+
+    def failing_executor(spec):
+        calls.append(spec.config_hash)
+        raise RuntimeError("synthetic failure")
+
+    runner = BatchRunner(store, failing_executor)
+    assert runner.run([_spec()])[0]["decision"] == "NOT_EVALUABLE"
+    assert runner.run([_spec()], resume=True) == []
+    assert len(calls) == 1
+
+    assert runner.run([_spec()], retry_failed=True) == []
+    assert len(calls) == 2
+
+
 def test_matrix_expansion_honors_repeated_selected_instances():
     config = {
         "experiment_id": "matrix",

@@ -385,12 +385,14 @@ class BatchRunner:
             if (self.store.path / ".pause").exists():
                 break
             previous = latest.get(spec.config_hash)
-            if resume and previous and previous.get("status") in {
+            if retry_failed:
+                if not previous or previous.get("status") != "failed":
+                    continue
+            elif resume and previous and previous.get("status") in {
                 "completed",
                 "not_evaluable",
+                "failed",
             }:
-                continue
-            if retry_failed and (not previous or previous.get("status") != "failed"):
                 continue
             if max_hardware_tasks is not None and completed_this_run >= max_hardware_tasks:
                 break
