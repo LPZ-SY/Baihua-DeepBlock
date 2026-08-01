@@ -5,8 +5,9 @@ Status: frozen for dry-run and cross-backend smoke testing; no formal v2 hardwar
 ## Protocol identity
 
 - Protocol: `formal-matrix-v2`
-- Frozen P0-P7 commit: `8eaeefe92a1dd3c1cf1167d7196cead036695517`
-- Frozen tag: `qrf-p0-p7-acceptance-v1`
+- Frozen formal-protocol commit: `6f417d6c3c3e8a16132cd3a472567f9090edab85`
+- Frozen formal-protocol tag: `qrf-formal-protocol-v2`
+- P0-P7 baseline commit/tag: `8eaeefe92a1dd3c1cf1167d7196cead036695517` / `qrf-p0-p7-acceptance-v1`
 - Formal config: `experiments/configs/formal_hardware_matrix_v2.json`
 - Frozen thresholds: `experiments/configs/formal_hardware_matrix_v2_thresholds.json`
 - Threshold file SHA-256: `0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb`
