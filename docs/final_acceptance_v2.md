@@ -26,6 +26,17 @@ The explicit hardware confirmation gate was satisfied on 2026-08-02.
 - [x] P12 formal C/C+R/C+Q results were generated for all 24 evaluable tasks with equal budgets and retained provenance.
 - [x] P13 task-, instance-, backend-, and overall statistics and paper figures were generated from the complete matrix.
 - [x] Final conclusions were rewritten from all 24 predeclared tasks, including unfavorable results.
-- [ ] Final credential scan, integrity validation, release commit/tag, and Pull Request are complete.
+- [x] Final credential scan, integrity validation, release commit/tag, and Pull Request are complete.
 
-The project is data-complete; release acceptance remains open until the final scan, validation, release tag, and Pull Request are recorded.
+## Release record
+
+- Branch: `codex/complete-qrf-workflow`.
+- Formal-result commit: `8a1d4ee` (`Complete formal 24-task hardware experiment`).
+- Final release tag: `qrf-final-experiment-v2`.
+- Pull Request: `LPZ-SY/kujinganlai-version#1` targeting `main`.
+- Strict integrity validation: 24/24 planned tasks observed, `complete=true`, `valid=true`, zero errors and warnings.
+- Regression validation: compileall passed, 44 tests passed, and the classical CLI smoke passed.
+- Credential scan: 529 text evidence/source files scanned, zero credential-pattern hits.
+- Formal result protection: 415 evidence and analysis files marked read-only locally.
+
+P8-P14 acceptance is complete. The formal evidence is preserved without substituting replay/manual/fallback data and the bounded conclusions include unfavorable outcomes.

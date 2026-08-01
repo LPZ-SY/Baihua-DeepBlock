@@ -44,12 +44,12 @@ This audit maps the execution guide's P8-P14 requirements to current repository 
 - Feasible-classical threshold reach was positive but low (mean 0.050252); strict improvement was zero in all 24 tasks.
 - Required paired, backend-distribution, threshold, hybrid-delta, convergence, and backend-separated energy-CDF artifacts are present under the formal result root.
 
-## P14 - Interface, documentation, and release: final release checks in progress
+## P14 - Interface, documentation, and release: complete
 
 - Dash exposes requested/actual backend, task ID, shots, source, formal `NOT_EVALUABLE`, and task-level history filters.
 - README, protocol, claim boundaries, formal report, hybrid report, and acceptance v2 now distinguish smoke/replay evidence from the completed formal result.
-- Final credential scan, test suite, read-only evidence protection, release commit/tag, and Pull Request are the remaining release actions.
+- Final credential scan found zero matches, the full suite passed 44 tests, 415 formal-result files were protected read-only, the formal result was committed, and Pull Request #1 was opened against `main` with release tag `qrf-final-experiment-v2`.
 
 ## Current gate
 
-Hardware execution and analysis are complete. No further hardware submission is authorized by this phase; only final local validation, evidence protection, release commit/tag, and Pull Request remain.
+P8-P14 are complete. No further hardware submission is authorized by this phase; future experiments require a new prespecified protocol and confirmation gate.
