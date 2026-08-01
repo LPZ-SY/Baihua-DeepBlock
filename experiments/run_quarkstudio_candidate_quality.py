@@ -6,6 +6,7 @@ import json
 import math
 import os
 import random
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -54,6 +55,21 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
             writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
             writer.writeheader()
             writer.writerows(rows)
+
+
+def _current_git_commit() -> str | None:
+    try:
+        completed = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    value = completed.stdout.strip().lower()
+    return value if completed.returncode == 0 and len(value) == 40 else None
 
 
 def _selected_customers(customers: list, max_qubits: int) -> list:
@@ -156,6 +172,12 @@ def main() -> None:
     parser.add_argument("--shots", type=int, default=1024)
     parser.add_argument("--num-sweeps", type=int, default=40)
     parser.add_argument("--backend", default="auto")
+    parser.add_argument("--protocol-version", default="single-run-v1")
+    parser.add_argument("--frozen-git-commit", default="")
+    parser.add_argument("--protocol-config-sha256", default="")
+    parser.add_argument("--task-key", default="")
+    parser.add_argument("--repeat-index", type=int, default=1)
+    parser.add_argument("--threshold-file-sha256", default="")
     parser.add_argument("--token-file", type=Path, default=ROOT.parent / ".env.txt")
     parser.add_argument("--quark-runtime", type=Path, default=ROOT.parent / "tmp" / "quarkstudio_runtime2")
     parser.add_argument("--outdir", type=Path, default=ROOT / "results" / "quarkstudio_candidate_quality")
@@ -352,6 +374,14 @@ def main() -> None:
     summary = summary_model.to_dict()
     summary.update(
         {
+            "protocol_version": args.protocol_version,
+            "frozen_git_commit": args.frozen_git_commit or None,
+            "git_commit_actual": _current_git_commit(),
+            "protocol_config_sha256": args.protocol_config_sha256 or None,
+            "task_key": args.task_key or None,
+            "repeat_index": args.repeat_index,
+            "backend_requested": args.backend,
+            "backend_actual": measurement.backend,
             "backend_queue_snapshot_before_submit": backend_snapshot,
             "status": measurement.status,
             "shots": measurement.shots_requested,
@@ -389,10 +419,18 @@ def main() -> None:
 
     evidence_payload = {
         "schema_version": 2,
+        "protocol_version": args.protocol_version,
+        "frozen_git_commit": args.frozen_git_commit or None,
+        "git_commit_actual": _current_git_commit(),
+        "protocol_config_sha256": args.protocol_config_sha256 or None,
+        "task_key": args.task_key or None,
+        "repeat_index": args.repeat_index,
         "source": measurement.source,
         "platform": measurement.platform,
         "task_id": measurement.task_id,
         "backend": measurement.backend,
+        "backend_requested": args.backend,
+        "backend_actual": measurement.backend,
         "status": measurement.status,
         "shots": measurement.shots_requested,
         "shots_received": measurement.shots_received,
@@ -402,6 +440,7 @@ def main() -> None:
         "circuit": qasm,
         "circuit_hash": canonical_sha256(qasm),
         "threshold_hash": canonical_sha256(frozen),
+        "threshold_file_sha256": args.threshold_file_sha256 or None,
         "raw_payload_sha256": measurement.raw_payload_sha256,
         "threshold_created_at": frozen.get("created_at"),
         "submitted_at": measurement.submitted_at or submission_time,

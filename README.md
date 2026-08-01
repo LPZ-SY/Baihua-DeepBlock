@@ -160,29 +160,38 @@ Preview the exact matrix and shot budget without submitting:
 
 ```powershell
 .\.venv\Scripts\python.exe experiments\batch_candidate_quality.py `
-  --config experiments\configs\qrf_hw_quality_v2.json `
+  --config experiments\configs\formal_hardware_matrix_v2.json `
   --dry-run
 ```
 
-Run with a per-invocation hardware cap:
+The frozen v2 protocol is a balanced `4 instances x 3 fixed backends x 2 repeats = 24 tasks`
+matrix. It forbids `backend=auto`, verifies the frozen threshold file and QASM/customer
+order hashes, and prints 24 unique task keys without accessing hardware.
+
+After reviewing the dry-run manifest, submit at most one fresh hardware task with explicit confirmation:
 
 ```powershell
 .\.venv\Scripts\python.exe experiments\batch_candidate_quality.py `
-  --config experiments\configs\qrf_hw_quality_v2.json `
-  --max-hardware-tasks 3
+  --config experiments\configs\formal_hardware_matrix_v2.json `
+  --confirm-live --max-hardware-tasks 1
 ```
 
 Resume without duplicating completed `config_hash` values:
 
 ```powershell
 .\.venv\Scripts\python.exe experiments\batch_candidate_quality.py `
-  --config experiments\configs\qrf_hw_quality_v2.json `
-  --resume --max-hardware-tasks 3
+  --config experiments\configs\formal_hardware_matrix_v2.json `
+  --confirm-live --resume --max-hardware-tasks 1
 ```
 
 Use `--retry-failed` to target failed records and `--reuse-evidence <path>` to exercise the same orchestration/evaluation/storage path offline. Every task is written immediately, so an interrupted run can recover from `tasks.jsonl`.
 
-The formal default matrix contains customers 4/6/8, two vehicles, three fixed seeds, medium/tight capacity pressure, 1024 shots, and selected repeated instances. Large 24/48-customer, four-vehicle pages remain engineering demonstrations and are not mixed with the 100%-coverage main candidate-quality claim.
+The historical `qrf_hw_quality_v2.json` is retained for auditability but is not eligible for
+formal submission because it used `backend=auto` and did not repeat each fixed instance on
+all three chips. The frozen formal v2 matrix contains four predeclared 4/6-customer,
+two-vehicle instances, medium/tight capacity pressure, 1024 shots, and two repeats on each
+of Baihua, Dongling, and Shenglian. Large 24/48-customer, four-vehicle pages remain
+engineering demonstrations and are not mixed with the 100%-coverage main candidate-quality claim.
 
 ## Fair hybrid contribution experiment
 

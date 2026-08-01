@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import random
+import re
 import statistics
 import subprocess
 import sys
@@ -39,9 +41,19 @@ class BatchTaskSpec:
     repeat: int
     backend: str
     num_sweeps: int
+    protocol_version: str = "legacy-matrix-v1"
+    frozen_git_commit: str = ""
+    explicit_instance_id: str = ""
+    selected_customer_ids_in_qubit_order: tuple[int, ...] = ()
+    logical_qasm_sha256: str = ""
+    threshold_sha256: str = ""
+    protocol_config_sha256: str = ""
+    execution_index: int = 0
 
     @property
     def instance_id(self) -> str:
+        if self.explicit_instance_id:
+            return self.explicit_instance_id
         return (
             f"seed{self.seed}_c{self.customers}_v{self.vehicles}_"
             f"{self.capacity_pressure}"
@@ -49,10 +61,35 @@ class BatchTaskSpec:
 
     @property
     def config_hash(self) -> str:
-        return canonical_sha256(asdict(self))
+        return canonical_sha256(
+            {
+                "protocol_version": self.protocol_version,
+                "frozen_git_commit": self.frozen_git_commit,
+                "instance_id": self.instance_id,
+                "backend_requested": self.backend,
+                "repeat_index": self.repeat,
+                "shots": self.shots,
+                "logical_qasm_sha256": self.logical_qasm_sha256,
+                "threshold_sha256": self.threshold_sha256,
+                "protocol_config_sha256": self.protocol_config_sha256,
+                "capacity": self.capacity,
+                "num_sweeps": self.num_sweeps,
+            }
+        )
+
+    @property
+    def task_key(self) -> str:
+        return self.config_hash
 
     def to_dict(self) -> dict[str, Any]:
-        return {**asdict(self), "instance_id": self.instance_id, "config_hash": self.config_hash}
+        return {
+            **asdict(self),
+            "instance_id": self.instance_id,
+            "repeat_index": self.repeat,
+            "backend_requested": self.backend,
+            "task_key": self.task_key,
+            "config_hash": self.config_hash,
+        }
 
 
 def _pressure_ratio(name: str) -> float:
@@ -62,7 +99,113 @@ def _pressure_ratio(name: str) -> float:
         raise ValueError(f"unsupported capacity pressure: {name}") from exc
 
 
+def _is_sha256(value: str) -> bool:
+    return bool(re.fullmatch(r"[0-9a-f]{64}", value.lower()))
+
+
+def _expand_explicit_protocol(config: Mapping[str, Any]) -> list[BatchTaskSpec]:
+    from run_quarkstudio_candidate_quality import _business_qasm, _selected_customers
+
+    protocol_version = str(config.get("protocol_version", "")).strip()
+    frozen_git_commit = str(config.get("frozen_git_commit", "")).strip().lower()
+    if not protocol_version:
+        raise ValueError("formal protocol requires protocol_version")
+    if not re.fullmatch(r"[0-9a-f]{40}", frozen_git_commit):
+        raise ValueError("formal protocol requires a full 40-character frozen_git_commit")
+    shots = int(config.get("shots", 1024))
+    if shots <= 0 or shots % 1024 != 0:
+        raise ValueError("shots must be a positive multiple of 1024")
+    repeats = int(config.get("repeats", 0))
+    if repeats < 1:
+        raise ValueError("formal protocol requires repeats >= 1")
+    backends = [str(value) for value in config.get("backends", [])]
+    if not backends or "auto" in {value.lower() for value in backends}:
+        raise ValueError("formal protocol requires fixed backends and forbids backend=auto")
+    if len(backends) != len(set(backends)):
+        raise ValueError("formal protocol backends must be unique")
+    threshold_sha256 = str(config.get("threshold_sha256", "")).lower()
+    if not _is_sha256(threshold_sha256):
+        raise ValueError("formal protocol requires threshold_sha256")
+
+    instances: dict[str, Mapping[str, Any]] = {}
+    for raw in config.get("instances", []):
+        instance_id = str(raw.get("instance_id", "")).strip()
+        if not instance_id or instance_id in instances:
+            raise ValueError("formal protocol instance_id values must be non-empty and unique")
+        if int(raw.get("vehicles", 0)) != 2:
+            raise ValueError("formal candidate-quality matrix requires vehicles=2")
+        selected_ids = tuple(int(value) for value in raw.get("selected_customer_ids_in_qubit_order", []))
+        qasm_sha256 = str(raw.get("logical_qasm_sha256", "")).lower()
+        if not selected_ids or not _is_sha256(qasm_sha256):
+            raise ValueError(f"formal protocol instance {instance_id} lacks frozen customer order or QASM hash")
+        instance = generate_dispatch_instance(
+            seed=int(raw["seed"]),
+            num_customers=int(raw["customers"]),
+            num_vehicles=int(raw["vehicles"]),
+            vehicle_capacity=int(raw["capacity"]),
+        )
+        selected = _selected_customers(instance.customers, int(raw["customers"]))
+        computed_ids = tuple(customer.customer_id for customer in selected)
+        computed_qasm_sha256 = canonical_sha256(_business_qasm(selected))
+        if computed_ids != selected_ids:
+            raise ValueError(f"frozen customer order mismatch for {instance_id}")
+        if computed_qasm_sha256 != qasm_sha256:
+            raise ValueError(f"logical QASM hash mismatch for {instance_id}")
+        instances[instance_id] = raw
+
+    execution_order = list(config.get("execution_order", []))
+    expected_count = len(instances) * len(backends) * repeats
+    if len(execution_order) != expected_count:
+        raise ValueError(
+            f"formal execution_order must contain {expected_count} tasks, got {len(execution_order)}"
+        )
+    seen: set[tuple[str, str, int]] = set()
+    specs: list[BatchTaskSpec] = []
+    for execution_index, entry in enumerate(execution_order, start=1):
+        instance_id = str(entry.get("instance_id", ""))
+        backend = str(entry.get("backend_requested", ""))
+        repeat = int(entry.get("repeat_index", 0))
+        if instance_id not in instances:
+            raise ValueError(f"unknown instance in execution_order: {instance_id}")
+        if backend not in backends:
+            raise ValueError(f"unknown backend in execution_order: {backend}")
+        if repeat < 1 or repeat > repeats:
+            raise ValueError(f"invalid repeat_index in execution_order: {repeat}")
+        schedule_key = (instance_id, backend, repeat)
+        if schedule_key in seen:
+            raise ValueError(f"duplicate formal task: {schedule_key}")
+        seen.add(schedule_key)
+        raw = instances[instance_id]
+        specs.append(
+            BatchTaskSpec(
+                experiment_id=str(config["experiment_id"]),
+                seed=int(raw["seed"]),
+                customers=int(raw["customers"]),
+                vehicles=int(raw["vehicles"]),
+                capacity_pressure=str(raw["capacity_pressure"]),
+                capacity=int(raw["capacity"]),
+                shots=shots,
+                repeat=repeat,
+                backend=backend,
+                num_sweeps=int(config.get("classical_num_sweeps", 40)),
+                protocol_version=protocol_version,
+                frozen_git_commit=frozen_git_commit,
+                explicit_instance_id=instance_id,
+                selected_customer_ids_in_qubit_order=tuple(
+                    int(value) for value in raw["selected_customer_ids_in_qubit_order"]
+                ),
+                logical_qasm_sha256=str(raw["logical_qasm_sha256"]).lower(),
+                threshold_sha256=threshold_sha256,
+                protocol_config_sha256=canonical_sha256(config),
+                execution_index=execution_index,
+            )
+        )
+    return specs
+
+
 def expand_matrix(config: Mapping[str, Any]) -> list[BatchTaskSpec]:
+    if "instances" in config or "execution_order" in config:
+        return _expand_explicit_protocol(config)
     experiment_id = str(config["experiment_id"])
     shots = int(config.get("shots", 1024))
     if shots <= 0 or shots % 1024 != 0:
@@ -196,6 +339,29 @@ def freeze_batch_thresholds(
     )
 
 
+def _load_frozen_protocol_thresholds(config: Mapping[str, Any]) -> Optional[dict[str, Any]]:
+    raw_path = str(config.get("threshold_file", "")).strip()
+    if not raw_path:
+        return None
+    path = Path(raw_path)
+    if not path.is_absolute():
+        path = ROOT / path
+    if not path.exists():
+        raise FileNotFoundError(f"frozen threshold file not found: {path}")
+    actual_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+    expected_sha256 = str(config.get("threshold_sha256", "")).lower()
+    if actual_sha256 != expected_sha256:
+        raise ValueError(
+            f"frozen threshold file hash mismatch: expected {expected_sha256}, got {actual_sha256}"
+        )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    expected_instances = {str(item["instance_id"]) for item in config.get("instances", [])}
+    missing = expected_instances - set(payload.get("instances", {}))
+    if missing:
+        raise ValueError(f"frozen threshold file lacks instances: {sorted(missing)}")
+    return payload
+
+
 Executor = Callable[[BatchTaskSpec], Mapping[str, Any]]
 
 
@@ -219,7 +385,10 @@ class BatchRunner:
             if (self.store.path / ".pause").exists():
                 break
             previous = latest.get(spec.config_hash)
-            if resume and previous and previous.get("status") == "completed":
+            if resume and previous and previous.get("status") in {
+                "completed",
+                "not_evaluable",
+            }:
                 continue
             if retry_failed and (not previous or previous.get("status") != "failed"):
                 continue
@@ -230,6 +399,14 @@ class BatchRunner:
                 evidence = output.pop("evidence", None)
                 candidates = list(output.pop("candidates", []))
                 summary = dict(output.pop("summary", output))
+                backend_actual = summary.get("backend_actual", summary.get("backend"))
+                backend_mismatch = (
+                    summary.get("source") == "hardware"
+                    and backend_actual != spec.backend
+                )
+                if backend_mismatch:
+                    summary["decision"] = "NOT_EVALUABLE"
+                    summary["backend_mismatch"] = True
                 evidence_path = None
                 evidence_hash = None
                 if evidence is not None:
@@ -240,13 +417,20 @@ class BatchRunner:
                 )
                 task_row = {
                     **spec.to_dict(),
-                    "status": "completed",
+                    "status": (
+                        "not_evaluable"
+                        if summary.get("decision") == "NOT_EVALUABLE"
+                        else "completed"
+                    ),
                     "evaluation_decision": summary.get("decision"),
                     "task_id": summary.get("task_id"),
                     "source": summary.get("source"),
+                    "backend_actual": backend_actual,
                     "evidence_path": evidence_path,
                     "evidence_sha256": evidence_hash,
                 }
+                if backend_mismatch:
+                    task_row["backend_mismatch"] = True
                 self.store.append_task(task_row)
                 summaries.append({**spec.to_dict(), **summary})
             except Exception as exc:  # task-level fault isolation is intentional
@@ -320,6 +504,18 @@ def _subprocess_executor(
             str(spec.num_sweeps),
             "--backend",
             spec.backend,
+            "--protocol-version",
+            spec.protocol_version,
+            "--frozen-git-commit",
+            spec.frozen_git_commit,
+            "--protocol-config-sha256",
+            spec.protocol_config_sha256,
+            "--task-key",
+            spec.task_key,
+            "--repeat-index",
+            str(spec.repeat),
+            "--threshold-file-sha256",
+            spec.threshold_sha256,
             "--outdir",
             str(outdir),
             "--frozen-thresholds",
@@ -349,24 +545,19 @@ def main() -> None:
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--results-root", type=Path, default=ROOT / "results" / "experiments")
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--max-hardware-tasks", type=int, default=None)
+    parser.add_argument("--max-hardware-tasks", type=int, default=1)
+    parser.add_argument(
+        "--confirm-live",
+        action="store_true",
+        help="Explicitly confirm submission of fresh hardware tasks.",
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--retry-failed", action="store_true")
     parser.add_argument("--reuse-evidence", type=Path, default=None)
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding="utf-8"))
     specs = expand_matrix(config)
-    store = ResultStore(args.results_root, str(config["experiment_id"]))
-    config_hash = store.initialize_config(config)
-    store.write_manifest(
-        {
-            "repository": config.get("repository", "LPZ-SY/kujinganlai-version"),
-            "config_hash": config_hash,
-            "task_count": len(specs),
-            "total_requested_shots": sum(spec.shots for spec in specs),
-            "mode": "dry_run" if args.dry_run else "evidence_replay" if args.reuse_evidence else "live_hardware",
-        }
-    )
+    frozen_protocol = _load_frozen_protocol_thresholds(config)
     if args.dry_run:
         print(
             json.dumps(
@@ -381,7 +572,22 @@ def main() -> None:
             )
         )
         return
-    frozen = freeze_batch_thresholds(config, specs)
+    if not args.dry_run and args.reuse_evidence is None and not args.confirm_live:
+        raise SystemExit(
+            "Fresh hardware submission requires --confirm-live after reviewing the dry-run manifest."
+        )
+    store = ResultStore(args.results_root, str(config["experiment_id"]))
+    config_hash = store.initialize_config(config)
+    store.write_manifest(
+        {
+            "repository": config.get("repository", "LPZ-SY/kujinganlai-version"),
+            "config_hash": config_hash,
+            "task_count": len(specs),
+            "total_requested_shots": sum(spec.shots for spec in specs),
+            "mode": "dry_run" if args.dry_run else "evidence_replay" if args.reuse_evidence else "live_hardware",
+        }
+    )
+    frozen = frozen_protocol or freeze_batch_thresholds(config, specs)
     frozen_path = store.write_thresholds(frozen)
     runner = BatchRunner(
         store,

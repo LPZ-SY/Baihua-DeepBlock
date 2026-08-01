@@ -450,7 +450,7 @@ def _batch_layout():
                         "Experiment config",
                         dcc.Input(
                             id="batch-config-path",
-                            value=str(ROOT / "experiments" / "configs" / "qrf_hw_quality_v2.json"),
+                            value=str(ROOT / "experiments" / "configs" / "formal_hardware_matrix_v2.json"),
                             style=INPUT_STYLE,
                         ),
                         span=2,
@@ -467,8 +467,21 @@ def _batch_layout():
                     _field("Preview", html.Button("Dry Run", id="batch-preview-btn", n_clicks=0, style=BUTTON_STYLE)),
                     _field(
                         "Max hardware tasks",
-                        dcc.Input(id="batch-max-tasks", type="number", min=1, value=1, style=INPUT_STYLE),
-                        "Quota guard for each background invocation.",
+                        dcc.Input(id="batch-max-tasks", type="number", min=1, max=1, value=1, style=INPUT_STYLE),
+                        "Formal UI submissions are capped at one fresh task per invocation.",
+                    ),
+                    _field(
+                        "Live confirmation",
+                        dcc.Checklist(
+                            id="batch-confirm-live",
+                            options=[
+                                {
+                                    "label": " I reviewed the dry run and confirm one fresh hardware task",
+                                    "value": "confirmed",
+                                }
+                            ],
+                            value=[],
+                        ),
                     ),
                     _field("Start", html.Button("Start Background Batch", id="batch-start-btn", n_clicks=0, style=BUTTON_STYLE)),
                     _field("Resume", html.Button("Resume", id="batch-resume-btn", n_clicks=0, style=BUTTON_STYLE)),
@@ -1060,9 +1073,19 @@ def _batch_store(config_path, results_root):
     State("batch-config-path", "value"),
     State("batch-results-root", "value"),
     State("batch-max-tasks", "value"),
+    State("batch-confirm-live", "value"),
     prevent_initial_call=True,
 )
-def control_batch(_preview, _start, _resume, _pause, config_path, results_root, max_tasks):
+def control_batch(
+    _preview,
+    _start,
+    _resume,
+    _pause,
+    config_path,
+    results_root,
+    max_tasks,
+    live_confirmation,
+):
     try:
         config, store = _batch_store(config_path, results_root)
         trigger = ctx.triggered_id
@@ -1070,6 +1093,7 @@ def control_batch(_preview, _start, _resume, _pause, config_path, results_root, 
             specs = expand_matrix(config)
             return (
                 f"DRY RUN: {len(specs)} tasks, {sum(spec.shots for spec in specs)} requested shots. "
+                f"Fixed backends: {', '.join(sorted({spec.backend for spec in specs}))}. "
                 f"No hardware task was submitted."
             )
         pause_path = store.path / ".pause"
@@ -1078,6 +1102,11 @@ def control_batch(_preview, _start, _resume, _pause, config_path, results_root, 
             return "Pause requested; the runner will stop before the next task."
         if pause_path.exists():
             pause_path.unlink()
+        if "confirmed" not in (live_confirmation or []):
+            return (
+                "BLOCKED: review the dry run and check the live-confirmation box before "
+                "submitting one fresh hardware task."
+            )
         command = [
             sys.executable,
             str(ROOT / "experiments" / "batch_candidate_quality.py"),
@@ -1086,7 +1115,8 @@ def control_batch(_preview, _start, _resume, _pause, config_path, results_root, 
             "--results-root",
             str(results_root),
             "--max-hardware-tasks",
-            str(max(1, int(max_tasks or 1))),
+            "1",
+            "--confirm-live",
         ]
         if trigger == "batch-resume-btn":
             command.append("--resume")

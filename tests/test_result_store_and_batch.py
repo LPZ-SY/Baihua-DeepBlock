@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import sys
 
@@ -79,3 +80,42 @@ def test_matrix_expansion_honors_repeated_selected_instances():
     specs = expand_matrix(config)
     assert len(specs) == 4
     assert sum(spec.repeat > 1 for spec in specs) == 2
+
+
+def test_formal_matrix_v2_is_balanced_fixed_and_unique():
+    config_path = ROOT / "experiments" / "configs" / "formal_hardware_matrix_v2.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    specs = expand_matrix(config)
+
+    assert len(specs) == 24
+    assert len({spec.task_key for spec in specs}) == 24
+    assert all(spec.backend != "auto" for spec in specs)
+    assert [spec.execution_index for spec in specs] == list(range(1, 25))
+
+    instance_ids = {spec.instance_id for spec in specs}
+    assert len(instance_ids) == 4
+    for instance_id in instance_ids:
+        instance_specs = [spec for spec in specs if spec.instance_id == instance_id]
+        assert len(instance_specs) == 6
+        assert {(spec.backend, spec.repeat) for spec in instance_specs} == {
+            (backend, repeat)
+            for backend in ("Baihua", "Dongling", "Shenglian")
+            for repeat in (1, 2)
+        }
+        assert len({spec.logical_qasm_sha256 for spec in instance_specs}) == 1
+        assert len({spec.threshold_sha256 for spec in instance_specs}) == 1
+        assert len(
+            {spec.selected_customer_ids_in_qubit_order for spec in instance_specs}
+        ) == 1
+
+
+def test_formal_matrix_rejects_backend_auto():
+    config_path = ROOT / "experiments" / "configs" / "formal_hardware_matrix_v2.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["backends"][0] = "auto"
+    try:
+        expand_matrix(config)
+    except ValueError as exc:
+        assert "forbids backend=auto" in str(exc)
+    else:
+        raise AssertionError("formal matrix accepted backend=auto")
