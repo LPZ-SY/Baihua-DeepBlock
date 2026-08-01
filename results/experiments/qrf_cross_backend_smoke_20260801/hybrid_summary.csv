@@ -1,0 +1,4 @@
+﻿task_key,task_id,instance_id,backend,repeat_index,decision,candidate_budget,D_C,D_C_plus_R,D_C_plus_Q,delta_QR,delta_QC,final_source_C,final_source_C_plus_R,final_source_C_plus_Q,quantum_source_win,best_quantum_rank_in_C_plus_Q,reason
+63bf003c200b1a23efbef71ad1810f5c3aa87ed71fe027da7718392ac9049d41,2608012251527123036,seed2026_c4_v2_medium,Baihua,1,EVALUATED,20,38.37125528409125,38.37125528409125,38.37125528409125,0.0,0.0,classical,uniform_random,quantum,True,1,
+f1e0f47e90745974c43cd9497317723f577578227990c20b6c646b0bda9d7569,2608012253199368389,seed2026_c4_v2_medium,Dongling,1,EVALUATED,20,38.37125528409125,38.37125528409125,38.37125528409125,0.0,0.0,classical,uniform_random,quantum,True,1,
+be6a609e34695dddf1c7a06c4eef738e5bf27c9867898da41b78df7d4f898826,2608012254449770289,seed2026_c4_v2_medium,Shenglian,1,EVALUATED,20,38.37125528409125,38.37125528409125,38.37125528409125,0.0,0.0,classical,uniform_random,quantum,True,1,

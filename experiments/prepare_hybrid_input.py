@@ -101,6 +101,9 @@ def build_hybrid_input(
                 "customers": spec.customers,
                 "vehicles": spec.vehicles,
                 "capacity": spec.capacity,
+                "selected_customer_ids_in_qubit_order": list(
+                    spec.selected_customer_ids_in_qubit_order
+                ),
                 "measurement_source": task.get("source"),
                 "measurement_status": task.get("status"),
                 "classical": classical,
@@ -114,6 +117,7 @@ def build_hybrid_input(
         "source_config_sha256": canonical_sha256(config),
         "candidate_budget": candidate_budget,
         "two_opt_rounds": 2,
+        "bit_order": config.get("bit_order", "openqasm_high_classical_bit_left"),
         "formal_quantum_sources": ["hardware"],
         "instances": units,
     }

@@ -13,7 +13,10 @@ This record is intentionally incomplete until the formal hardware confirmation g
 - [x] Formal dry run contains 24 unique tasks, fixed chips, frozen QASM/customer/threshold hashes, and no `auto` backend.
 - [x] P10 Baihua, Dongling, and Shenglian smoke tasks returned complete 1024-shot counts with matching requested/actual backends.
 - [x] P10 evidence is task-ID-addressable, includes redacted raw responses, and passes strict integrity validation.
-- [x] C/C+R/C+Q offline workflow enforces equal budgets, a shared classical base, provenance eligibility, source tracking, and task-level statistics.
+- [x] Formal live execution is pinned to `qrf-preformal-execution-v2`, requires a clean tracked worktree, and enforces the frozen one-task cap.
+- [x] Formal evidence includes task-addressable raw response/counts/QASM/candidate files, dependencies, timestamps, queue/poll fields, compile options, and optional hardware metadata.
+- [x] C/C+R/C+Q offline workflow enforces equal budgets, a shared classical base, frozen customer-to-qubit order, provenance eligibility, source tracking, and task-level statistics.
+- [x] Paper outputs preserve task-, instance-, and backend-level strata and use a backend-separated shot-weighted energy CDF.
 - [x] Dash and CLI default to one-task guarded submission and preserve fresh/replay/manual/fallback provenance.
 
 ## Pending explicit user confirmation and fresh hardware execution

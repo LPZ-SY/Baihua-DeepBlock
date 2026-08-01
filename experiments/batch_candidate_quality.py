@@ -25,7 +25,11 @@ from quantum_route_forge.candidate_quality import (  # noqa: E402
     freeze_thresholds,
     raw_feasibility,
 )
-from quantum_route_forge.quantum_measurements import canonical_sha256  # noqa: E402
+from quantum_route_forge.quantum_measurements import (  # noqa: E402
+    canonical_sha256,
+    redact_payload,
+    redact_text,
+)
 from quantum_route_forge.result_store import ResultStore  # noqa: E402
 
 
@@ -101,6 +105,35 @@ def _pressure_ratio(name: str) -> float:
 
 def _is_sha256(value: str) -> bool:
     return bool(re.fullmatch(r"[0-9a-f]{64}", value.lower()))
+
+
+def _git_rev_parse(ref: str) -> str | None:
+    try:
+        completed = subprocess.run(
+            ["git", "rev-list", "-n", "1", ref],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    value = completed.stdout.strip().lower()
+    return value if completed.returncode == 0 and re.fullmatch(r"[0-9a-f]{40}", value) else None
+
+
+def _tracked_worktree_is_clean() -> bool:
+    try:
+        completed = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=no"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return completed.returncode == 0 and not completed.stdout.strip()
 
 
 def _expand_explicit_protocol(config: Mapping[str, Any]) -> list[BatchTaskSpec]:
@@ -281,6 +314,7 @@ def build_dry_run_manifest(
         "protocol_version": config.get("protocol_version"),
         "frozen_git_commit": config.get("frozen_git_commit"),
         "frozen_git_tag": config.get("frozen_git_tag"),
+        "execution_git_tag": config.get("execution_git_tag"),
         "config_sha256": canonical_sha256(config),
         "threshold_file": config.get("threshold_file"),
         "threshold_sha256": config.get("threshold_sha256"),
@@ -290,6 +324,7 @@ def build_dry_run_manifest(
         "backends": sorted({spec.backend for spec in rows}),
         "instance_task_counts": instance_counts,
         "contains_backend_auto": any(spec.backend.lower() == "auto" for spec in rows),
+        "live_submission": dict(config.get("live_submission", {})),
         "tasks": [spec.to_dict() for spec in rows],
     }
 
@@ -394,6 +429,13 @@ def _load_frozen_protocol_thresholds(config: Mapping[str, Any]) -> Optional[dict
 Executor = Callable[[BatchTaskSpec], Mapping[str, Any]]
 
 
+class SubmittedTaskPendingError(RuntimeError):
+    def __init__(self, message: str, receipt: Mapping[str, Any], receipt_path: Path):
+        super().__init__(message)
+        self.receipt = dict(receipt)
+        self.receipt_path = receipt_path
+
+
 class BatchRunner:
     def __init__(
         self,
@@ -475,6 +517,7 @@ class BatchRunner:
                     "task_id": summary.get("task_id"),
                     "source": summary.get("source"),
                     "backend_actual": backend_actual,
+                    "shots_received": summary.get("shots_received"),
                     "evidence_path": evidence_path,
                     "evidence_sha256": evidence_hash,
                 }
@@ -482,14 +525,82 @@ class BatchRunner:
                     task_row["backend_mismatch"] = True
                 if source_ineligible:
                     task_row["source_ineligible_for_formal_statistics"] = True
+                if evidence is not None and task_row.get("task_id"):
+                    self.store.save_task_artifacts(
+                        str(task_row["task_id"]),
+                        evidence=evidence,
+                        candidates=candidates,
+                        summary=summary,
+                    )
                 self.store.append_task(task_row)
                 summaries.append({**spec.to_dict(), **summary})
             except Exception as exc:  # task-level fault isolation is intentional
+                error = redact_text(f"{type(exc).__name__}: {exc}")
+                if isinstance(exc, SubmittedTaskPendingError):
+                    receipt = exc.receipt
+                    self.store.append_task(
+                        {
+                            **spec.to_dict(),
+                            "status": "submitted",
+                            "evaluation_decision": "NOT_EVALUABLE",
+                            "task_id": receipt.get("task_id"),
+                            "source": "hardware",
+                            "backend_actual": receipt.get("backend_actual"),
+                            "shots_received": 0,
+                            "evidence_path": str(exc.receipt_path),
+                            "error": error,
+                        }
+                    )
+                    summaries.append(
+                        {
+                            **spec.to_dict(),
+                            "decision": "NOT_EVALUABLE",
+                            "task_id": receipt.get("task_id"),
+                            "source": "hardware",
+                            "backend_actual": receipt.get("backend_actual"),
+                            "error": error,
+                        }
+                    )
+                    completed_this_run += 1
+                    continue
+                failure_evidence = redact_payload(
+                    {
+                        "schema_version": 2,
+                        "run_id": spec.experiment_id,
+                        "protocol_version": spec.protocol_version,
+                        "frozen_git_commit": spec.frozen_git_commit,
+                        "protocol_config_sha256": spec.protocol_config_sha256,
+                        "task_key": spec.task_key,
+                        "instance_id": spec.instance_id,
+                        "repeat_index": spec.repeat,
+                        "backend_requested": spec.backend,
+                        "backend_actual": None,
+                        "status": "failed",
+                        "source": None,
+                        "shots": spec.shots,
+                        "shots_received": 0,
+                        "counts": {},
+                        "raw_counts": {},
+                        "unique_bitstrings": 0,
+                        "selected_customer_ids": list(
+                            spec.selected_customer_ids_in_qubit_order
+                        ),
+                        "circuit_hash": spec.logical_qasm_sha256,
+                        "threshold_file_sha256": spec.threshold_sha256,
+                        "error": error,
+                    }
+                )
+                evidence_path, evidence_hash = self.store.save_evidence(
+                    spec.config_hash, failure_evidence
+                )
                 self.store.append_task(
                     {
                         **spec.to_dict(),
                         "status": "failed",
-                        "error": f"{type(exc).__name__}: {exc}",
+                        "error": error,
+                        "shots_received": 0,
+                        "evidence_path": str(evidence_path),
+                        "evidence_sha256": evidence_hash,
                     }
                 )
                 if not retry_failed:
@@ -605,6 +716,8 @@ def _subprocess_executor(
             spec.backend,
             "--protocol-version",
             spec.protocol_version,
+            "--run-id",
+            spec.experiment_id,
             "--frozen-git-commit",
             spec.frozen_git_commit,
             "--protocol-config-sha256",
@@ -613,6 +726,8 @@ def _subprocess_executor(
             spec.task_key,
             "--repeat-index",
             str(spec.repeat),
+            "--capacity",
+            str(spec.capacity),
             "--threshold-file-sha256",
             spec.threshold_sha256,
             "--outdir",
@@ -622,9 +737,37 @@ def _subprocess_executor(
         ]
         if reuse_evidence is not None:
             command.extend(["--reuse-evidence", str(reuse_evidence)])
+        receipt_path = outdir / "submission_receipt.json"
+        if reuse_evidence is None and receipt_path.exists():
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            if receipt.get("task_key") != spec.task_key:
+                raise RuntimeError("submission receipt task_key conflicts with frozen task")
+            if receipt.get("backend_requested") != spec.backend:
+                raise RuntimeError("submission receipt backend conflicts with frozen task")
+            command.extend(
+                [
+                    "--resume-task-id",
+                    str(receipt.get("task_id", "")),
+                    "--resume-backend",
+                    str(receipt.get("backend_actual", "")),
+                    "--resume-submitted-at",
+                    str(receipt.get("submitted_at", "")),
+                ]
+            )
         completed = subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
+        store.logs_dir.mkdir(parents=True, exist_ok=True)
+        (store.logs_dir / f"{spec.config_hash}.stdout.log").write_text(
+            redact_text(completed.stdout), encoding="utf-8"
+        )
+        (store.logs_dir / f"{spec.config_hash}.stderr.log").write_text(
+            redact_text(completed.stderr), encoding="utf-8"
+        )
         if completed.returncode != 0:
-            raise RuntimeError(completed.stderr.strip() or completed.stdout.strip())
+            message = redact_text(completed.stderr.strip() or completed.stdout.strip())
+            if receipt_path.exists():
+                receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+                raise SubmittedTaskPendingError(message, receipt, receipt_path)
+            raise RuntimeError(message)
         summary = json.loads((outdir / "quantum_candidate_quality_summary.json").read_text(encoding="utf-8"))
         evidence = json.loads((outdir / "task_evidence.json").read_text(encoding="utf-8"))
         candidates: list[dict[str, Any]] = []
@@ -675,8 +818,50 @@ def main() -> None:
         raise SystemExit(
             "Fresh hardware submission requires --confirm-live after reviewing the dry-run manifest."
         )
+    if args.reuse_evidence is None and str(config.get("protocol_version", "")).startswith(
+        "formal-matrix"
+    ):
+        execution_tag = str(config.get("execution_git_tag", ""))
+        expected_commit = _git_rev_parse(execution_tag)
+        actual_commit = _git_rev_parse("HEAD")
+        if not expected_commit or actual_commit != expected_commit:
+            raise SystemExit(
+                "Formal live execution requires HEAD to equal the frozen execution_git_tag "
+                f"({execution_tag})."
+            )
+        if not _tracked_worktree_is_clean():
+            raise SystemExit("Formal live execution requires a clean tracked worktree.")
+    configured_max = int(
+        config.get("live_submission", {}).get("max_tasks_per_invocation", 1)
+    )
+    if args.reuse_evidence is None and (
+        args.max_hardware_tasks < 1 or args.max_hardware_tasks > configured_max
+    ):
+        raise SystemExit(
+            "Live task cap violation: --max-hardware-tasks must be between 1 and "
+            f"the frozen protocol limit ({configured_max})."
+        )
     store = ResultStore(args.results_root, str(config["experiment_id"]))
     config_hash = store.initialize_config(config)
+    dry_run_manifest = build_dry_run_manifest(config, specs)
+    store.write_protocol_snapshot(
+        {
+            "schema_version": 2,
+            "experiment_id": config["experiment_id"],
+            "protocol_version": config.get("protocol_version"),
+            "config_sha256": config_hash,
+            "frozen_git_commit": config.get("frozen_git_commit"),
+            "frozen_git_tag": config.get("frozen_git_tag"),
+            "execution_git_tag": config.get("execution_git_tag"),
+            "threshold_sha256": config.get("threshold_sha256"),
+            "ordered_tasks": dry_run_manifest["tasks"],
+        }
+    )
+    baseline_manifest_path = ROOT / "docs" / "baseline_manifest.json"
+    if baseline_manifest_path.exists():
+        store.write_baseline_manifest(
+            json.loads(baseline_manifest_path.read_text(encoding="utf-8"))
+        )
     store.write_manifest(
         {
             "repository": config.get("repository", "LPZ-SY/kujinganlai-version"),
@@ -703,6 +888,12 @@ def main() -> None:
     store.write_instance_summary(summaries)
     aggregate = aggregate_summaries(summaries)
     store.write_aggregate_summary(aggregate)
+    latest = store.latest_tasks_by_hash()
+    store.write_task_manifest(
+        latest[spec.config_hash]
+        for spec in specs
+        if spec.config_hash in latest
+    )
     print(json.dumps(aggregate, ensure_ascii=False, indent=2))
 
 

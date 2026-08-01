@@ -4,6 +4,7 @@
   "source_config_sha256": "6746a5002a9a21190d284b6f4c27baccf8965f9cde9dffafcd42f4d8155383ad",
   "candidate_budget": 20,
   "two_opt_rounds": 2,
+  "bit_order": "openqasm_high_classical_bit_left",
   "formal_quantum_sources": [
     "hardware"
   ],
@@ -18,6 +19,12 @@
       "customers": 4,
       "vehicles": 2,
       "capacity": 6,
+      "selected_customer_ids_in_qubit_order": [
+        3,
+        4,
+        1,
+        2
+      ],
       "measurement_source": "hardware",
       "measurement_status": "completed",
       "classical": [
@@ -909,6 +916,12 @@
       "customers": 4,
       "vehicles": 2,
       "capacity": 6,
+      "selected_customer_ids_in_qubit_order": [
+        3,
+        4,
+        1,
+        2
+      ],
       "measurement_source": "hardware",
       "measurement_status": "completed",
       "classical": [
@@ -1800,6 +1813,12 @@
       "customers": 4,
       "vehicles": 2,
       "capacity": 6,
+      "selected_customer_ids_in_qubit_order": [
+        3,
+        4,
+        1,
+        2
+      ],
       "measurement_source": "hardware",
       "measurement_status": "completed",
       "classical": [

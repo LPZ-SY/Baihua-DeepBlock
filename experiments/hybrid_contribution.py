@@ -192,30 +192,49 @@ def aggregate_paired_results(summaries: list[Mapping[str, Any]]) -> dict[str, An
         "paired_gain_CQ_vs_CR_energy",
         "paired_gain_CQ_vs_CR_distance",
     ]
-    metrics: dict[str, Any] = {}
     evaluable = [row for row in summaries if row.get("decision", "EVALUATED") != "NOT_EVALUABLE"]
-    for name in metric_names:
-        values = [float(row[name]) for row in evaluable if row.get(name) is not None]
-        rng = random.Random(2026)
-        bootstrap_means = sorted(
-            statistics.fmean(rng.choice(values) for _ in range(len(values)))
-            for _ in range(2000)
-        ) if values else []
-        metrics[name] = {
-            "mean": statistics.fmean(values) if values else None,
-            "median": statistics.median(values) if values else None,
-            "standard_deviation": statistics.stdev(values) if len(values) > 1 else 0.0 if values else None,
-            "positive_instance_rate": sum(value > 0 for value in values) / len(values) if values else None,
-            "bootstrap_95_ci": (
-                [
-                    bootstrap_means[int(0.025 * len(bootstrap_means))],
-                    bootstrap_means[int(0.975 * len(bootstrap_means)) - 1],
-                ]
-                if bootstrap_means
-                else None
-            ),
-            "values": values,
-        }
+
+    def summarize(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
+        metrics: dict[str, Any] = {}
+        for name in metric_names:
+            values = [float(row[name]) for row in rows if row.get(name) is not None]
+            rng = random.Random(2026)
+            bootstrap_means = (
+                sorted(
+                    statistics.fmean(rng.choice(values) for _ in range(len(values)))
+                    for _ in range(2000)
+                )
+                if values
+                else []
+            )
+            positive_rate = (
+                sum(value > 0 for value in values) / len(values) if values else None
+            )
+            metrics[name] = {
+                "mean": statistics.fmean(values) if values else None,
+                "median": statistics.median(values) if values else None,
+                "standard_deviation": (
+                    statistics.stdev(values)
+                    if len(values) > 1
+                    else 0.0 if values else None
+                ),
+                "positive_task_rate": positive_rate,
+                "positive_instance_rate": positive_rate,
+                "bootstrap_95_ci": (
+                    [
+                        bootstrap_means[int(0.025 * len(bootstrap_means))],
+                        bootstrap_means[int(0.975 * len(bootstrap_means)) - 1],
+                    ]
+                    if bootstrap_means
+                    else None
+                ),
+                "values": values,
+            }
+        return metrics
+
+    metrics = summarize(evaluable)
+    backends = sorted({str(row.get("backend", "")) for row in evaluable})
+    instances = sorted({str(row.get("instance_id", "")) for row in evaluable})
     positive_qr = sum(
         float(row.get("delta_QR", 0.0)) > 0 for row in evaluable
     )
@@ -246,11 +265,65 @@ def aggregate_paired_results(summaries: list[Mapping[str, Any]]) -> dict[str, An
             else None
         ),
         "metrics": metrics,
+        "by_backend": {
+            backend: summarize(
+                [row for row in evaluable if str(row.get("backend", "")) == backend]
+            )
+            for backend in backends
+        },
+        "by_instance": {
+            instance_id: summarize(
+                [
+                    row
+                    for row in evaluable
+                    if str(row.get("instance_id", "")) == instance_id
+                ]
+            )
+            for instance_id in instances
+        },
         "conclusion": conclusion,
     }
 
 
-def _sample_from_candidate(candidate: Candidate, instance, bqm) -> dict[str, int]:
+def _hybrid_summary_csv_rows(summaries: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for raw in summaries:
+        source = raw.get("final_source") if isinstance(raw.get("final_source"), dict) else {}
+        rows.append(
+            {
+                "task_key": raw.get("task_key"),
+                "task_id": raw.get("task_id"),
+                "instance_id": raw.get("instance_id"),
+                "backend": raw.get("backend"),
+                "repeat_index": raw.get("repeat_index"),
+                "decision": raw.get("decision"),
+                "candidate_budget": raw.get("candidate_budget"),
+                "D_C": raw.get("D_C"),
+                "D_C_plus_R": raw.get("D_C_plus_R"),
+                "D_C_plus_Q": raw.get("D_C_plus_Q"),
+                "delta_QR": raw.get("delta_QR"),
+                "delta_QC": raw.get("delta_QC"),
+                "final_source_C": source.get("C"),
+                "final_source_C_plus_R": source.get("C+R"),
+                "final_source_C_plus_Q": source.get("C+Q"),
+                "quantum_source_win": raw.get("quantum_source_win"),
+                "best_quantum_rank_in_C_plus_Q": raw.get(
+                    "best_quantum_rank_in_C_plus_Q"
+                ),
+                "reason": raw.get("reason"),
+            }
+        )
+    return rows
+
+
+def _sample_from_candidate(
+    candidate: Candidate,
+    instance,
+    bqm,
+    *,
+    selected_customer_ids_in_qubit_order: Iterable[int],
+    bit_order: str,
+) -> dict[str, int]:
     if isinstance(candidate.get("sample"), dict):
         return {str(key): int(value) for key, value in candidate["sample"].items()}
     bitstring = str(candidate.get("bitstring", ""))
@@ -258,8 +331,9 @@ def _sample_from_candidate(candidate: Candidate, instance, bqm) -> dict[str, int
         raise ValueError("candidate requires sample or bitstring")
     fixed = fixed_assignment_from_bitstring(
         bitstring,
-        [customer.customer_id for customer in instance.customers],
+        selected_customer_ids_in_qubit_order,
         num_vehicles=instance.num_vehicles,
+        bit_order=bit_order,
     )
     sample, _energy = complete_min_energy_sample(bqm, fixed)
     return sample
@@ -326,7 +400,17 @@ def main() -> None:
         )
 
         def evaluator(candidate: Candidate) -> Mapping[str, Any]:
-            sample = _sample_from_candidate(candidate, instance, bqm)
+            sample = _sample_from_candidate(
+                candidate,
+                instance,
+                bqm,
+                selected_customer_ids_in_qubit_order=raw[
+                    "selected_customer_ids_in_qubit_order"
+                ],
+                bit_order=str(
+                    payload.get("bit_order", "openqasm_high_classical_bit_left")
+                ),
+            )
             return evaluate_sample(
                 instance,
                 bqm,
@@ -352,6 +436,10 @@ def main() -> None:
     (args.outdir / "hybrid_instance_summary.json").write_text(
         json.dumps(summaries, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    summary_csv_rows = _hybrid_summary_csv_rows(summaries)
+    _write_csv(args.outdir / "hybrid_summary.csv", summary_csv_rows)
+    if args.outdir.name == "hybrid":
+        _write_csv(args.outdir.parent / "hybrid_summary.csv", summary_csv_rows)
     aggregate = aggregate_paired_results(summaries)
     (args.outdir / "hybrid_aggregate_summary.json").write_text(
         json.dumps(aggregate, ensure_ascii=False, indent=2), encoding="utf-8"

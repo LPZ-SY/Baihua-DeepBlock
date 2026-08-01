@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import argparse
 import csv
+import importlib.metadata
 import json
 import math
 import os
+import platform
 import random
 import subprocess
 import sys
@@ -70,6 +72,41 @@ def _current_git_commit() -> str | None:
         return None
     value = completed.stdout.strip().lower()
     return value if completed.returncode == 0 and len(value) == 40 else None
+
+
+def _dependency_snapshot() -> dict[str, Any]:
+    packages: dict[str, str | None] = {}
+    for name in ("dimod", "numpy", "quarkstudio", "pyquafu"):
+        try:
+            packages[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            packages[name] = None
+    return {
+        "python_version": platform.python_version(),
+        "python_implementation": platform.python_implementation(),
+        "platform": platform.platform(),
+        "packages": packages,
+    }
+
+
+def _find_metadata_value(payload: Any, names: set[str]) -> Any:
+    pending = [payload]
+    visited: set[int] = set()
+    while pending:
+        current = pending.pop(0)
+        marker = id(current)
+        if marker in visited:
+            continue
+        visited.add(marker)
+        if isinstance(current, dict):
+            for key, value in current.items():
+                if str(key).lower() in names:
+                    return value
+                if isinstance(value, (dict, list, tuple)):
+                    pending.append(value)
+        elif isinstance(current, (list, tuple)):
+            pending.extend(current)
+    return None
 
 
 def _selected_customers(customers: list, max_qubits: int) -> list:
@@ -173,16 +210,21 @@ def main() -> None:
     parser.add_argument("--num-sweeps", type=int, default=40)
     parser.add_argument("--backend", default="auto")
     parser.add_argument("--protocol-version", default="single-run-v1")
+    parser.add_argument("--run-id", default="")
     parser.add_argument("--frozen-git-commit", default="")
     parser.add_argument("--protocol-config-sha256", default="")
     parser.add_argument("--task-key", default="")
     parser.add_argument("--repeat-index", type=int, default=1)
+    parser.add_argument("--capacity", type=int, default=0)
     parser.add_argument("--threshold-file-sha256", default="")
     parser.add_argument("--token-file", type=Path, default=ROOT.parent / ".env.txt")
     parser.add_argument("--quark-runtime", type=Path, default=ROOT.parent / "tmp" / "quarkstudio_runtime2")
     parser.add_argument("--outdir", type=Path, default=ROOT / "results" / "quarkstudio_candidate_quality")
     parser.add_argument("--reuse-evidence", type=Path, default=None)
     parser.add_argument("--frozen-thresholds", type=Path, default=None)
+    parser.add_argument("--resume-task-id", default="")
+    parser.add_argument("--resume-backend", default="")
+    parser.add_argument("--resume-submitted-at", default="")
     args = parser.parse_args()
 
     if args.vehicles != 2:
@@ -195,7 +237,7 @@ def main() -> None:
     pressure_ratio = {"legacy": 1.15, "loose": 1.30, "medium": 1.15, "tight": 1.0}[
         args.capacity_pressure
     ]
-    capacity = infer_capacity_from_seed(
+    capacity = int(args.capacity) if args.capacity > 0 else infer_capacity_from_seed(
         args.seed,
         args.customers,
         args.vehicles,
@@ -312,31 +354,75 @@ def main() -> None:
         if not token:
             raise SystemExit("QPU_API_TOKEN and --token-file are both empty.")
         manager = Task(token)
-        backend, backend_snapshot = _choose_backend(manager.status(), args.backend)
-        task = {
-            "chip": backend,
-            "name": f"QRF_candidate_quality_{instance_id}",
-            "circuit": qasm,
-            "shots": args.shots,
-            "compile": True,
-            "options": {
-                "compiler": "quarkcircuit",
-                "correct": False,
-                "open_dd": None,
-                "target_qubits": [],
-            },
-        }
-        submission_time = now_iso()
-        task_id = manager.run(task)
-        if not isinstance(task_id, int):
-            raise RuntimeError(f"QuarkStudio submit failed: {task_id}")
-        print(
-            json.dumps(
-                {"event": "submitted", "task_id": task_id, "backend": backend, "shots": args.shots},
-                ensure_ascii=True,
-            ),
-            flush=True,
-        )
+        if args.resume_task_id:
+            backend = args.resume_backend or args.backend
+            if backend != args.backend:
+                raise RuntimeError("resume backend differs from frozen backend request")
+            backend_snapshot = {"resumed_existing_task": True}
+            task_id = (
+                int(args.resume_task_id)
+                if args.resume_task_id.isdigit()
+                else args.resume_task_id
+            )
+            submission_time = args.resume_submitted_at or None
+            print(
+                json.dumps(
+                    {"event": "resume_existing_task", "task_id": task_id, "backend": backend},
+                    ensure_ascii=True,
+                ),
+                flush=True,
+            )
+        else:
+            backend, backend_snapshot = _choose_backend(manager.status(), args.backend)
+            task = {
+                "chip": backend,
+                "name": f"QRF_candidate_quality_{instance_id}",
+                "circuit": qasm,
+                "shots": args.shots,
+                "compile": True,
+                "options": {
+                    "compiler": "quarkcircuit",
+                    "correct": False,
+                    "open_dd": None,
+                    "target_qubits": [],
+                },
+            }
+            submission_time = now_iso()
+            task_id = manager.run(task)
+            if not isinstance(task_id, int):
+                raise RuntimeError(f"QuarkStudio submit failed: {task_id}")
+            receipt = {
+                "schema_version": 1,
+                "run_id": args.run_id or None,
+                "protocol_version": args.protocol_version,
+                "protocol_config_sha256": args.protocol_config_sha256 or None,
+                "task_key": args.task_key or None,
+                "instance_id": instance_id,
+                "repeat_index": args.repeat_index,
+                "source": "hardware",
+                "status": "submitted",
+                "task_id": str(task_id),
+                "backend_requested": args.backend,
+                "backend_actual": backend,
+                "shots": args.shots,
+                "submitted_at": submission_time,
+                "selected_customer_ids": selected_ids,
+                "bit_order": BIT_ORDER_OPENQASM,
+                "circuit": qasm,
+                "circuit_hash": canonical_sha256(qasm),
+                "threshold_file_sha256": args.threshold_file_sha256 or None,
+                "compile_options": task["options"] | {"compile": True},
+            }
+            _write_json(
+                args.outdir / "submission_receipt.json", redact_payload(receipt)
+            )
+            print(
+                json.dumps(
+                    {"event": "submitted", "task_id": task_id, "backend": backend, "shots": args.shots},
+                    ensure_ascii=True,
+                ),
+                flush=True,
+            )
         result = manager.result(task_id, timeout=180.0)
         if not isinstance(result, dict):
             result = {"status": "failed", "error": f"Unexpected result type: {type(result).__name__}"}
@@ -378,6 +464,7 @@ def main() -> None:
     summary.update(
         {
             "protocol_version": args.protocol_version,
+            "run_id": args.run_id or None,
             "frozen_git_commit": args.frozen_git_commit or None,
             "git_commit_actual": _current_git_commit(),
             "protocol_config_sha256": args.protocol_config_sha256 or None,
@@ -422,11 +509,13 @@ def main() -> None:
 
     evidence_payload = {
         "schema_version": 2,
+        "run_id": args.run_id or None,
         "protocol_version": args.protocol_version,
         "frozen_git_commit": args.frozen_git_commit or None,
         "git_commit_actual": _current_git_commit(),
         "protocol_config_sha256": args.protocol_config_sha256 or None,
         "task_key": args.task_key or None,
+        "instance_id": instance_id,
         "repeat_index": args.repeat_index,
         "source": measurement.source,
         "platform": measurement.platform,
@@ -437,6 +526,8 @@ def main() -> None:
         "status": measurement.status,
         "shots": measurement.shots_requested,
         "shots_received": measurement.shots_received,
+        "unique_bitstrings": len(measurement.counts),
+        "raw_counts": measurement.counts,
         "counts": measurement.counts,
         "raw_response": redact_payload(raw_response),
         "selected_customer_ids": selected_ids,
@@ -445,10 +536,23 @@ def main() -> None:
         "circuit_hash": canonical_sha256(qasm),
         "threshold_hash": canonical_sha256(frozen),
         "threshold_file_sha256": args.threshold_file_sha256 or None,
+        "threshold_method": frozen.get("threshold_method"),
+        "random_reference": {
+            "median_energy": threshold_info.get("random_median_energy"),
+            "quality_hit_rate": threshold_info.get("random_quality_hit_rate"),
+        },
+        "classical_reference": {
+            "best_energy_all": threshold_info.get("best_classical_energy_all"),
+            "best_energy_feasible": threshold_info.get("best_classical_energy_feasible"),
+            "observed_baseline_shots": threshold_info.get("observed_baseline_shots"),
+        },
         "raw_payload_sha256": measurement.raw_payload_sha256,
         "threshold_created_at": frozen.get("created_at"),
         "submitted_at": measurement.submitted_at or submission_time,
         "completed_at": measurement.completed_at,
+        "poll_count": _find_metadata_value(
+            raw_response, {"poll_count", "polls", "query_count"}
+        ),
         "backend_queue_snapshot_before_submit": backend_snapshot,
         "compile_options": {
             "compile": True,
@@ -457,6 +561,22 @@ def main() -> None:
             "open_dd": None,
             "target_qubits": [],
         },
+        "hardware_metadata": {
+            "physical_mapping": _find_metadata_value(
+                raw_response, {"physical_mapping", "qubit_mapping", "mapping"}
+            ),
+            "compiled_depth": _find_metadata_value(
+                raw_response, {"compiled_depth", "circuit_depth", "depth"}
+            ),
+            "two_qubit_gate_count": _find_metadata_value(
+                raw_response, {"two_qubit_gate_count", "2q_gates", "twoq_gates"}
+            ),
+            "swap_count": _find_metadata_value(raw_response, {"swap_count", "swaps"}),
+            "calibration": _find_metadata_value(
+                raw_response, {"calibration", "calibration_snapshot"}
+            ),
+        },
+        "dependency_snapshot": _dependency_snapshot(),
         "qubit_count": len(selected_ids),
         "warnings": measurement.warnings,
     }

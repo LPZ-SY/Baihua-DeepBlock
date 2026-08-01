@@ -1,0 +1,8 @@
+﻿instance_id,metric,n_tasks,mean,median,standard_deviation,bootstrap_95_ci
+seed2026_c4_v2_medium,quality_hit_rate,3,0.27734375,0.2568359375,0.04335541578207639,"[0.248046875, 0.3271484375]"
+seed2026_c4_v2_medium,random_quality_hit_rate,3,0.375,0.375,0.0,"[0.375, 0.375]"
+seed2026_c4_v2_medium,quality_hit_gain,3,-0.09765625,-0.1181640625,0.04335541578207639,"[-0.126953125, -0.0478515625]"
+seed2026_c4_v2_medium,classical_reach_feasible_rate,3,0.0869140625,0.0615234375,0.04567974829502539,"[0.0595703125, 0.1396484375]"
+seed2026_c4_v2_medium,strict_improvement_rate,3,0.0,0.0,0.0,"[0.0, 0.0]"
+seed2026_c4_v2_medium,raw_feasible_rate,3,0.27734375,0.2568359375,0.04335541578207639,"[0.248046875, 0.3271484375]"
+seed2026_c4_v2_medium,best_gap,3,0.0,0.0,0.0,"[0.0, 0.0]"

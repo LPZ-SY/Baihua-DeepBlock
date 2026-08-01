@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -22,6 +23,23 @@ from quantum_route_forge.quantum_measurements import canonical_sha256  # noqa: E
 
 
 TERMINAL_STATUSES = {"completed", "failed", "not_evaluable"}
+
+
+def _resolve_git_tag(tag: str) -> str | None:
+    if not tag:
+        return None
+    try:
+        completed = subprocess.run(
+            ["git", "rev-list", "-n", "1", tag],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    value = completed.stdout.strip().lower()
+    return value if completed.returncode == 0 and re.fullmatch(r"[0-9a-f]{40}", value) else None
 
 
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -57,6 +75,13 @@ def validate_result_store(
     errors: list[str] = []
     warnings: list[str] = []
     task_checks: list[dict[str, Any]] = []
+    strict_formal_schema = str(config.get("protocol_version", "")).startswith(
+        "formal-matrix"
+    )
+    execution_tag = str(config.get("execution_git_tag", ""))
+    expected_execution_commit = _resolve_git_tag(execution_tag)
+    if strict_formal_schema and not expected_execution_commit:
+        errors.append(f"execution_git_tag cannot be resolved: {execution_tag!r}")
 
     duplicates = [key for key, count in Counter(row.get("task_id") for row in rows if row.get("task_id")).items() if count > 1]
     if duplicates:
@@ -140,9 +165,58 @@ def validate_result_store(
                 task_errors.append("actual git commit is missing or invalid")
             else:
                 actual_git_commits.add(git_commit_actual)
+                if expected_execution_commit and git_commit_actual != expected_execution_commit:
+                    task_errors.append("actual git commit does not match execution_git_tag")
             raw_response_path = experiment_dir / "tasks" / str(task.get("task_id")) / "raw_response.json"
             if evidence.get("raw_response") is None and not raw_response_path.exists():
                 task_errors.append("raw platform response is missing")
+            if strict_formal_schema:
+                if evidence.get("run_id") != config.get("experiment_id"):
+                    task_errors.append("run_id mismatch")
+                if evidence.get("instance_id") != spec.instance_id:
+                    task_errors.append("evidence instance_id mismatch")
+                if evidence.get("task_key") != spec.task_key:
+                    task_errors.append("evidence task_key mismatch")
+                if str(evidence.get("task_id")) != str(task.get("task_id")):
+                    task_errors.append("evidence task_id mismatch")
+                if evidence.get("raw_counts") != evidence.get("counts"):
+                    task_errors.append("raw_counts and normalized counts differ")
+                if evidence.get("unique_bitstrings") != len(evidence.get("counts", {})):
+                    task_errors.append("unique_bitstrings mismatch")
+                for field in (
+                    "submitted_at",
+                    "completed_at",
+                    "threshold_method",
+                    "dependency_snapshot",
+                    "compile_options",
+                    "hardware_metadata",
+                    "backend_queue_snapshot_before_submit",
+                    "poll_count",
+                ):
+                    if field not in evidence:
+                        task_errors.append(f"required evidence field is missing: {field}")
+                if not isinstance(evidence.get("random_reference"), dict):
+                    task_errors.append("random_reference is missing")
+                if not isinstance(evidence.get("classical_reference"), dict):
+                    task_errors.append("classical_reference is missing")
+                if evidence.get("qubit_count") != spec.customers:
+                    task_errors.append("qubit_count mismatch")
+                task_dir = experiment_dir / "tasks" / str(task.get("task_id"))
+                required_task_artifacts = {
+                    "evidence.json",
+                    "raw_response.json",
+                    "counts.json",
+                    "summary.json",
+                    "logical_qasm.qasm",
+                    "candidate_metrics.csv",
+                }
+                missing_task_artifacts = sorted(
+                    name for name in required_task_artifacts if not (task_dir / name).exists()
+                )
+                if missing_task_artifacts:
+                    task_errors.append(
+                        f"task-addressable artifacts are missing: {missing_task_artifacts}"
+                    )
 
         if status in {"failed", "not_evaluable"} and not task.get("error") and evidence is None:
             task_errors.append("non-evaluable task lacks both error detail and evidence")
@@ -179,6 +253,10 @@ def validate_result_store(
         "instance_summary.csv",
         "aggregate_summary.json",
     ]
+    if strict_formal_schema:
+        required_files.extend(
+            ["protocol_snapshot.json", "baseline_manifest.json", "task_manifest.csv"]
+        )
     missing_files = [name for name in required_files if not (experiment_dir / name).exists()]
     if missing_files:
         errors.append(f"missing required result-store files: {missing_files}")

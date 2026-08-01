@@ -194,25 +194,25 @@
       },
       "C+Q": {
         "group": "C+Q",
-        "candidate_index": 5,
-        "source": "classical",
-        "bitstring": "",
-        "assignment_energy": 54.09541431515527,
+        "candidate_index": 16,
+        "source": "quantum",
+        "bitstring": "1011",
+        "assignment_energy": 201.2579027966351,
         "decoded_assignment": {
           "0": [
-            4,
-            1
+            1,
+            3
           ],
           "1": [
             2,
-            3
+            4
           ]
         },
         "onehot_violation_count": 0,
         "capacity_violation_count": 0,
         "capacity_violation_count_before_repair": 1,
         "total_over_capacity": 0,
-        "total_over_capacity_before_repair": 1,
+        "total_over_capacity_before_repair": 2,
         "onehot_feasible": true,
         "capacity_feasible": true,
         "assignment_feasible": true,
@@ -220,40 +220,40 @@
         "repair_summary": "capacity_repaired",
         "repair_moved_customers": 1,
         "vehicle_loads": {
-          "0": 5,
-          "1": 5
+          "0": 6,
+          "1": 4
         },
         "vehicle_loads_before_repair": {
-          "0": 3,
-          "1": 7
+          "0": 2,
+          "1": 8
         },
         "vehicle_route_lengths": {
-          "1": 32.585385245257925,
-          "2": 20.267412862315776
+          "1": 23.92670754757829,
+          "2": 14.444547736512959
         },
-        "route_distance_before_2opt": 52.852798107573705,
-        "route_distance_after_2opt": 52.852798107573705,
+        "route_distance_before_2opt": 38.37125528409125,
+        "route_distance_after_2opt": 38.37125528409125,
         "improvement_after_2opt": 0.0,
         "route_feasible": true,
         "routes_before_2opt": [
           {
             "vehicle_id": 1,
             "stops": 2,
-            "load": 5,
-            "distance": 32.585385245257925,
+            "load": 6,
+            "distance": 23.92670754757829,
             "customer_ids": [
-              4,
+              3,
               1
             ]
           },
           {
             "vehicle_id": 2,
             "stops": 2,
-            "load": 5,
-            "distance": 20.267412862315776,
+            "load": 4,
+            "distance": 14.444547736512959,
             "customer_ids": [
               2,
-              3
+              4
             ]
           }
         ],
@@ -261,21 +261,21 @@
           {
             "vehicle_id": 1,
             "stops": 2,
-            "load": 5,
-            "distance": 32.585385245257925,
+            "load": 6,
+            "distance": 23.92670754757829,
             "customer_ids": [
-              4,
+              3,
               1
             ]
           },
           {
             "vehicle_id": 2,
             "stops": 2,
-            "load": 5,
-            "distance": 20.267412862315776,
+            "load": 4,
+            "distance": 14.444547736512959,
             "customer_ids": [
               2,
-              3
+              4
             ]
           }
         ],
@@ -373,22 +373,22 @@
     },
     "D_C": 38.37125528409125,
     "D_C_plus_R": 38.37125528409125,
-    "D_C_plus_Q": 52.852798107573705,
-    "delta_QR": -14.481542823482457,
-    "delta_QC": -14.481542823482457,
-    "delta_energy_C_to_CQ": -52.135055092621315,
-    "delta_distance_C_to_CQ": -14.481542823482457,
-    "paired_gain_CQ_vs_CR_energy": 221.6616457124253,
-    "paired_gain_CQ_vs_CR_distance": -14.481542823482457,
-    "quantum_source_win": false,
+    "D_C_plus_Q": 38.37125528409125,
+    "delta_QR": 0.0,
+    "delta_QC": 0.0,
+    "delta_energy_C_to_CQ": -199.29754357410116,
+    "delta_distance_C_to_CQ": 0.0,
+    "paired_gain_CQ_vs_CR_energy": 74.49915723094546,
+    "paired_gain_CQ_vs_CR_distance": 0.0,
+    "quantum_source_win": true,
     "final_source": {
       "C": "classical",
       "C+R": "uniform_random",
-      "C+Q": "classical",
+      "C+Q": "quantum",
       "Q-only": "quantum"
     },
     "quantum_candidates_in_C_plus_Q": 10,
-    "best_quantum_rank_in_C_plus_Q": 2,
+    "best_quantum_rank_in_C_plus_Q": 1,
     "repair_moved_customers": {
       "C": 0,
       "C+R": 1,
@@ -411,8 +411,8 @@
       "C+Q": {
         "capacity_violations_before": 1,
         "capacity_violations_after": 0,
-        "route_distance_before_2opt": 52.852798107573705,
-        "route_distance_after_2opt": 52.852798107573705
+        "route_distance_before_2opt": 38.37125528409125,
+        "route_distance_after_2opt": 38.37125528409125
       },
       "Q-only": {
         "capacity_violations_before": 0,
@@ -1129,66 +1129,66 @@
       },
       "Q-only": {
         "group": "Q-only",
-        "candidate_index": 10,
+        "candidate_index": 5,
         "source": "quantum",
-        "bitstring": "1110",
-        "assignment_energy": 201.2579027966351,
+        "bitstring": "1001",
+        "assignment_energy": -0.18208246942526785,
         "decoded_assignment": {
           "0": [
             1,
-            3
+            4
           ],
           "1": [
             2,
-            4
+            3
           ]
         },
         "onehot_violation_count": 0,
         "capacity_violation_count": 0,
-        "capacity_violation_count_before_repair": 1,
+        "capacity_violation_count_before_repair": 0,
         "total_over_capacity": 0,
-        "total_over_capacity_before_repair": 2,
+        "total_over_capacity_before_repair": 0,
         "onehot_feasible": true,
         "capacity_feasible": true,
         "assignment_feasible": true,
-        "repaired": true,
-        "repair_summary": "capacity_repaired",
-        "repair_moved_customers": 1,
+        "repaired": false,
+        "repair_summary": "no_repair_needed",
+        "repair_moved_customers": 0,
         "vehicle_loads": {
-          "0": 6,
-          "1": 4
+          "0": 5,
+          "1": 5
         },
         "vehicle_loads_before_repair": {
-          "0": 2,
-          "1": 8
+          "0": 5,
+          "1": 5
         },
         "vehicle_route_lengths": {
-          "1": 23.92670754757829,
-          "2": 14.444547736512959
+          "1": 32.585385245257925,
+          "2": 20.267412862315776
         },
-        "route_distance_before_2opt": 38.37125528409125,
-        "route_distance_after_2opt": 38.37125528409125,
+        "route_distance_before_2opt": 52.852798107573705,
+        "route_distance_after_2opt": 52.852798107573705,
         "improvement_after_2opt": 0.0,
         "route_feasible": true,
         "routes_before_2opt": [
           {
             "vehicle_id": 1,
             "stops": 2,
-            "load": 6,
-            "distance": 23.92670754757829,
+            "load": 5,
+            "distance": 32.585385245257925,
             "customer_ids": [
-              3,
+              4,
               1
             ]
           },
           {
             "vehicle_id": 2,
             "stops": 2,
-            "load": 4,
-            "distance": 14.444547736512959,
+            "load": 5,
+            "distance": 20.267412862315776,
             "customer_ids": [
               2,
-              4
+              3
             ]
           }
         ],
@@ -1196,21 +1196,21 @@
           {
             "vehicle_id": 1,
             "stops": 2,
-            "load": 6,
-            "distance": 23.92670754757829,
+            "load": 5,
+            "distance": 32.585385245257925,
             "customer_ids": [
-              3,
+              4,
               1
             ]
           },
           {
             "vehicle_id": 2,
             "stops": 2,
-            "load": 4,
-            "distance": 14.444547736512959,
+            "load": 5,
+            "distance": 20.267412862315776,
             "customer_ids": [
               2,
-              4
+              3
             ]
           }
         ],
@@ -1239,7 +1239,7 @@
       "C": 0,
       "C+R": 1,
       "C+Q": 0,
-      "Q-only": 1
+      "Q-only": 0
     },
     "repair_and_route_change": {
       "C": {
@@ -1261,10 +1261,10 @@
         "route_distance_after_2opt": 38.37125528409125
       },
       "Q-only": {
-        "capacity_violations_before": 1,
+        "capacity_violations_before": 0,
         "capacity_violations_after": 0,
-        "route_distance_before_2opt": 38.37125528409125,
-        "route_distance_after_2opt": 38.37125528409125
+        "route_distance_before_2opt": 52.852798107573705,
+        "route_distance_after_2opt": 52.852798107573705
       }
     }
   }

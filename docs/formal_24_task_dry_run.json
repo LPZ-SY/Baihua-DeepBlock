@@ -6,7 +6,8 @@
   "protocol_version": "formal-matrix-v2",
   "frozen_git_commit": "6f417d6c3c3e8a16132cd3a472567f9090edab85",
   "frozen_git_tag": "qrf-formal-protocol-v2",
-  "config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+  "execution_git_tag": "qrf-preformal-execution-v2",
+  "config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
   "threshold_file": "experiments/configs/formal_hardware_matrix_v2_thresholds.json",
   "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
   "task_count": 24,
@@ -24,6 +25,14 @@
     "seed2027_c6_v2_tight": 6
   },
   "contains_backend_auto": false,
+  "live_submission": {
+    "max_tasks_per_invocation": 1,
+    "require_explicit_confirmation": true,
+    "allow_backend_fallback": false,
+    "require_execution_git_tag_match": true,
+    "require_clean_tracked_worktree": true,
+    "persist_submission_receipt_before_polling": true
+  },
   "tasks": [
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -47,13 +56,13 @@
       ],
       "logical_qasm_sha256": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 1,
       "instance_id": "seed2026_c4_v2_medium",
       "repeat_index": 1,
       "backend_requested": "Baihua",
-      "task_key": "de9df6657062fc03db5c1870332534fb82286c96e0b061744d7e67118959afa1",
-      "config_hash": "de9df6657062fc03db5c1870332534fb82286c96e0b061744d7e67118959afa1"
+      "task_key": "1bf6eba632664c7613696f5da5be98d5681870d95a9c48dc56f9be51af187260",
+      "config_hash": "1bf6eba632664c7613696f5da5be98d5681870d95a9c48dc56f9be51af187260"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -77,13 +86,13 @@
       ],
       "logical_qasm_sha256": "ae0b0cd8c2d5f9492c0ae33b01e41dc4929ceb32f9730db0d263376b9c432e5e",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 2,
       "instance_id": "seed2027_c4_v2_tight",
       "repeat_index": 1,
       "backend_requested": "Shenglian",
-      "task_key": "c15b6f31d9c02f47fd34f142874c335962a7638bbd4a800d4b9ecc917e0b9ac2",
-      "config_hash": "c15b6f31d9c02f47fd34f142874c335962a7638bbd4a800d4b9ecc917e0b9ac2"
+      "task_key": "224aff4146aa3a629fe2093f7677df79ebb37e015eda3edb74f754364faebb74",
+      "config_hash": "224aff4146aa3a629fe2093f7677df79ebb37e015eda3edb74f754364faebb74"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -109,13 +118,13 @@
       ],
       "logical_qasm_sha256": "66be66f9b8f9dabb1c6cb01570c585d1f776866559ca992217f6bbee4d211eeb",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 3,
       "instance_id": "seed2026_c6_v2_medium",
       "repeat_index": 1,
       "backend_requested": "Dongling",
-      "task_key": "9479c1a1d83b99125641ab4577142a025b949f5957964cbe24b22763e3987655",
-      "config_hash": "9479c1a1d83b99125641ab4577142a025b949f5957964cbe24b22763e3987655"
+      "task_key": "be5c69662202f208e389bcb835a3c60b911cf7280d91cf67193ac99fa45b5ea9",
+      "config_hash": "be5c69662202f208e389bcb835a3c60b911cf7280d91cf67193ac99fa45b5ea9"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -141,13 +150,13 @@
       ],
       "logical_qasm_sha256": "b4de2c04ddbde194c87fe6839e932295d6623238b01d32dfba45763bce83b756",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 4,
       "instance_id": "seed2027_c6_v2_tight",
       "repeat_index": 1,
       "backend_requested": "Baihua",
-      "task_key": "8ee15df3ea73306d7e119bf0633be2ca115f1e928e847cbed21f5a77f7519bd5",
-      "config_hash": "8ee15df3ea73306d7e119bf0633be2ca115f1e928e847cbed21f5a77f7519bd5"
+      "task_key": "25af38ed7354c72d3d844a7380222c1d4d1f259937748c0bafce152b22823331",
+      "config_hash": "25af38ed7354c72d3d844a7380222c1d4d1f259937748c0bafce152b22823331"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -171,13 +180,13 @@
       ],
       "logical_qasm_sha256": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 5,
       "instance_id": "seed2026_c4_v2_medium",
       "repeat_index": 1,
       "backend_requested": "Dongling",
-      "task_key": "8ae3d947abcd99435bee4682e3c194f5aa23a1a023750e74f8f79c298c7bb282",
-      "config_hash": "8ae3d947abcd99435bee4682e3c194f5aa23a1a023750e74f8f79c298c7bb282"
+      "task_key": "75417fe10b0315d8a1bd5fbc2472e0737094274255b362e54e8cceac2fc6eeac",
+      "config_hash": "75417fe10b0315d8a1bd5fbc2472e0737094274255b362e54e8cceac2fc6eeac"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -201,13 +210,13 @@
       ],
       "logical_qasm_sha256": "ae0b0cd8c2d5f9492c0ae33b01e41dc4929ceb32f9730db0d263376b9c432e5e",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 6,
       "instance_id": "seed2027_c4_v2_tight",
       "repeat_index": 1,
       "backend_requested": "Baihua",
-      "task_key": "d13f2259305556ed89b3d6e0193afa4f8957f0b3bea08ba11f17ed21921f42ca",
-      "config_hash": "d13f2259305556ed89b3d6e0193afa4f8957f0b3bea08ba11f17ed21921f42ca"
+      "task_key": "164da253ee6e8d31867401165e551a097ad9e0ab72ed07953848ff3ea9d82ad1",
+      "config_hash": "164da253ee6e8d31867401165e551a097ad9e0ab72ed07953848ff3ea9d82ad1"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -233,13 +242,13 @@
       ],
       "logical_qasm_sha256": "66be66f9b8f9dabb1c6cb01570c585d1f776866559ca992217f6bbee4d211eeb",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 7,
       "instance_id": "seed2026_c6_v2_medium",
       "repeat_index": 1,
       "backend_requested": "Shenglian",
-      "task_key": "be5a9a1d08871681929ae685caefbee69a3ec97f2a14efa26ded5a0c7df649af",
-      "config_hash": "be5a9a1d08871681929ae685caefbee69a3ec97f2a14efa26ded5a0c7df649af"
+      "task_key": "20ec9465b326d88c3b5bccb1efd626d2c476b080e75f54df74f686bbb3bacaf5",
+      "config_hash": "20ec9465b326d88c3b5bccb1efd626d2c476b080e75f54df74f686bbb3bacaf5"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -265,13 +274,13 @@
       ],
       "logical_qasm_sha256": "b4de2c04ddbde194c87fe6839e932295d6623238b01d32dfba45763bce83b756",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 8,
       "instance_id": "seed2027_c6_v2_tight",
       "repeat_index": 1,
       "backend_requested": "Shenglian",
-      "task_key": "37891324a4e402ccf6c1ecd6527e3a4b776e6c5c27ee1abab303c999816e43da",
-      "config_hash": "37891324a4e402ccf6c1ecd6527e3a4b776e6c5c27ee1abab303c999816e43da"
+      "task_key": "7441052f56b5a455d156b2adbc4ed25d477e4e1e6e716f0be06581000182488b",
+      "config_hash": "7441052f56b5a455d156b2adbc4ed25d477e4e1e6e716f0be06581000182488b"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -295,13 +304,13 @@
       ],
       "logical_qasm_sha256": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 9,
       "instance_id": "seed2026_c4_v2_medium",
       "repeat_index": 1,
       "backend_requested": "Shenglian",
-      "task_key": "cb7db68b70bc3166b81fb1aa00d2df27c01605c3c96813bc754593dbca449435",
-      "config_hash": "cb7db68b70bc3166b81fb1aa00d2df27c01605c3c96813bc754593dbca449435"
+      "task_key": "10984da3de5e0e69cd56a47920865dff4967c27323c743f2197364e756f58697",
+      "config_hash": "10984da3de5e0e69cd56a47920865dff4967c27323c743f2197364e756f58697"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -325,13 +334,13 @@
       ],
       "logical_qasm_sha256": "ae0b0cd8c2d5f9492c0ae33b01e41dc4929ceb32f9730db0d263376b9c432e5e",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 10,
       "instance_id": "seed2027_c4_v2_tight",
       "repeat_index": 1,
       "backend_requested": "Dongling",
-      "task_key": "e7690b7109ec235debd45e8d1a61b8c97a4e52db30bcc4580900bbc079f55b4e",
-      "config_hash": "e7690b7109ec235debd45e8d1a61b8c97a4e52db30bcc4580900bbc079f55b4e"
+      "task_key": "0c706d30175a11fddbba84781fd3909aa9304c49a5e44d19f68936c23ac94465",
+      "config_hash": "0c706d30175a11fddbba84781fd3909aa9304c49a5e44d19f68936c23ac94465"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -357,13 +366,13 @@
       ],
       "logical_qasm_sha256": "66be66f9b8f9dabb1c6cb01570c585d1f776866559ca992217f6bbee4d211eeb",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 11,
       "instance_id": "seed2026_c6_v2_medium",
       "repeat_index": 1,
       "backend_requested": "Baihua",
-      "task_key": "b0f88ee5fb1a20cb598445839171940a11217456ca6667d5a7870107a7e91f5f",
-      "config_hash": "b0f88ee5fb1a20cb598445839171940a11217456ca6667d5a7870107a7e91f5f"
+      "task_key": "7be36498eb8ecc3354f89ab04a140683a6235128e5e31ab3c29794b308571701",
+      "config_hash": "7be36498eb8ecc3354f89ab04a140683a6235128e5e31ab3c29794b308571701"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -389,13 +398,13 @@
       ],
       "logical_qasm_sha256": "b4de2c04ddbde194c87fe6839e932295d6623238b01d32dfba45763bce83b756",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 12,
       "instance_id": "seed2027_c6_v2_tight",
       "repeat_index": 1,
       "backend_requested": "Dongling",
-      "task_key": "da391efe8ca9ff6ecf1a68b8814e72ec754f83fdcd7e3598654a2dbdebcaeca2",
-      "config_hash": "da391efe8ca9ff6ecf1a68b8814e72ec754f83fdcd7e3598654a2dbdebcaeca2"
+      "task_key": "c41459a6109007f0134d0e06ba1ccc2ad382eb7db30f16f94208428158f190af",
+      "config_hash": "c41459a6109007f0134d0e06ba1ccc2ad382eb7db30f16f94208428158f190af"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -419,13 +428,13 @@
       ],
       "logical_qasm_sha256": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 13,
       "instance_id": "seed2026_c4_v2_medium",
       "repeat_index": 2,
       "backend_requested": "Shenglian",
-      "task_key": "7b2bd45ce79c227cf8bfd65c27a4dbaaba7be4bceea12cf4b47120637e209682",
-      "config_hash": "7b2bd45ce79c227cf8bfd65c27a4dbaaba7be4bceea12cf4b47120637e209682"
+      "task_key": "f0ea2c17a3bd015ce40eee0bc859698c66a9f11b2265b1a8dc85a61dd0738ebd",
+      "config_hash": "f0ea2c17a3bd015ce40eee0bc859698c66a9f11b2265b1a8dc85a61dd0738ebd"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -449,13 +458,13 @@
       ],
       "logical_qasm_sha256": "ae0b0cd8c2d5f9492c0ae33b01e41dc4929ceb32f9730db0d263376b9c432e5e",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 14,
       "instance_id": "seed2027_c4_v2_tight",
       "repeat_index": 2,
       "backend_requested": "Dongling",
-      "task_key": "186acf0c2de31f8f40ceb38b4fa892a708a382a4a67cf03bd3b9ef40c672aab0",
-      "config_hash": "186acf0c2de31f8f40ceb38b4fa892a708a382a4a67cf03bd3b9ef40c672aab0"
+      "task_key": "736e68d3b55ec9cca11908fb72a563c51872362804bca982c14210f9347d3a58",
+      "config_hash": "736e68d3b55ec9cca11908fb72a563c51872362804bca982c14210f9347d3a58"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -481,13 +490,13 @@
       ],
       "logical_qasm_sha256": "66be66f9b8f9dabb1c6cb01570c585d1f776866559ca992217f6bbee4d211eeb",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 15,
       "instance_id": "seed2026_c6_v2_medium",
       "repeat_index": 2,
       "backend_requested": "Baihua",
-      "task_key": "2fab13bf2041735bb080c05f98c4f6ecdaa2fbe209ecc76658ddf3d4de2097fd",
-      "config_hash": "2fab13bf2041735bb080c05f98c4f6ecdaa2fbe209ecc76658ddf3d4de2097fd"
+      "task_key": "c931d8c11141189cfc2b8fe0307f05343f809bb6039074ecbdd888cec174cf4a",
+      "config_hash": "c931d8c11141189cfc2b8fe0307f05343f809bb6039074ecbdd888cec174cf4a"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -513,13 +522,13 @@
       ],
       "logical_qasm_sha256": "b4de2c04ddbde194c87fe6839e932295d6623238b01d32dfba45763bce83b756",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 16,
       "instance_id": "seed2027_c6_v2_tight",
       "repeat_index": 2,
       "backend_requested": "Dongling",
-      "task_key": "8a93a7dbc36d7989e17f901babf64d504f0932a8cd2c6de29e909a29108be074",
-      "config_hash": "8a93a7dbc36d7989e17f901babf64d504f0932a8cd2c6de29e909a29108be074"
+      "task_key": "1f9291be656edac051c9c211d3fc7bda45ce6459f139cb8f5b98978f972fc17f",
+      "config_hash": "1f9291be656edac051c9c211d3fc7bda45ce6459f139cb8f5b98978f972fc17f"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -543,13 +552,13 @@
       ],
       "logical_qasm_sha256": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 17,
       "instance_id": "seed2026_c4_v2_medium",
       "repeat_index": 2,
       "backend_requested": "Baihua",
-      "task_key": "972ffc434e6d6480c8ec2a574867a1f33929290fb7450a37774b423bc187d2f5",
-      "config_hash": "972ffc434e6d6480c8ec2a574867a1f33929290fb7450a37774b423bc187d2f5"
+      "task_key": "de4aae21931c2a9295d3c99d7bb9c1bce64481422537988e53112c60c8cafcc1",
+      "config_hash": "de4aae21931c2a9295d3c99d7bb9c1bce64481422537988e53112c60c8cafcc1"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -573,13 +582,13 @@
       ],
       "logical_qasm_sha256": "ae0b0cd8c2d5f9492c0ae33b01e41dc4929ceb32f9730db0d263376b9c432e5e",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 18,
       "instance_id": "seed2027_c4_v2_tight",
       "repeat_index": 2,
       "backend_requested": "Shenglian",
-      "task_key": "d61b4b1e359809078f339b4a6e0fe6296bcb927c6cf3d9141595caf4197be88e",
-      "config_hash": "d61b4b1e359809078f339b4a6e0fe6296bcb927c6cf3d9141595caf4197be88e"
+      "task_key": "aebeebfceca58a06c0e590cfa2c71ea6e2ebfcd4b333a4a94d91ab081885776a",
+      "config_hash": "aebeebfceca58a06c0e590cfa2c71ea6e2ebfcd4b333a4a94d91ab081885776a"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -605,13 +614,13 @@
       ],
       "logical_qasm_sha256": "66be66f9b8f9dabb1c6cb01570c585d1f776866559ca992217f6bbee4d211eeb",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 19,
       "instance_id": "seed2026_c6_v2_medium",
       "repeat_index": 2,
       "backend_requested": "Dongling",
-      "task_key": "122bafdc4ceef8c58e8e1409b5d1f84b88de1fc1a128f36c1f216f8536ef9261",
-      "config_hash": "122bafdc4ceef8c58e8e1409b5d1f84b88de1fc1a128f36c1f216f8536ef9261"
+      "task_key": "78c62db0c78d4ed6195d0a57269a5a932dfdcc37faa863cdfd68557f07b89ef4",
+      "config_hash": "78c62db0c78d4ed6195d0a57269a5a932dfdcc37faa863cdfd68557f07b89ef4"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -637,13 +646,13 @@
       ],
       "logical_qasm_sha256": "b4de2c04ddbde194c87fe6839e932295d6623238b01d32dfba45763bce83b756",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 20,
       "instance_id": "seed2027_c6_v2_tight",
       "repeat_index": 2,
       "backend_requested": "Baihua",
-      "task_key": "4d03967aa025dad218dc514e758a40c5583531c9e4aa4ed91cd76522d9bd64c6",
-      "config_hash": "4d03967aa025dad218dc514e758a40c5583531c9e4aa4ed91cd76522d9bd64c6"
+      "task_key": "9151a98414b2179cc294172a1bc5b4aa432e268b13d70b10b5206d7ab6360d82",
+      "config_hash": "9151a98414b2179cc294172a1bc5b4aa432e268b13d70b10b5206d7ab6360d82"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -667,13 +676,13 @@
       ],
       "logical_qasm_sha256": "31310d3f5a6294b3503d6b7bef06cc21db56cac73338ea514ef88006329bdc17",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 21,
       "instance_id": "seed2026_c4_v2_medium",
       "repeat_index": 2,
       "backend_requested": "Dongling",
-      "task_key": "e55534f873314dff2c764fe761b483c618e835d145dc3a671d155d6f63ffb860",
-      "config_hash": "e55534f873314dff2c764fe761b483c618e835d145dc3a671d155d6f63ffb860"
+      "task_key": "0296c3ee870cabb945c7e72b6d9cb0bffd8cbdf74a37ac4f46246583fc8a1952",
+      "config_hash": "0296c3ee870cabb945c7e72b6d9cb0bffd8cbdf74a37ac4f46246583fc8a1952"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -697,13 +706,13 @@
       ],
       "logical_qasm_sha256": "ae0b0cd8c2d5f9492c0ae33b01e41dc4929ceb32f9730db0d263376b9c432e5e",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 22,
       "instance_id": "seed2027_c4_v2_tight",
       "repeat_index": 2,
       "backend_requested": "Baihua",
-      "task_key": "e460d09b3c2cedfda57fe69c22dcde75ee4a92efa34203bfb39e2752f2e4ec7f",
-      "config_hash": "e460d09b3c2cedfda57fe69c22dcde75ee4a92efa34203bfb39e2752f2e4ec7f"
+      "task_key": "196d8a38054aa2dde552da3cbdfcf82bf426966d66fdacb3583bd8be7bd4d776",
+      "config_hash": "196d8a38054aa2dde552da3cbdfcf82bf426966d66fdacb3583bd8be7bd4d776"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -729,13 +738,13 @@
       ],
       "logical_qasm_sha256": "66be66f9b8f9dabb1c6cb01570c585d1f776866559ca992217f6bbee4d211eeb",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 23,
       "instance_id": "seed2026_c6_v2_medium",
       "repeat_index": 2,
       "backend_requested": "Shenglian",
-      "task_key": "bdc51c27c4917cb59a4ef6a4ef14707304d14110eec267c116ed28fe7684e95c",
-      "config_hash": "bdc51c27c4917cb59a4ef6a4ef14707304d14110eec267c116ed28fe7684e95c"
+      "task_key": "7c33dc7a274b80eb73d8c8454658fbd4e58344a8cfb3bc583b45b758cc181867",
+      "config_hash": "7c33dc7a274b80eb73d8c8454658fbd4e58344a8cfb3bc583b45b758cc181867"
     },
     {
       "experiment_id": "qrf_formal_hardware_matrix_v2",
@@ -761,13 +770,13 @@
       ],
       "logical_qasm_sha256": "b4de2c04ddbde194c87fe6839e932295d6623238b01d32dfba45763bce83b756",
       "threshold_sha256": "0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb",
-      "protocol_config_sha256": "2be15061114a93494490fc9a0de7a8f60751d77597360f110a6d1b81b482edb0",
+      "protocol_config_sha256": "6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b",
       "execution_index": 24,
       "instance_id": "seed2027_c6_v2_tight",
       "repeat_index": 2,
       "backend_requested": "Shenglian",
-      "task_key": "bbd174b464345ed9c3f66c176322167541765afe1e0f2895dc32cff8bfd24127",
-      "config_hash": "bbd174b464345ed9c3f66c176322167541765afe1e0f2895dc32cff8bfd24127"
+      "task_key": "b23d4ed3b1d70956351ea774a4dca90bb37f021bca1a24a01a62a19a0b6e6054",
+      "config_hash": "b23d4ed3b1d70956351ea774a4dca90bb37f021bca1a24a01a62a19a0b6e6054"
     }
   ]
 }

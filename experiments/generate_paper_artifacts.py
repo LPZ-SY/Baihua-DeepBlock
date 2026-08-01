@@ -118,7 +118,9 @@ def _task_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [{field: row.get(field, "") for field in fields} for row in rows]
 
 
-def _statistics(rows: list[dict[str, Any]]) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+def _statistics(
+    rows: list[dict[str, Any]],
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
     evaluable = [row for row in rows if str(row.get("decision")) in {"PASS", "FAIL"}]
     metrics = [
         "quality_hit_rate",
@@ -141,6 +143,22 @@ def _statistics(rows: list[dict[str, Any]]) -> tuple[dict[str, Any], list[dict[s
             by_backend[backend][metric] = summary
             if summary:
                 backend_rows.append({"backend": backend, "metric": metric, **summary})
+    instances = sorted({str(row.get("instance_id", "")) for row in evaluable})
+    by_instance: dict[str, Any] = {}
+    instance_rows: list[dict[str, Any]] = []
+    for instance_id in instances:
+        subset = [
+            row for row in evaluable if str(row.get("instance_id", "")) == instance_id
+        ]
+        by_instance[instance_id] = {}
+        for metric in metrics:
+            values = [_float(row.get(metric)) for row in subset]
+            summary = _bootstrap_summary(value for value in values if value is not None)
+            by_instance[instance_id][metric] = summary
+            if summary:
+                instance_rows.append(
+                    {"instance_id": instance_id, "metric": metric, **summary}
+                )
     overall = {
         metric: _bootstrap_summary(
             value
@@ -159,12 +177,14 @@ def _statistics(rows: list[dict[str, Any]]) -> tuple[dict[str, Any], list[dict[s
             "not_evaluable_tasks": len(rows) - len(evaluable),
             "overall": overall,
             "by_backend": by_backend,
+            "by_instance": by_instance,
             "pooled_result_caveat": (
                 "Pooled summaries are descriptive only; backend-specific results retain "
                 "the hardware heterogeneity needed for interpretation."
             ),
         },
         backend_rows,
+        instance_rows,
     )
 
 
@@ -187,22 +207,47 @@ def _latex_table(rows: list[dict[str, Any]]) -> str:
 
 def _energy_cdf(candidates: list[dict[str, Any]], output: Path) -> None:
     fig, ax = plt.subplots(figsize=(7.2, 4.6), dpi=160)
-    sources = sorted({str(row.get("source", "unknown")) for row in candidates})
+    instances = sorted(
+        {str(row.get("instance_id", "")) for row in candidates if row.get("instance_id")}
+    )
+    representative = instances[0] if instances else ""
+    representative_rows = [
+        row
+        for row in candidates
+        if not representative or str(row.get("instance_id", "")) == representative
+    ]
+    backends = sorted(
+        {
+            str(row.get("backend", "unknown"))
+            for row in representative_rows
+        }
+    )
     plotted = False
-    for source in sources:
-        values = sorted(
-            value
-            for value in (_float(row.get("energy", row.get("bqm_energy"))) for row in candidates if str(row.get("source", "unknown")) == source)
+    for backend in backends:
+        weighted_values = sorted(
+            (
+                value,
+                max(0.0, _float(row.get("count")) or 0.0),
+            )
+            for row in representative_rows
+            if str(row.get("backend", "unknown")) == backend
+            for value in [_float(row.get("energy", row.get("bqm_energy")))]
             if value is not None
         )
-        if not values:
+        total_weight = sum(weight for _value, weight in weighted_values)
+        if not weighted_values or total_weight <= 0:
             continue
-        y = [(index + 1) / len(values) for index in range(len(values))]
-        ax.step(values, y, where="post", label=source)
+        cumulative = 0.0
+        y: list[float] = []
+        for _value, weight in weighted_values:
+            cumulative += weight
+            y.append(cumulative / total_weight)
+        ax.step([value for value, _weight in weighted_values], y, where="post", label=backend)
         plotted = True
-    ax.set_title("Candidate energy CDF")
+    suffix = f" ({representative})" if representative else ""
+    ax.set_title(f"Measured candidate energy CDF by backend{suffix}")
     ax.set_xlabel("BQM energy")
-    ax.set_ylabel("Empirical CDF over unique candidates")
+    ax.set_ylabel("Shot-weighted empirical CDF")
     ax.grid(alpha=0.25)
     if plotted:
         ax.legend()
@@ -214,7 +259,7 @@ def _energy_cdf(candidates: list[dict[str, Any]], output: Path) -> None:
 
 
 def _hit_rates(rows: list[dict[str, Any]], output: Path) -> None:
-    labels = [str(row.get("instance_id", index)) for index, row in enumerate(rows)]
+    labels = [_task_label(row, index) for index, row in enumerate(rows)]
     quality = [_float(row.get("quality_hit_rate")) or 0.0 for row in rows]
     random_rates = [_float(row.get("random_quality_hit_rate")) or 0.0 for row in rows]
     fig, ax = plt.subplots(figsize=(max(7.2, 0.55 * max(1, len(labels))), 4.8), dpi=160)
@@ -308,6 +353,9 @@ def _hybrid_delta(experiment_dir: Path, output: Path) -> None:
     fig, ax = plt.subplots(figsize=(max(7.2, len(values) * 0.45), 4.6), dpi=160)
     colors = ["#1a8f5b" if value > 0 else "#b54a4a" for value in values]
     ax.bar(range(len(values)), values, color=colors)
+    ax.scatter(range(len(values)), values, color=colors, edgecolor="black", zorder=3)
+    for index, value in enumerate(values):
+        ax.annotate(f"{value:.3g}", (index, value), xytext=(0, 7), textcoords="offset points", ha="center")
     ax.axhline(0.0, color="black", linewidth=1)
     ax.set_xticks(range(len(values)), labels, rotation=45, ha="right")
     ax.set_ylabel("Delta_QR = D(C+R) - D(C+Q)")
@@ -358,7 +406,7 @@ def _resampling_convergence(candidates: list[dict[str, Any]], output: Path) -> N
 def _conclusion(rows: list[dict[str, Any]]) -> str:
     evaluable = [row for row in rows if str(row.get("decision")) in {"PASS", "FAIL"}]
     if not evaluable:
-        return "NOT_EVALUABLE: no complete candidate-quality instance summary is available."
+        return "NOT_EVALUABLE: no complete candidate-quality task summary is available."
     quality = [row for row in evaluable if (_float(row.get("quality_hit_rate")) or 0) > 0]
     above_random = [
         row
@@ -370,7 +418,7 @@ def _conclusion(rows: list[dict[str, Any]]) -> str:
     reach = [row for row in evaluable if (_float(row.get("classical_reach_feasible_rate")) or 0) > 0]
     strict = [row for row in evaluable if (_float(row.get("strict_improvement_rate")) or 0) > 0]
     return (
-        f"Evaluable instances: {len(evaluable)}. Absolute quality hits occurred in {len(quality)}; "
+        f"Evaluable hardware tasks: {len(evaluable)}. Absolute quality hits occurred in {len(quality)}; "
         f"measured hit rate exceeded uniform random in {len(above_random)}; same-budget feasible "
         f"classical reach occurred in {len(reach)}; strict improvement occurred in {len(strict)}. "
         "These observations concern candidate quality under the frozen matrix and do not establish "
@@ -389,10 +437,11 @@ def main() -> None:
     candidates = _read_jsonl(experiment_dir / "candidates.jsonl")
     table = _paper_table(summaries)
     tasks = _task_rows(summaries)
-    statistics_payload, backend_rows = _statistics(summaries)
+    statistics_payload, backend_rows, instance_rows = _statistics(summaries)
     _write_csv(figures / "candidate_quality_table.csv", table)
     _write_csv(experiment_dir / "candidate_quality_summary.csv", tasks)
     _write_csv(experiment_dir / "cross_backend_summary.csv", backend_rows)
+    _write_csv(experiment_dir / "instance_statistics_summary.csv", instance_rows)
     (experiment_dir / "statistics_summary.json").write_text(
         json.dumps(statistics_payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

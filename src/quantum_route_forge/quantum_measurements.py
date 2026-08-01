@@ -28,6 +28,18 @@ _SENSITIVE_KEYS = {
     "token",
 }
 
+_SENSITIVE_TEXT_PATTERNS = (
+    re.compile(
+        r"(?i)(authorization\s*[:=]\s*(?:bearer\s+)?)[^\s,;]+"
+    ),
+    re.compile(
+        r"(?i)((?:api[_-]?key|api[_-]?token|access[_-]?token|refresh[_-]?token|"
+        r"cookie|jwt|password|secret)\s*[:=]\s*)(?:\"[^\"]*\"|'[^']*'|[^\s,;]+)"
+    ),
+    re.compile(r"\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b"),
+    re.compile(r"\bsk-[A-Za-z0-9_-]{16,}\b", re.IGNORECASE),
+)
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).astimezone().isoformat()
@@ -60,6 +72,16 @@ def redact_payload(value: Any) -> Any:
     if isinstance(value, tuple):
         return [redact_payload(item) for item in value]
     return value
+
+
+def redact_text(value: Any) -> str:
+    text = str(value or "")
+    for pattern in _SENSITIVE_TEXT_PATTERNS:
+        if pattern.groups:
+            text = pattern.sub(r"\1[REDACTED]", text)
+        else:
+            text = pattern.sub("[REDACTED]", text)
+    return text
 
 
 def _parse_serialized(value: Any) -> Any:

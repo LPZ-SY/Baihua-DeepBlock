@@ -8,8 +8,17 @@ EXPERIMENTS_DIR = ROOT / "experiments"
 if str(EXPERIMENTS_DIR) not in sys.path:
     sys.path.insert(0, str(EXPERIMENTS_DIR))
 
-from hybrid_contribution import build_fair_candidate_pools, evaluate_pools  # noqa: E402
+from experiment_utils import build_bqm_for_instance  # noqa: E402
+from hybrid_contribution import (  # noqa: E402
+    _sample_from_candidate,
+    build_fair_candidate_pools,
+    evaluate_pools,
+)
 from prepare_hybrid_input import build_hybrid_input  # noqa: E402
+from quantum_route_forge import generate_dispatch_instance  # noqa: E402
+from quantum_route_forge.candidate_quality import (  # noqa: E402
+    fixed_assignment_from_bitstring,
+)
 
 
 def test_candidate_pools_have_equal_total_budget_and_source_replacement():
@@ -94,3 +103,38 @@ def test_checked_in_smoke_hybrid_input_is_reproducible_and_task_level():
     assert all(len(unit["random"]) == 20 for unit in first["instances"])
     assert first["instances"][0]["classical"] == first["instances"][1]["classical"]
     assert first["instances"][0]["random"] == first["instances"][1]["random"]
+    assert first["instances"][0]["selected_customer_ids_in_qubit_order"] == [3, 4, 1, 2]
+
+
+def test_quantum_hybrid_decode_uses_frozen_customer_qubit_order():
+    instance = generate_dispatch_instance(
+        seed=2026,
+        num_customers=4,
+        num_vehicles=2,
+        vehicle_capacity=6,
+    )
+    bqm = build_bqm_for_instance(instance)
+    frozen_order = [3, 4, 1, 2]
+    bitstring = "0001"
+    sample = _sample_from_candidate(
+        {"bitstring": bitstring},
+        instance,
+        bqm,
+        selected_customer_ids_in_qubit_order=frozen_order,
+        bit_order="openqasm_high_classical_bit_left",
+    )
+    expected = fixed_assignment_from_bitstring(
+        bitstring,
+        frozen_order,
+        num_vehicles=2,
+        bit_order="openqasm_high_classical_bit_left",
+    )
+    natural_order = [customer.customer_id for customer in instance.customers]
+    wrong = fixed_assignment_from_bitstring(
+        bitstring,
+        natural_order,
+        num_vehicles=2,
+        bit_order="openqasm_high_classical_bit_left",
+    )
+    assert all(sample[key] == value for key, value in expected.items())
+    assert expected != wrong

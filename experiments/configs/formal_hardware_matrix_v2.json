@@ -4,7 +4,7 @@
   "protocol_version": "formal-matrix-v2",
   "frozen_git_commit": "6f417d6c3c3e8a16132cd3a472567f9090edab85",
   "frozen_git_tag": "qrf-formal-protocol-v2",
-  "execution_git_tag": "qrf-preformal-execution-v1",
+  "execution_git_tag": "qrf-preformal-execution-v2",
   "baseline_git_commit": "8eaeefe92a1dd3c1cf1167d7196cead036695517",
   "baseline_git_tag": "qrf-p0-p7-acceptance-v1",
   "source_matrix": "experiments/configs/qrf_hw_quality_v2.json",
@@ -135,7 +135,10 @@
   "live_submission": {
     "max_tasks_per_invocation": 1,
     "require_explicit_confirmation": true,
-    "allow_backend_fallback": false
+    "allow_backend_fallback": false,
+    "require_execution_git_tag_match": true,
+    "require_clean_tracked_worktree": true,
+    "persist_submission_receipt_before_polling": true
   },
   "eligibility": {
     "required_source": "hardware",

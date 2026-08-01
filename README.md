@@ -86,7 +86,7 @@ Classical mode needs no token:
 Quantum submit through SQC uses the browser JWT access token:
 
 ```powershell
-$env:QUAFU_API_TOKEN="your_access_token_jwt"
+$env:QUAFU_API_TOKEN="<JWT>"
 $env:QUAFU_BASE_URL="https://quafu-sqc.baqis.ac.cn/"
 .\.venv\Scripts\python.exe run_cli.py --mode quantum --customers 8 --vehicles 2 --capacity 13 --quafu-wait false
 ```
@@ -143,7 +143,7 @@ Reaching a classical threshold is not rewritten as â€œquantum beats classical.â€
 Live run requirements: two vehicles, 100% customer-to-qubit coverage, and shots that are a positive multiple of 1024.
 
 ```powershell
-$env:QPU_API_TOKEN="your_quarkstudio_token"
+$env:QPU_API_TOKEN="<QPU_TOKEN>"
 .\.venv\Scripts\python.exe experiments\run_quarkstudio_candidate_quality.py `
   --seed 2026 --customers 4 --vehicles 2 --capacity-pressure medium --shots 1024 `
   --outdir results\single_live
@@ -172,7 +172,9 @@ Preview the exact matrix and shot budget without submitting:
 
 The frozen v2 protocol is a balanced `4 instances x 3 fixed backends x 2 repeats = 24 tasks`
 matrix. It forbids `backend=auto`, verifies the frozen threshold file and QASM/customer
-order hashes, and prints 24 unique task keys without accessing hardware.
+order hashes, and prints 24 unique task keys without accessing hardware. Live submission also
+requires `HEAD` to resolve to the frozen `execution_git_tag`, a clean tracked worktree, and the
+protocol-enforced one-task cap.
 
 After reviewing the dry-run manifest, submit at most one fresh hardware task with explicit confirmation:
 
@@ -217,7 +219,16 @@ Prepare input directly from a complete validated result store:
   --config experiments\configs\formal_hardware_matrix_v2.json `
   --experiment-dir results\experiments\qrf_formal_hardware_matrix_v2 `
   --output results\experiments\qrf_formal_hardware_matrix_v2\hybrid_input.json
+
+.\.venv\Scripts\python.exe experiments\hybrid_contribution.py `
+  --input results\experiments\qrf_formal_hardware_matrix_v2\hybrid_input.json `
+  --outdir results\experiments\qrf_formal_hardware_matrix_v2\hybrid
 ```
+
+The measured bitstrings are decoded with the frozen
+`selected_customer_ids_in_qubit_order`; backend, repeat, final source, and paired deltas are
+retained at the hardware-task level. The workflow writes both JSON detail and
+`hybrid_summary.csv`, including backend- and instance-stratified bootstrap summaries.
 
 ## Result store
 
@@ -232,12 +243,31 @@ results/experiments/<experiment_id>/
   candidates.jsonl
   instance_summary.csv
   aggregate_summary.json
+  protocol_snapshot.json
+  baseline_manifest.json
+  task_manifest.csv
+  tasks/<task_id>/
+    evidence.json
+    raw_response.json
+    counts.json
+    logical_qasm.qasm
+    candidate_metrics.csv
+    summary.json
   raw_evidence/
   figures/
   logs/
 ```
 
 `config.json`, frozen thresholds, and evidence hashes are immutable for a given experiment/config hash. Authentication material is recursively redacted before evidence is written.
+Completed formal evidence also records the dependency snapshot, timestamps, queue/poll fields,
+compile options, optional hardware metadata, requested/actual backend, QASM/customer order, and
+all frozen hashes. Validate the complete matrix before analysis:
+
+```powershell
+.\.venv\Scripts\python.exe experiments\validate_formal_result_store.py `
+  --config experiments\configs\formal_hardware_matrix_v2.json `
+  --experiment-dir results\experiments\qrf_formal_hardware_matrix_v2
+```
 
 ## Paper artifacts
 
@@ -245,10 +275,14 @@ After an experiment:
 
 ```powershell
 .\.venv\Scripts\python.exe experiments\generate_paper_artifacts.py `
-  --experiment-dir results\experiments\qrf_hw_quality_v2
+  --experiment-dir results\experiments\qrf_formal_hardware_matrix_v2
 ```
 
-The `figures/` directory receives a CSV/LaTeX instance table, candidate-energy CDF, measured-versus-random hit-rate chart, empirical shot-resampling convergence chart, and data-derived conclusion text. Neutral or `NOT_EVALUABLE` wording is generated when evidence is incomplete.
+The result root receives task-, instance-, and backend-level CSV/JSON summaries. The `figures/`
+directory receives a CSV/LaTeX result table, backend-separated shot-weighted energy CDF,
+task-paired measured-versus-random chart, classical-reach versus strict-improvement chart,
+C+Q versus C+R delta chart, empirical resampling chart, and data-derived conclusion text.
+Neutral or `NOT_EVALUABLE` wording is generated when evidence is incomplete.
 
 It also writes task-level candidate-quality and cross-backend CSVs, `statistics_summary.json`, separate classical-reach/strict-improvement bars, a backend distribution plot, and the `C+Q` versus `C+R` route-delta plot. Statistical inference uses the hardware task as the repeat unit; shots are never treated as independent experiments.
 

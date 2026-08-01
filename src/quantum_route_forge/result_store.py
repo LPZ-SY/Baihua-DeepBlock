@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import csv
+import io
 import json
 import os
+import re
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -27,6 +29,14 @@ def _atomic_text(path: Path, text: str) -> None:
             os.unlink(temp_name)
 
 
+def _immutable_text(path: Path, text: str) -> None:
+    if path.exists():
+        if path.read_bytes() != text.encode("utf-8"):
+            raise ValueError(f"immutable artifact conflict: {path}")
+        return
+    _atomic_text(path, text)
+
+
 class ResultStore:
     """Idempotent, auditable storage for one experiment id."""
 
@@ -38,9 +48,16 @@ class ResultStore:
         self.experiment_id = clean_id
         self.path = self.root / clean_id
         self.raw_evidence_dir = self.path / "raw_evidence"
+        self.tasks_dir = self.path / "tasks"
         self.figures_dir = self.path / "figures"
         self.logs_dir = self.path / "logs"
-        for directory in (self.path, self.raw_evidence_dir, self.figures_dir, self.logs_dir):
+        for directory in (
+            self.path,
+            self.raw_evidence_dir,
+            self.tasks_dir,
+            self.figures_dir,
+            self.logs_dir,
+        ):
             directory.mkdir(parents=True, exist_ok=True)
 
     @property
@@ -81,6 +98,88 @@ class ResultStore:
         path = self.path / "manifest.json"
         _atomic_text(path, json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
         return path
+
+    def write_protocol_snapshot(self, payload: Mapping[str, Any]) -> Path:
+        path = self.path / "protocol_snapshot.json"
+        text = json.dumps(dict(payload), ensure_ascii=False, indent=2) + "\n"
+        _immutable_text(path, text)
+        return path
+
+    def write_baseline_manifest(self, payload: Mapping[str, Any]) -> Path:
+        path = self.path / "baseline_manifest.json"
+        text = json.dumps(dict(payload), ensure_ascii=False, indent=2) + "\n"
+        _immutable_text(path, text)
+        return path
+
+    def write_task_manifest(self, rows: Iterable[Mapping[str, Any]]) -> Path:
+        path = self.path / "task_manifest.csv"
+        records = [dict(row) for row in rows]
+        fields = [
+            "execution_index",
+            "task_key",
+            "task_id",
+            "instance_id",
+            "backend_requested",
+            "backend_actual",
+            "repeat_index",
+            "status",
+            "source",
+            "shots",
+            "shots_received",
+            "evaluation_decision",
+            "recorded_at",
+            "error",
+        ]
+        stream = io.StringIO(newline="")
+        writer = csv.DictWriter(stream, fieldnames=fields, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(records)
+        _atomic_text(path, stream.getvalue())
+        return path
+
+    def save_task_artifacts(
+        self,
+        task_id: str,
+        *,
+        evidence: Mapping[str, Any],
+        candidates: Iterable[Mapping[str, Any]],
+        summary: Mapping[str, Any],
+    ) -> Path:
+        clean_task_id = str(task_id).strip()
+        if not re.fullmatch(r"[A-Za-z0-9._-]+", clean_task_id):
+            raise ValueError("task_id must be a non-empty path-safe identifier")
+        task_dir = self.tasks_dir / clean_task_id
+        task_dir.mkdir(parents=True, exist_ok=True)
+        clean_evidence = redact_payload(dict(evidence))
+        artifacts: dict[str, Any] = {
+            "evidence.json": clean_evidence,
+            "raw_response.json": clean_evidence.get("raw_response"),
+            "counts.json": clean_evidence.get("counts", {}),
+            "summary.json": redact_payload(dict(summary)),
+        }
+        for name, payload in artifacts.items():
+            _immutable_text(
+                task_dir / name,
+                json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            )
+        circuit = str(clean_evidence.get("circuit") or "")
+        if circuit:
+            _immutable_text(task_dir / "logical_qasm.qasm", circuit)
+        candidate_rows = [dict(row) for row in candidates]
+        candidate_stream = io.StringIO(newline="")
+        if candidate_rows:
+            fields: list[str] = []
+            seen: set[str] = set()
+            for row in candidate_rows:
+                for field in row:
+                    if field not in seen:
+                        fields.append(field)
+                        seen.add(field)
+            writer = csv.DictWriter(candidate_stream, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(candidate_rows)
+        _immutable_text(task_dir / "candidate_metrics.csv", candidate_stream.getvalue())
+        return task_dir
 
     @staticmethod
     def _read_jsonl(path: Path) -> list[dict[str, Any]]:

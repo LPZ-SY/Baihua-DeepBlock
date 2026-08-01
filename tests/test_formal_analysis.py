@@ -15,12 +15,14 @@ from generate_paper_artifacts import _read_csv, _statistics  # noqa: E402
 def test_smoke_statistics_use_tasks_and_preserve_backend_strata():
     result_dir = ROOT / "results" / "experiments" / "qrf_cross_backend_smoke_20260801"
     rows = _read_csv(result_dir / "instance_summary.csv")
-    statistics, backend_rows = _statistics(rows)
+    statistics, backend_rows, instance_rows = _statistics(rows)
     assert statistics["statistical_unit"] == "hardware task"
     assert statistics["shots_are_not_independent_replicates"] is True
     assert statistics["evaluable_tasks"] == 3
     assert set(statistics["by_backend"]) == {"Baihua", "Dongling", "Shenglian"}
+    assert set(statistics["by_instance"]) == {"seed2026_c4_v2_medium"}
     assert backend_rows
+    assert instance_rows
 
 
 def test_generated_smoke_artifacts_keep_reach_and_strict_improvement_separate():
