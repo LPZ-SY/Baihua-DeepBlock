@@ -13,3 +13,8 @@ __pycache__/
 tmp/
 results/competition_history/
 
+# Local document QA/cache and generated superseded artifacts.
+docs/.qa_*/
+~$*.docx
+**/_obsolete/
+

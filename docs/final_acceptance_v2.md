@@ -1,42 +1,44 @@
-# Final Acceptance v2
+# 最终验收记录 v2
 
-Date: 2026-08-02
+日期：2026-08-02
 
-The explicit hardware confirmation gate was satisfied on 2026-08-02.
+用户已于 2026-08-02 明确确认正式硬件执行门。
 
-## Completed
+## 一、基础阶段验收
 
-- [x] P8 P0-P7 baseline pushed and tagged `qrf-p0-p7-acceptance-v1`.
-- [x] Baseline manifest hashes recompute successfully.
-- [x] Earlier Baihua live acceptance evidence remains protected and unchanged.
-- [x] P9 balanced `4 x 3 x 2` protocol frozen and tagged `qrf-formal-protocol-v2`.
-- [x] Formal dry run contains 24 unique tasks, fixed chips, frozen QASM/customer/threshold hashes, and no `auto` backend.
-- [x] P10 Baihua, Dongling, and Shenglian smoke tasks returned complete 1024-shot counts with matching requested/actual backends.
-- [x] P10 evidence is task-ID-addressable, includes redacted raw responses, and passes strict integrity validation.
-- [x] Formal live execution is pinned to `qrf-preformal-execution-v2`, requires a clean tracked worktree, and enforces the frozen one-task cap.
-- [x] Formal evidence includes task-addressable raw response/counts/QASM/candidate files, dependencies, timestamps, queue/poll fields, compile options, and optional hardware metadata.
-- [x] C/C+R/C+Q offline workflow enforces equal budgets, a shared classical base, frozen customer-to-qubit order, provenance eligibility, source tracking, and task-level statistics.
-- [x] Paper outputs preserve task-, instance-, and backend-level strata and use a backend-separated shot-weighted energy CDF.
-- [x] Dash and CLI default to one-task guarded submission and preserve fresh/replay/manual/fallback provenance.
+- [x] P8：P0-P7 基线已推送，并创建标签 `qrf-p0-p7-acceptance-v1`。
+- [x] 基线清单中的哈希可重新计算且结果一致。
+- [x] 早期 Baihua 真实硬件验收证据保持受保护且未被修改。
+- [x] P9：平衡的 `4 × 3 × 2` 协议已冻结，并创建标签 `qrf-formal-protocol-v2`。
+- [x] 正式 dry-run 包含 24 个唯一任务、固定芯片、冻结的 QASM/客户顺序/阈值哈希，且不含 `auto` 后端。
+- [x] P10：Baihua、Dongling 和 Shenglian 冒烟任务均返回完整的 1024-shot 计数，请求后端与实际后端一致。
+- [x] P10 证据可按任务 ID 定位，包含脱敏原始响应，并通过严格完整性校验。
+- [x] 正式实时执行固定到 `qrf-preformal-execution-v2`，要求受跟踪工作区干净，并强制每次最多提交一个新硬件任务。
+- [x] 正式证据包含按任务定位的原始响应、计数、QASM、候选文件、依赖快照、时间戳、队列/轮询字段、编译选项和可选硬件元数据。
+- [x] `C/C+R/C+Q` 离线流程强制相同预算、共享经典基础候选、冻结客户到量子比特顺序、来源资格校验、来源跟踪和任务级统计。
+- [x] 论文产物保留任务、实例、后端和总体分层，并生成按后端区分的 shot 加权能量 CDF。
+- [x] Dash 和 CLI 默认执行单任务保护，完整区分真实硬件、回放、手工输入和降级来源。
 
-## Formal experiment completion
+## 二、正式实验验收
 
-- [x] P11 all 24 planned formal tasks are `COMPLETED`; none are failed or non-evaluable.
-- [x] Every completed task has 1024/1024 counts, requested/actual backend equality, and matching frozen hashes.
-- [x] P12 formal C/C+R/C+Q results were generated for all 24 evaluable tasks with equal budgets and retained provenance.
-- [x] P13 task-, instance-, backend-, and overall statistics and paper figures were generated from the complete matrix.
-- [x] Final conclusions were rewritten from all 24 predeclared tasks, including unfavorable results.
-- [x] Final credential scan, integrity validation, release commit/tag, and Pull Request are complete.
+- [x] P11：计划中的 24 个正式任务全部为 `COMPLETED`，无失败任务和不可评价任务。
+- [x] 每个已完成任务均为 1024/1024 shots，请求后端与实际后端相同，冻结哈希全部匹配。
+- [x] P12：已为 24 个可评价任务生成正式 `C/C+R/C+Q` 结果，候选预算相同且来源信息完整保留。
+- [x] P13：已从完整矩阵生成任务、实例、后端和总体统计以及论文图表。
+- [x] 最终结论基于全部 24 个预声明任务重新撰写，并如实纳入不利结果。
+- [x] 最终凭证扫描、完整性校验、发布提交、版本标签和 Pull Request 均已完成。
 
-## Release record
+## 三、发布记录
 
-- Branch: `codex/complete-qrf-workflow`.
-- Formal-result commit: `8a1d4ee` (`Complete formal 24-task hardware experiment`).
-- Final release tag: `qrf-final-experiment-v2.1` (the earlier `qrf-final-experiment-v2` data-acceptance tag is retained; v2.1 adds cross-platform CI reproducibility).
-- Pull Request: `LPZ-SY/kujinganlai-version#1` targeting `main`.
-- Strict integrity validation: 24/24 planned tasks observed, `complete=true`, `valid=true`, zero errors and warnings.
-- Regression validation: compileall passed, 44 tests passed, and the classical CLI smoke passed.
-- Credential scan: 529 text evidence/source files scanned, zero credential-pattern hits.
-- Formal result protection: 415 evidence and analysis files marked read-only locally.
+- 工作分支：`codex/complete-qrf-workflow`。
+- 正式结果提交：`8a1d4ee`（`Complete formal 24-task hardware experiment`）。
+- 最终发布标签：`qrf-final-experiment-v2.1`。此前的 `qrf-final-experiment-v2` 数据验收标签继续保留；v2.1 增加了跨平台 CI 可复现性修复。
+- Pull Request：`LPZ-SY/kujinganlai-version#1`，已合并至 `main`。
+- 严格完整性校验：计划任务与观测任务均为 24 个；`complete=true`、`valid=true`；错误和警告均为 0。
+- 回归验证：compileall 通过，44 项测试通过，经典 CLI 冒烟测试通过。
+- 凭证扫描：扫描 529 个文本证据或源文件，凭证模式命中数为 0。
+- 正式结果保护：415 个证据和分析文件已在本地设为只读。
 
-P8-P14 acceptance is complete. The formal evidence is preserved without substituting replay/manual/fallback data and the bounded conclusions include unfavorable outcomes.
+## 四、最终验收结论
+
+P8-P14 已全部通过验收。正式证据未使用回放、手工输入或降级数据替代真实硬件数据；最终结论保留了所有不利结果，并严格限定在本次预声明实验范围内。

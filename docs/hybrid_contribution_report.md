@@ -1,25 +1,29 @@
-# Fair Hybrid Contribution Report
+# 公平混合贡献实验报告
 
-Date: 2026-08-02
+日期：2026-08-02
 
-Status: complete for all 24 formal hardware tasks.
+状态：24 个正式硬件任务均已完成分析。
 
-## Fair comparison
+## 一、公平比较设计
 
-C, C+R, and C+Q use equal total candidate budgets. C+R and C+Q share the exact same classical subset and differ only in the added uniform-random versus measured-quantum half. Measured bitstrings use the frozen `selected_customer_ids_in_qubit_order`. Every candidate passes through the same BQM evaluation, capacity repair, routing, 2-opt, and final selection rule. No replay, manual, simulator, or fallback evidence was admitted.
+`C`、`C+R` 和 `C+Q` 使用相同的候选总预算。`C+R` 与 `C+Q` 共享完全相同的经典候选子集，唯一差异是另外一半候选分别来自均匀随机采样和实测量子采样。实测比特串按照冻结的 `selected_customer_ids_in_qubit_order` 解码。
 
-## Results
+所有候选均经过相同的 BQM 评价、容量修复、路线构造、2-opt 优化和最终选择规则。正式分析未纳入回放、手工输入、模拟器或降级数据。
 
-- Hardware task units: 24.
-- Evaluable C+Q comparisons: 24; NOT_EVALUABLE: 0.
-- `D_C+R - D_C+Q` (`delta_QR`): 0 in all 24 tasks.
-- `D_C - D_C+Q` (`delta_QC`): 0 in all 24 tasks.
-- Mean and median `delta_QR`: 0; 95% task-bootstrap CI [0, 0].
-- Mean and median `delta_QC`: 0; 95% task-bootstrap CI [0, 0].
-- A quantum candidate won the C+Q internal energy/source tie-break in 11 of 24 tasks (45.83%), but never changed final route distance.
+## 二、实验结果
 
-## Interpretation
+- 硬件任务单元：24 个。
+- 可评价的 `C+Q` 比较：24 个；`NOT_EVALUABLE`：0 个。
+- `D_C+R - D_C+Q`（`delta_QR`）：24 个任务全部为 0。
+- `D_C - D_C+Q`（`delta_QC`）：24 个任务全部为 0。
+- `delta_QR` 的均值和中位数均为 0；任务级 Bootstrap 95% 置信区间为 [0, 0]。
+- `delta_QC` 的均值和中位数均为 0；任务级 Bootstrap 95% 置信区间为 [0, 0]。
+- 在 24 个任务中，有 11 个任务（45.83%）由量子候选赢得 `C+Q` 内部的能量或来源平局判定，但这些情况均未改变最终路线距离。
 
-The formal experiment observed no task-level C+Q route-distance improvement over the equal-budget C+R control or the pure-classical control. Energy-level ranking or a quantum-source tie-break is not reported as a route improvement. Under this frozen workflow, measured quantum candidates did not provide incremental routing value beyond the matched random candidate supplement.
+## 三、结果解释
 
-Detailed task rows are in `results/experiments/qrf_formal_hardware_matrix_v2/hybrid_summary.csv`; overall, backend, and instance strata are in `hybrid/hybrid_aggregate_summary.json`.
+正式实验没有观察到 `C+Q` 相比同预算 `C+R` 对照组或纯经典对照组的任务级路线距离改善。能量排序胜出或量子来源赢得平局判定不能表述为路线改善。
+
+在本次冻结流程下，实测量子候选没有提供超过匹配随机候选补充组的增量路线优化价值。
+
+逐任务明细位于 `results/experiments/qrf_formal_hardware_matrix_v2/hybrid_summary.csv`；总体、后端和实例分层统计位于 `hybrid/hybrid_aggregate_summary.json`。

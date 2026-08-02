@@ -1,0 +1,6 @@
+{
+  "primary_tasks": 20,
+  "shot_resamples": 200,
+  "repeat_tasks": 12,
+  "repeat_configurations": 4
+}

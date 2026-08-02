@@ -1,0 +1,5 @@
+﻿seed,round,instance_id,task_id,shots,accepted,route_improvement,selected_state,block_regenerated_after
+2,1,seed002_pair1_B2_w8,2608021813552220082,1024,False,0.0,,True
+2,2,closedloop_seed002_round2_B3_w8,2608021839415268593,1024,True,1.0476183063159397,196,False
+3,1,seed003_pair1_B1_w8,2608021821302408472,1024,False,0.0,,True
+3,2,closedloop_seed003_round2_B3_w8,2608021848557133436,1024,False,0.0,,False

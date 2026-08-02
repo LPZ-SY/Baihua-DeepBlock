@@ -153,24 +153,34 @@ def _statevector(
     width = proxy.width
     size = 1 << width
     state = np.ones(size, dtype=np.complex128) / math.sqrt(size)
-    energies = np.array(
-        [proxy.energy(tuple((basis >> index) & 1 for index in range(width))) for basis in range(size)],
-        dtype=np.float64,
-    )
+    basis = np.arange(size, dtype=np.uint32)
+    bits = ((basis[:, None] >> np.arange(width, dtype=np.uint32)) & 1).astype(np.float64)
+    energies = np.full(size, float(proxy.constant), dtype=np.float64)
+    energies += bits @ np.asarray(proxy.linear, dtype=np.float64)
+    for row in proxy.kept_interactions:
+        energies += float(row.coefficient) * bits[:, row.left] * bits[:, row.right]
     for layer_gamma, layer_beta in zip(gamma, beta):
         state *= np.exp(-1j * float(layer_gamma) * energies)
         cosine = math.cos(float(layer_beta))
         minus_i_sine = -1j * math.sin(float(layer_beta))
         for qubit in range(width):
             step = 1 << qubit
-            for base in range(0, size, step * 2):
-                for offset in range(step):
-                    zero = base + offset
-                    one = zero + step
-                    amp_zero, amp_one = state[zero], state[one]
-                    state[zero] = cosine * amp_zero + minus_i_sine * amp_one
-                    state[one] = minus_i_sine * amp_zero + cosine * amp_one
+            paired = state.reshape(-1, step * 2)
+            zero = paired[:, :step].copy()
+            one = paired[:, step:].copy()
+            paired[:, :step] = cosine * zero + minus_i_sine * one
+            paired[:, step:] = minus_i_sine * zero + cosine * one
     return state
+
+
+def ideal_probabilities(
+    proxy: SparseProxyQUBO,
+    parameters: QAOAParameters,
+) -> np.ndarray:
+    """Return the exact noiseless QAOA distribution in integer-state order."""
+    state = _statevector(proxy, parameters.gamma, parameters.beta)
+    probabilities = np.abs(state) ** 2
+    return probabilities / probabilities.sum()
 
 
 def expected_proxy_energy(
@@ -235,9 +245,7 @@ def simulate_counts(
     seed: int,
 ) -> dict[str, int]:
     shots = max(1, int(shots))
-    state = _statevector(proxy, parameters.gamma, parameters.beta)
-    probabilities = np.abs(state) ** 2
-    probabilities = probabilities / probabilities.sum()
+    probabilities = ideal_probabilities(proxy, parameters)
     rng = np.random.default_rng(int(seed))
     sampled = rng.multinomial(shots, probabilities)
     return {

@@ -1,27 +1,27 @@
-# Formal 24-Task Hardware Report
+# 正式 24 任务量子硬件实验报告
 
-Date: 2026-08-02
+日期：2026-08-02
 
-Status: complete and strictly validated.
+状态：已完成，并通过严格完整性校验。
 
-## Protocol and integrity
+## 一、实验协议与完整性
 
-- Design: 4 fixed instances x 3 fixed backends x 2 repeats = 24 hardware tasks.
-- Execution code: `9082b74ee2d22ffdd1103f62e3af9ceca18af740` / `qrf-preformal-execution-v2`.
-- Protocol: `formal-matrix-v2` / `qrf-formal-protocol-v2`.
-- Config SHA-256: `6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b`.
-- Threshold file SHA-256: `0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb`.
-- Shots: 1024 per task; 24,576 received in total.
-- Status: 24 `COMPLETED`, 0 `FAILED`, 0 `NOT_EVALUABLE`.
-- Requested backend equaled actual backend for all 24 tasks.
-- Strict result-store validation: complete, valid, 0 task errors, 0 duplicate task IDs.
-- All task evidence retains counts, redacted raw response, QASM, customer order, frozen hashes, dependencies, timestamps, compile options, and task-ID-addressable artifacts.
+- 实验设计：4 个固定实例 × 3 个固定后端 × 2 次重复，共 24 个硬件任务。
+- 执行代码：`9082b74ee2d22ffdd1103f62e3af9ceca18af740` / `qrf-preformal-execution-v2`。
+- 冻结协议：`formal-matrix-v2` / `qrf-formal-protocol-v2`。
+- 配置文件 SHA-256：`6150452c7d9072344d3addf3979a5e6227ca858991e9a16cab787be2f13ce01b`。
+- 阈值文件 SHA-256：`0f43c81d0d6d4d3f9a07dba6b1a16f6201967cd2e39563069662310cdc630afb`。
+- 采样次数：每个任务 1024 shots，共收到 24,576 shots。
+- 任务状态：24 个 `COMPLETED`，0 个 `FAILED`，0 个 `NOT_EVALUABLE`。
+- 24 个任务的请求后端与实际执行后端全部一致。
+- 结果存储严格校验：完整、有效；任务错误 0 个，重复任务 ID 0 个。
+- 每个任务均保留计数分布、脱敏原始响应、QASM、客户顺序、冻结哈希、依赖快照、时间戳、编译选项及可按任务 ID 定位的证据文件。
 
-## Task-level results
+## 二、逐任务结果
 
-`QHR` is measured quantum quality hit rate; `Random` is the frozen uniform-random reference; `Reach` is the same-budget feasible-classical threshold reach rate. `Strict` means strictly below that classical threshold.
+指标说明：`QHR` 为实测量子质量命中率；`Random` 为冻结的均匀随机参考命中率；`Reach` 为达到同预算可行经典阈值的比率；`Strict` 表示严格低于该经典阈值。
 
-| # | Task ID | Instance | Backend | Repeat | Status | Shots | QHR | Random | Reach | Strict |
+| 序号 | 任务 ID | 实例 | 后端 | 重复轮次 | 状态 | 采样数 | QHR | 随机参考 | 达到经典阈值 | 严格改进 |
 |---:|---|---|---|---:|---|---:|---:|---:|---:|---:|
 | 1 | 2608020032220735213 | seed2026_c4_v2_medium | Baihua | 1 | COMPLETED | 1024 | 0.258789 | 0.375000 | 0.053711 | 0 |
 | 2 | 2608020035387167015 | seed2027_c4_v2_tight | Shenglian | 1 | COMPLETED | 1024 | 0.066406 | 0.125000 | 0.066406 | 0 |
@@ -48,17 +48,19 @@ Status: complete and strictly validated.
 | 23 | 2608020043451218721 | seed2026_c6_v2_medium | Shenglian | 2 | COMPLETED | 1024 | 0.083984 | 0.125000 | 0.031250 | 0 |
 | 24 | 2608020044026086405 | seed2027_c6_v2_tight | Shenglian | 2 | COMPLETED | 1024 | 0.188477 | 0.281250 | 0.041992 | 0 |
 
-## Task-level statistical summary
+## 三、任务级统计汇总
 
-- Mean QHR: 0.161011; median 0.143555; SD 0.088802; 95% task-bootstrap CI [0.127035, 0.197795].
-- Mean random-reference hit rate: 0.226562; 95% CI [0.186198, 0.270833].
-- Mean `Quantum - Random`: -0.065552; median -0.060059; 95% CI [-0.079427, -0.051514].
-- Mean feasible-classical threshold reach rate: 0.050252; 95% CI [0.044067, 0.056600].
-- Strict improvement rate: 0 for every task.
-- Measured QHR exceeded the random reference in 0 of 24 tasks.
+- QHR 均值：0.161011；中位数：0.143555；标准差：0.088802；任务级 Bootstrap 95% 置信区间：[0.127035, 0.197795]。
+- 随机参考命中率均值：0.226562；95% 置信区间：[0.186198, 0.270833]。
+- `量子 - 随机` 差值均值：-0.065552；中位数：-0.060059；95% 置信区间：[-0.079427, -0.051514]。
+- 达到可行经典阈值的比率均值：0.050252；95% 置信区间：[0.044067, 0.056600]。
+- 24 个任务的严格改进率均为 0。
+- 实测 QHR 超过随机参考的任务数：0/24。
 
-Backend-specific mean QHR values were Baihua 0.147461, Dongling 0.182251, and Shenglian 0.153320. These descriptive differences are not treated as a backend ranking because the experiment was not designed or powered for that claim.
+按后端统计的 QHR 均值分别为：Baihua 0.147461、Dongling 0.182251、Shenglian 0.153320。由于本实验并非为后端优劣排序而设计，样本量也不足以支持该类推断，因此这些数值只作描述性统计，不解释为后端排名。
 
-## Conclusion
+## 四、实验结论
 
-Under the frozen instances, circuit, parameters, compilation settings, and three tested backends, the measured quantum distribution reached the same-budget feasible-classical threshold in every task at a low positive rate, but never strictly improved on that threshold. Its quality hit rate was below the frozen uniform-random reference in every task. The formal matrix therefore does not show a stable positive quantum candidate-quality effect, a route-distance contribution, or quantum advantage. This conclusion is limited to the tested experimental scope and does not establish that all quantum routing approaches are ineffective.
+在冻结的实例、电路、参数、编译设置以及三个被测后端范围内，实测量子分布在每个任务中都以较低的正比率达到同预算可行经典阈值，但从未严格优于该阈值。24 个任务的质量命中率均低于冻结的均匀随机参考。
+
+因此，本次正式矩阵没有显示出稳定的量子候选质量增益、路线距离贡献或量子优势。该结论只适用于本次预声明的实验范围，不能外推为“所有量子路线优化方法均无效”。

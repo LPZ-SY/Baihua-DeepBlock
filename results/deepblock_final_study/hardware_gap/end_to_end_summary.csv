@@ -1,0 +1,4 @@
+﻿seed,baseline_distance,final_distance,improvement,accepted_moves,round_limit,vehicle_pairs_per_round,simulator_task_count,hardware_task_count
+2,118.72648151671785,118.72648151671785,0.0,0,3,1,1,0
+3,128.45641540180517,128.45641540180517,0.0,0,3,1,1,0
+7,97.07690039479087,95.11983410146411,1.9570662933267613,1,3,1,2,0

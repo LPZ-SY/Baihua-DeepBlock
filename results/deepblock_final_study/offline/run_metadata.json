@@ -1,0 +1,14 @@
+{
+  "created_at": "2026-08-02T09:37:35.812418+00:00",
+  "seed_count": 30,
+  "block_sizes": [
+    6,
+    8
+  ],
+  "vehicle_pairs_per_seed": 2,
+  "blocks_per_pair": 3,
+  "analyzed_blocks": 360,
+  "selected_local_traps": 55,
+  "errors": [],
+  "claim_boundary": "筛选结果只证明所分析 DeepBlock 中的改善空间与局部陷阱。"
+}

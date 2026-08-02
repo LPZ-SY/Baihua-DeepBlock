@@ -1,0 +1,8 @@
+{
+  "seeds": 2,
+  "rounds_per_seed": 2,
+  "hardware_rounds": 4,
+  "new_tasks_submitted": 0,
+  "accepted_moves": 1,
+  "total_route_improvement": 1.0476183063159397
+}

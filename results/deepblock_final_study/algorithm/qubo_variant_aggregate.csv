@@ -1,0 +1,4 @@
+﻿qubo_version,instances,mean_seed,mean_block_size,mean_capacity_penalty,mean_spearman_qubo_true_distance,mean_low_10pct_improving_ratio,mean_feasible_state_ratio,mean_capacity_repair_ratio,mean_top_16_contains_improvement,mean_top_32_contains_improvement,mean_top_64_contains_improvement
+current_sparse,8,2.5,11.0,25.0,0.19414455552863513,0.06402061910550898,0.37213134765625,0.62786865234375,0.75,0.75,0.75
+full_interaction,8,2.5,11.0,25.0,0.10444161310164503,0.04345885251524234,0.37213134765625,0.62786865234375,0.5,0.5,0.625
+improved_route_proxy,8,2.5,11.0,25.0,0.11587774988963827,0.05884511077478004,0.37213134765625,0.62786865234375,0.5,0.5,0.625

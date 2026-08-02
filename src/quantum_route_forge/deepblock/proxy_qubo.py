@@ -146,8 +146,8 @@ def build_sparse_proxy_qubo(
     """Build an interpretable pairwise route proxy and prune it to hardware edges."""
     customers = list(block_customers)
     width = len(customers)
-    if width < 1 or width > 8:
-        raise ValueError("A Baihua proxy QUBO must contain between 1 and 8 customers.")
+    if width < 1 or width > 14:
+        raise ValueError("A DeepBlock research QUBO must contain between 1 and 14 customers.")
     by_vehicle = {
         customer.customer_id: vehicle
         for vehicle, rows in assignments.items()
@@ -229,5 +229,4 @@ def build_sparse_proxy_qubo(
         current_bitstring=bits_to_bitstring(current_bits),
         scale=float(scale),
     )
-
 

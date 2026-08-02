@@ -1,0 +1,94 @@
+{
+  "requested": 8,
+  "completed": 8,
+  "results": [
+    {
+      "task_id": "2608021835102139328",
+      "instance_id": "seed002_pair1_B2_w8",
+      "p": 1,
+      "replicate": 2,
+      "status": "COMPLETED",
+      "shots_received": 1024,
+      "unique_states": 245,
+      "evidence_path": "E:\\QuantumRouteForge附件\\项目源码\\results\\deepblock_final_study\\hardware_gap\\live_tasks\\2608021835102139328.json",
+      "submission_count_this_run": 1
+    },
+    {
+      "task_id": "2608021835209182815",
+      "instance_id": "seed002_pair1_B2_w8",
+      "p": 1,
+      "replicate": 3,
+      "status": "COMPLETED",
+      "shots_received": 1024,
+      "unique_states": 251,
+      "evidence_path": "E:\\QuantumRouteForge附件\\项目源码\\results\\deepblock_final_study\\hardware_gap\\live_tasks\\2608021835209182815.json",
+      "submission_count_this_run": 1
+    },
+    {
+      "task_id": "2608021835303347898",
+      "instance_id": "seed002_pair1_B2_w8",
+      "p": 2,
+      "replicate": 2,
+      "status": "COMPLETED",
+      "shots_received": 1024,
+      "unique_states": 224,
+      "evidence_path": "E:\\QuantumRouteForge附件\\项目源码\\results\\deepblock_final_study\\hardware_gap\\live_tasks\\2608021835303347898.json",
+      "submission_count_this_run": 1
+    },
+    {
+      "task_id": "2608021835396191466",
+      "instance_id": "seed002_pair1_B2_w8",
+      "p": 2,
+      "replicate": 3,
+      "status": "COMPLETED",
+      "shots_received": 1024,
+      "unique_states": 223,
+      "evidence_path": "E:\\QuantumRouteForge附件\\项目源码\\results\\deepblock_final_study\\hardware_gap\\live_tasks\\2608021835396191466.json",
+      "submission_count_this_run": 1
+    },
+    {
+      "task_id": "2608021835489093784",
+      "instance_id": "seed003_pair1_B1_w8",
+      "p": 1,
+      "replicate": 2,
+      "status": "COMPLETED",
+      "shots_received": 1024,
+      "unique_states": 246,
+      "evidence_path": "E:\\QuantumRouteForge附件\\项目源码\\results\\deepblock_final_study\\hardware_gap\\live_tasks\\2608021835489093784.json",
+      "submission_count_this_run": 1
+    },
+    {
+      "task_id": "2608021835579544811",
+      "instance_id": "seed003_pair1_B1_w8",
+      "p": 1,
+      "replicate": 3,
+      "status": "COMPLETED",
+      "shots_received": 1024,
+      "unique_states": 239,
+      "evidence_path": "E:\\QuantumRouteForge附件\\项目源码\\results\\deepblock_final_study\\hardware_gap\\live_tasks\\2608021835579544811.json",
+      "submission_count_this_run": 1
+    },
+    {
+      "task_id": "2608021836072036530",
+      "instance_id": "seed003_pair1_B1_w8",
+      "p": 2,
+      "replicate": 2,
+      "status": "COMPLETED",
+      "shots_received": 1024,
+      "unique_states": 238,
+      "evidence_path": "E:\\QuantumRouteForge附件\\项目源码\\results\\deepblock_final_study\\hardware_gap\\live_tasks\\2608021836072036530.json",
+      "submission_count_this_run": 1
+    },
+    {
+      "task_id": "2608021836142634464",
+      "instance_id": "seed003_pair1_B1_w8",
+      "p": 2,
+      "replicate": 3,
+      "status": "COMPLETED",
+      "shots_received": 1024,
+      "unique_states": 242,
+      "evidence_path": "E:\\QuantumRouteForge附件\\项目源码\\results\\deepblock_final_study\\hardware_gap\\live_tasks\\2608021836142634464.json",
+      "submission_count_this_run": 1
+    }
+  ]
+}
