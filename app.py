@@ -55,7 +55,7 @@ def _initial_status_text():
 def _field(label: str, control, hint: str = ""):
     return html.Div(
         [
-            html.Label(label, style={"fontSize": "12px", "fontWeight": 700, "color": "#405b7d"}),
+            html.Label(label, style={"fontSize": "13px", "fontWeight": 700, "color": "#405b7d"}),
             control,
             html.Small(hint, style={"color": "#7b8da6", "lineHeight": "1.25"}) if hint else None,
         ],
@@ -78,13 +78,13 @@ def _number(component_id: str, value: int, minimum: int, maximum: int, step: int
 def _empty_figure(title: str, subtitle: str = "运行后显示"):
     figure = go.Figure()
     figure.add_annotation(
-        text=f"<b>{title}</b><br><span style='font-size:12px;color:#7188aa'>{subtitle}</span>",
+        text=f"<b>{title}</b><br><span style='font-size:13px;color:#7188aa'>{subtitle}</span>",
         x=0.5,
         y=0.5,
         xref="paper",
         yref="paper",
         showarrow=False,
-        font={"color": "#7186a2", "size": 16},
+        font={"color": "#7186a2", "size": 17},
     )
     figure.update_layout(
         template="plotly_white",
@@ -131,7 +131,7 @@ def _route_figure(instance: dict[str, Any], routes: list[dict[str, Any]], title:
         )
     figure.update_layout(
         template="plotly_white",
-        title={"text": title, "x": 0.03, "font": {"size": 16}},
+        title={"text": title, "x": 0.03, "font": {"size": 17}},
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="#fbfdff",
         height=440,
@@ -147,8 +147,8 @@ def _route_figure(instance: dict[str, Any], routes: list[dict[str, Any]], title:
 def _metric(label: str, value: str, tone: str = "#2f80ed"):
     return html.Div(
         [
-            html.Div(label, style={"fontSize": "11px", "letterSpacing": "1px", "textTransform": "uppercase", "color": MUTED}),
-            html.Div(value, style={"fontSize": "25px", "fontWeight": 800, "color": tone, "marginTop": "5px"}),
+            html.Div(label, style={"fontSize": "12px", "letterSpacing": "1px", "textTransform": "uppercase", "color": MUTED}),
+            html.Div(value, style={"fontSize": "26px", "fontWeight": 800, "color": tone, "marginTop": "5px"}),
         ],
         style={**PANEL, "padding": "15px 17px", "minHeight": "70px"},
     )
@@ -174,7 +174,8 @@ def _table(component_id: str, page_size: int = 10):
             "color": "#405b7d",
             "border": "1px solid #e0e8f2",
             "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
-            "fontSize": "12px",
+            "fontSize": "13px",
+            "lineHeight": "1.4",
             "padding": "10px",
             "textAlign": "left",
             "maxWidth": "280px",
@@ -191,8 +192,8 @@ controls = html.Div(
     [
         html.Div(
             [
-                html.Div("RUN CONFIG", style={"fontSize": "11px", "letterSpacing": "2px", "color": "#2f80ed"}),
-                html.H3("同条件公平对照", style={"margin": "5px 0 0", "fontSize": "18px"}),
+                html.Div("RUN CONFIG", style={"fontSize": "12px", "letterSpacing": "2px", "color": "#2f80ed"}),
+                html.H3("同条件公平对照", style={"margin": "5px 0 0", "fontSize": "20px"}),
             ]
         ),
         html.Div(
@@ -239,12 +240,12 @@ controls = html.Div(
                 }
             ],
             value=[],
-            style={"fontSize": "12px", "color": "#a86800", "marginTop": "13px"},
+            style={"fontSize": "13px", "color": "#a86800", "marginTop": "13px"},
         ),
         html.Div(
             [
                 html.Button("运行 DeepBlock 对照", id="run-btn", n_clicks=0, className="run-button"),
-                html.Div("同一实例 · 同一初始分配 · 同一 Top-k · 严格改善才接受", style={"fontSize": "11px", "color": MUTED}),
+                html.Div("同一实例 · 同一初始分配 · 同一 Top-k · 严格改善才接受", style={"fontSize": "12px", "color": MUTED}),
             ],
             style={"display": "flex", "alignItems": "center", "gap": "15px", "marginTop": "14px"},
         ),
@@ -282,7 +283,7 @@ process_page = html.Div(
         html.Details(
             [
                 html.Summary("查看完整 counts / QASM / 编译审计", style={"cursor": "pointer", "fontWeight": 700, "color": "#2f80ed"}),
-                html.Pre(id="evidence-json", style={"whiteSpace": "pre-wrap", "fontSize": "11px", "color": "#5f7390", "maxHeight": "560px", "overflow": "auto"}),
+                html.Pre(id="evidence-json", style={"whiteSpace": "pre-wrap", "fontSize": "12px", "lineHeight": "1.5", "color": "#5f7390", "maxHeight": "560px", "overflow": "auto"}),
             ],
             style={**PANEL, "padding": "18px", "marginTop": "14px"},
         ),
@@ -339,7 +340,7 @@ app.layout = html.Div(
                         html.Div(
                             [
                                 html.Div("QUANTUM ROUTE FORGE", className="eyebrow"),
-                                html.H1("Baihua DeepBlock 控制台", style={"margin": "3px 0", "fontSize": "28px"}),
+                                html.H1("Baihua DeepBlock 控制台", style={"margin": "3px 0", "fontSize": "30px"}),
                                 html.Div("可复核的量子候选生成 · 经典约束修复 · 真实路线单调接受", style={"color": MUTED}),
                             ]
                         ),
@@ -371,7 +372,7 @@ app.layout = html.Div(
         ),
         html.Div(
             "Quantum Route Forge · competition/deepblock-ui-integration · Hardware failures never become Exact results",
-            style={"textAlign": "center", "color": "#8291a7", "fontSize": "11px", "padding": "28px 0 10px"},
+            style={"textAlign": "center", "color": "#8291a7", "fontSize": "12px", "padding": "28px 0 10px"},
         ),
     ],
     style={"maxWidth": "1500px", "margin": "0 auto", "padding": "24px", "color": INK},
@@ -734,6 +735,8 @@ app.index_string = """
       * { box-sizing: border-box; }
       body {
         margin: 0;
+        font-size: 15px;
+        line-height: 1.45;
         background:
           radial-gradient(circle at 12% 4%, rgba(95,171,255,.20), transparent 31%),
           radial-gradient(circle at 88% 0%, rgba(151,123,255,.14), transparent 28%),
@@ -746,26 +749,27 @@ app.index_string = """
         background: linear-gradient(145deg,#3da7f5,#7c5cfc);
         box-shadow: 0 10px 28px rgba(67,124,218,.22);
       }
-      .eyebrow { font-size: 10px; letter-spacing: 2.4px; color: #2f80ed; font-weight: 800; }
+      .eyebrow { font-size: 11px; letter-spacing: 2.4px; color: #2f80ed; font-weight: 800; }
       .status-pill {
         display: inline-flex; align-items: center; min-height: 28px; padding: 5px 10px;
         border: 1px solid #cfe0f4; border-radius: 999px;
-        background: #edf5ff; color: #315b8f; font-size: 11px; font-weight: 700;
+        background: #edf5ff; color: #315b8f; font-size: 12px; font-weight: 700;
       }
       .status-banner {
         margin: 13px 0; padding: 11px 15px; border-left: 3px solid #2f80ed;
-        border-radius: 8px; background: #edf6ff; color: #496783; font-size: 12px;
+        border-radius: 8px; background: #edf6ff; color: #496783; font-size: 13px;
         box-shadow: 0 6px 18px rgba(63,107,158,.07);
       }
       .run-button, .secondary-button {
         border: 0; border-radius: 10px; padding: 11px 18px; cursor: pointer;
-        font-weight: 800; color: #ffffff; background: linear-gradient(90deg,#3da7f5,#7c5cfc);
+        font-size: 14px; font-weight: 800; color: #ffffff; background: linear-gradient(90deg,#3da7f5,#7c5cfc);
         box-shadow: 0 8px 18px rgba(79,126,211,.18);
       }
       .secondary-button { color: #365978; background: #ffffff; border: 1px solid #cedbea; box-shadow: none; }
       input, .Select-control, .dash-dropdown .Select-control {
         border-radius: 9px !important; border: 1px solid #cfdaea !important;
         background: #ffffff !important; color: #183153 !important;
+        font-size: 14px !important;
         box-shadow: 0 2px 5px rgba(69,92,125,.04);
       }
       input:focus { border-color: #68a9f5 !important; outline: none; box-shadow: 0 0 0 3px rgba(47,128,237,.10); }
@@ -773,7 +777,7 @@ app.index_string = """
       .Select-value-label, .Select-placeholder { color: #183153 !important; }
       .Select-option { color: #294866 !important; background: #ffffff !important; }
       .Select-option.is-focused { background: #edf5ff !important; }
-      .tab { background: rgba(255,255,255,.76) !important; color: #70849f !important; border: 0 !important; padding: 14px !important; }
+      .tab { background: rgba(255,255,255,.76) !important; color: #70849f !important; border: 0 !important; padding: 14px !important; font-size: 15px !important; }
       .tab--selected { color: #2f80ed !important; border-top: 2px solid #2f80ed !important; background: #ffffff !important; font-weight: 700; }
       .tab-content { padding-top: 15px; }
       @media (max-width: 900px) {
