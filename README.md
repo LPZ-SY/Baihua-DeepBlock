@@ -1,5 +1,25 @@
 # Quantum Route Forge
 
+## DeepBlock 比赛前端
+
+新的比赛入口保留路线地图与参数控制，并把 Baihua DeepBlock 算法隔离在
+`src/quantum_route_forge/deepblock/` 中。页面包含路线优化、B1/B2/B3 过程、
+Hardware/Random/Simulator/Exact 公平对照以及可重载的本地运行历史。
+
+```powershell
+python app.py --port 8050
+```
+
+旧研究前端完整保留，使用独立端口启动：
+
+```powershell
+python app_research.py --port 8051
+```
+
+Hardware 模式默认只做 dry-run。只有在页面明确勾选真实提交确认后才会提交
+Baihua 任务；真机失败返回 `FAILED` 或 `NOT_EVALUABLE`，不会回退并伪装为
+hardware。比赛历史保存在 `results/competition_history/`。
+
 `LPZ-SY/kujinganlai-version` is a reproducible research and demonstration platform for quantum-seeded fleet assignment and classical route refinement.
 
 The project makes a deliberately narrow claim: real-hardware measurements can be evaluated as assignment candidates, compared with random and same-budget classical candidates, and tested for incremental contribution to a shared hybrid pipeline. It does **not** claim universal quantum advantage, speed advantage, or a pure-quantum solution of the complete vehicle-routing problem.

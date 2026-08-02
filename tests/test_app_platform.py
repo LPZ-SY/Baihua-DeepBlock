@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import app as web_app  # noqa: E402
+import app_research as web_app  # noqa: E402
 
 
 def _component_ids(component):

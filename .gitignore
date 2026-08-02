@@ -11,4 +11,5 @@ __pycache__/
 .idea/
 *.log
 tmp/
+results/competition_history/
 

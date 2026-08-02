@@ -2,1292 +2,788 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
-import os
 from pathlib import Path
-import subprocess
 import sys
 from typing import Any
 
-from dash import Dash, Input, Output, State, ctx, dash_table, dcc, html
+from dash import Dash, Input, Output, State, ctx, dash_table, dcc, html, no_update
 import plotly.graph_objects as go
 
 ROOT = Path(__file__).resolve().parent
-SRC_DIR = ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
-from quantum_route_forge import generate_dispatch_instance, run_optimization  # noqa: E402
-from quantum_route_forge.assignment_bqm import build_assignment_bqm  # noqa: E402
-from quantum_route_forge.candidate_quality import (  # noqa: E402
-    evaluate_measurement,
-    exact_assignment_reference,
-)
-from quantum_route_forge.quantum_measurements import measurement_from_evidence  # noqa: E402
-from quantum_route_forge.result_store import ResultStore, list_experiments  # noqa: E402
-
-EXPERIMENTS_DIR = ROOT / "experiments"
-if str(EXPERIMENTS_DIR) not in sys.path:
-    sys.path.insert(0, str(EXPERIMENTS_DIR))
-
-from batch_candidate_quality import (  # noqa: E402
-    _load_frozen_protocol_thresholds,
-    build_dry_run_manifest,
-    expand_matrix,
-)
+from quantum_route_forge.competition_history import CompetitionHistory  # noqa: E402
+from quantum_route_forge.deepblock_service import run_deepblock_optimization  # noqa: E402
+from quantum_route_forge.scenario import generate_dispatch_instance  # noqa: E402
 
 
-COLORS = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#17becf",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-]
-
-PAGE_STYLE = {
-    "maxWidth": "1400px",
-    "margin": "0 auto",
-    "padding": "20px",
-    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
-    "color": "#0f1d2d",
-    "background": "linear-gradient(180deg, #f4f8ff 0%, #fbfdff 100%)",
+COLORS = ["#69e2ff", "#9478ff", "#ffca6b", "#55e6a5", "#ff7f9f", "#82a7ff"]
+INK = "#dce8ff"
+MUTED = "#8fa7c9"
+PANEL = {
+    "background": "linear-gradient(145deg, rgba(19,31,57,.96), rgba(12,21,40,.96))",
+    "border": "1px solid rgba(132,166,220,.18)",
+    "borderRadius": "18px",
+    "boxShadow": "0 18px 50px rgba(0,0,0,.24)",
 }
-
-PANEL_STYLE = {
-    "backgroundColor": "#ffffff",
-    "border": "1px solid #dde7f3",
-    "borderRadius": "14px",
-    "padding": "14px",
-    "boxShadow": "0 3px 14px rgba(39, 84, 126, 0.08)",
-}
-
-GRID_STYLE = {
-    "display": "grid",
-    "gridTemplateColumns": "repeat(auto-fit, minmax(190px, 1fr))",
-    "gap": "12px",
-}
-
-FIELD_STYLE = {
-    "display": "flex",
-    "flexDirection": "column",
-    "gap": "6px",
-}
-
-LABEL_STYLE = {
-    "fontSize": "13px",
-    "fontWeight": "700",
-    "letterSpacing": "0.2px",
-    "color": "#2a4159",
-}
-
-INPUT_STYLE = {
-    "width": "100%",
-    "height": "40px",
-    "borderRadius": "10px",
-}
-
-HINT_STYLE = {
-    "fontSize": "11px",
-    "lineHeight": "1.2",
-    "color": "#6582a0",
-}
-
-BUTTON_STYLE = {
-    "width": "100%",
-    "height": "42px",
-    "border": "none",
-    "borderRadius": "10px",
-    "background": "linear-gradient(90deg, #0d63ce 0%, #1f8bff 100%)",
-    "color": "white",
-    "fontWeight": "700",
-    "cursor": "pointer",
-}
-
-STATUS_BOX_STYLE = {
-    "marginBottom": "8px",
-    "fontWeight": "600",
-    "wordBreak": "break-word",
-    "lineHeight": "1.45",
-    "backgroundColor": "#f7fbff",
-    "border": "1px solid #d8e8fa",
-    "borderRadius": "10px",
-    "padding": "10px 12px",
-}
-
-METRICS_BOX_STYLE = {
-    "fontWeight": "600",
-    "marginBottom": "8px",
-    "backgroundColor": "#f7fbff",
-    "border": "1px solid #d8e8fa",
-    "borderRadius": "10px",
-    "padding": "10px 12px",
-}
+HISTORY = CompetitionHistory(ROOT / "results" / "competition_history")
 
 
-def _field(label: str, control, hint: str = "", span: int = 1):
-    style = dict(FIELD_STYLE)
-    if span > 1:
-        style["gridColumn"] = f"span {span}"
-    children = [html.Label(label, style=LABEL_STYLE), control]
-    if hint:
-        children.append(html.Div(hint, style=HINT_STYLE))
-    return html.Div(children, style=style)
+def _latest_history_payload():
+    try:
+        rows = HISTORY.rows()
+        return HISTORY.load(rows[0]["run_id"]) if rows else None
+    except (OSError, ValueError, KeyError):
+        return None
 
 
-def _build_figure(result) -> go.Figure:
-    depot = result.instance.depot
-    fig = go.Figure()
-    fig.add_trace(
+INITIAL_PAYLOAD = _latest_history_payload()
+
+
+def _initial_status_text():
+    if not INITIAL_PAYLOAD:
+        return "尚未运行。Hardware 未明确确认时仅进行 dry-run，不会提交任务。"
+    selected = INITIAL_PAYLOAD.get("selected", {})
+    return (
+        f"已载入最近运行 {INITIAL_PAYLOAD.get('run_id')} · "
+        f"{selected.get('status')} · source={selected.get('source')}"
+    )
+
+
+def _field(label: str, control, hint: str = ""):
+    return html.Div(
+        [
+            html.Label(label, style={"fontSize": "12px", "fontWeight": 700, "color": "#b9c9e4"}),
+            control,
+            html.Small(hint, style={"color": "#647fa6", "lineHeight": "1.25"}) if hint else None,
+        ],
+        style={"display": "flex", "flexDirection": "column", "gap": "6px"},
+    )
+
+
+def _number(component_id: str, value: int, minimum: int, maximum: int, step: int = 1):
+    return dcc.Input(
+        id=component_id,
+        type="number",
+        value=value,
+        min=minimum,
+        max=maximum,
+        step=step,
+        style={"width": "100%", "height": "38px"},
+    )
+
+
+def _empty_figure(title: str, subtitle: str = "运行后显示"):
+    figure = go.Figure()
+    figure.add_annotation(
+        text=f"<b>{title}</b><br><span style='font-size:12px;color:#7188aa'>{subtitle}</span>",
+        x=0.5,
+        y=0.5,
+        xref="paper",
+        yref="paper",
+        showarrow=False,
+        font={"color": "#a9bedc", "size": 16},
+    )
+    figure.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        height=410,
+        margin={"l": 25, "r": 25, "t": 40, "b": 25},
+        xaxis={"visible": False},
+        yaxis={"visible": False},
+    )
+    return figure
+
+
+def _route_figure(instance: dict[str, Any], routes: list[dict[str, Any]], title: str):
+    figure = go.Figure()
+    depot = instance.get("depot", [0, 0])
+    figure.add_trace(
         go.Scatter(
             x=[depot[0]],
             y=[depot[1]],
-            mode="markers",
+            mode="markers+text",
+            text=["DEPOT"],
+            textposition="top center",
             name="Depot",
-            marker={"size": 18, "symbol": "star", "color": "#111111"},
+            marker={"size": 19, "symbol": "star", "color": "#ffffff", "line": {"color": "#69e2ff", "width": 2}},
         )
     )
-
-    for idx, route in enumerate(result.routes):
-        color = COLORS[idx % len(COLORS)]
-        xs = [depot[0]] + [c.x for c in route.customers] + [depot[0]]
-        ys = [depot[1]] + [c.y for c in route.customers] + [depot[1]]
-        fig.add_trace(
+    for index, route in enumerate(routes or []):
+        customers = route.get("customers", [])
+        xs = [depot[0]] + [row["x"] for row in customers] + [depot[0]]
+        ys = [depot[1]] + [row["y"] for row in customers] + [depot[1]]
+        labels = ["Depot"] + [f"C{row['customer_id']} · d={row['demand']}" for row in customers] + ["Depot"]
+        figure.add_trace(
             go.Scatter(
                 x=xs,
                 y=ys,
                 mode="lines+markers",
-                name=f"Vehicle {route.vehicle_id}",
-                line={"width": 3, "color": color},
-                marker={"size": 8},
-                hovertemplate="x=%{x:.2f}<br>y=%{y:.2f}<extra></extra>",
+                name=f"车辆 {route.get('vehicle_id')}",
+                text=labels,
+                hovertemplate="%{text}<br>x=%{x:.2f}, y=%{y:.2f}<extra></extra>",
+                line={"width": 2.6, "color": COLORS[index % len(COLORS)]},
+                marker={"size": 8, "color": COLORS[index % len(COLORS)]},
             )
         )
-
-    fig.update_layout(
-        template="plotly_white",
-        title="Quantum Route Forge",
-        xaxis_title="City X",
-        yaxis_title="City Y",
-        height=700,
-        margin={"l": 20, "r": 20, "t": 60, "b": 20},
-        legend_title="Fleet",
+    figure.update_layout(
+        template="plotly_dark",
+        title={"text": title, "x": 0.03, "font": {"size": 16}},
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(5,12,25,.25)",
+        height=440,
+        margin={"l": 35, "r": 20, "t": 55, "b": 35},
+        legend={"orientation": "h", "y": -0.14},
+        xaxis={"gridcolor": "rgba(120,150,200,.10)", "zeroline": False},
+        yaxis={"gridcolor": "rgba(120,150,200,.10)", "zeroline": False, "scaleanchor": "x", "scaleratio": 1},
     )
-    return fig
+    return figure
 
 
-def _build_result_table(result) -> html.Table:
-    th_style = {
-        "textAlign": "left",
-        "padding": "10px 12px",
-        "borderBottom": "1px solid #d6e4f2",
-        "backgroundColor": "#eef5fd",
-        "fontWeight": "700",
-        "fontSize": "13px",
-        "color": "#223b55",
-    }
-    td_style = {
-        "padding": "9px 12px",
-        "borderBottom": "1px solid #e7eef7",
-        "fontSize": "13px",
-        "color": "#1d3147",
-        "verticalAlign": "top",
-    }
-    rows = []
-    for route in result.routes:
-        stop_ids = ", ".join(str(c.customer_id) for c in route.customers[:14])
-        if len(route.customers) > 14:
-            stop_ids += " ..."
-        rows.append(
-            html.Tr(
-                [
-                    html.Td(f"Vehicle {route.vehicle_id}", style=td_style),
-                    html.Td(str(len(route.customers)), style=td_style),
-                    html.Td(str(route.load), style=td_style),
-                    html.Td(f"{route.distance:.2f}", style=td_style),
-                    html.Td(stop_ids, style=td_style),
-                ]
-            )
-        )
-
-    return html.Table(
+def _metric(label: str, value: str, tone: str = "#69e2ff"):
+    return html.Div(
         [
-            html.Thead(
-                html.Tr(
-                    [
-                        html.Th("Route", style=th_style),
-                        html.Th("Stops", style=th_style),
-                        html.Th("Load", style=th_style),
-                        html.Th("Distance", style=th_style),
-                        html.Th("Customer IDs", style=th_style),
-                    ]
-                )
-            ),
-            html.Tbody(rows),
+            html.Div(label, style={"fontSize": "11px", "letterSpacing": "1px", "textTransform": "uppercase", "color": MUTED}),
+            html.Div(value, style={"fontSize": "25px", "fontWeight": 800, "color": tone, "marginTop": "5px"}),
         ],
-        style={
-            "width": "100%",
-            "borderCollapse": "separate",
-            "borderSpacing": "0",
-            "overflow": "hidden",
-            "borderRadius": "10px",
-            "border": "1px solid #d6e4f2",
-            "backgroundColor": "white",
+        style={**PANEL, "padding": "15px 17px", "minHeight": "70px"},
+    )
+
+
+def _table(component_id: str, page_size: int = 10):
+    return dash_table.DataTable(
+        id=component_id,
+        data=[],
+        columns=[],
+        page_size=page_size,
+        sort_action="native",
+        filter_action="native",
+        style_table={"overflowX": "auto", "borderRadius": "12px"},
+        style_header={
+            "backgroundColor": "#152544",
+            "color": "#cfe0fb",
+            "fontWeight": 700,
+            "border": "1px solid #263a5e",
         },
-    )
-
-
-def _build_error_outputs(instance, detail: str):
-    min_capacity = math.ceil(instance.total_demand / instance.num_vehicles)
-    status = f"Input error: {detail}"
-    fig = go.Figure()
-    fig.update_layout(
-        template="plotly_white",
-        title="No Feasible Solution",
-        height=190,
-        xaxis={"visible": False},
-        yaxis={"visible": False},
-        annotations=[
-            {
-                "text": "Capacity infeasible under strict mode.<br>"
-                f"Demand={instance.total_demand}, vehicles={instance.num_vehicles}, "
-                f"required capacity >= {min_capacity}.",
-                "xref": "paper",
-                "yref": "paper",
-                "x": 0.5,
-                "y": 0.5,
-                "showarrow": False,
-                "font": {"size": 15, "color": "#8a1f1f"},
-            }
+        style_cell={
+            "backgroundColor": "#0e1a31",
+            "color": "#b9c9e4",
+            "border": "1px solid #213452",
+            "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+            "fontSize": "12px",
+            "padding": "10px",
+            "textAlign": "left",
+            "maxWidth": "280px",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+        },
+        style_data_conditional=[
+            {"if": {"filter_query": "{accepted} = true"}, "backgroundColor": "rgba(45,180,125,.16)", "color": "#8af2c5"}
         ],
     )
-    metrics = (
-        f"Total demand={instance.total_demand}, fleet capacity={instance.num_vehicles * instance.vehicle_capacity} "
-        f"(required >= {instance.num_vehicles * min_capacity})."
-    )
-    table = html.Div(
-        "No route generated. Increase Capacity or Vehicles, then run again.",
-        style={"fontWeight": "600", "color": "#8a1f1f", "padding": "8px"},
-    )
-    return status, fig, metrics, table
 
 
-def _generate_outputs(
-    seed,
-    customers,
-    vehicles,
-    capacity,
-    mode,
-    time_limit,
-    quafu_token,
-    quafu_backend,
-    quafu_base_url,
-    quafu_shots,
-    quafu_max_qubits,
-    quafu_wait,
-    quafu_timeout_sec,
-    quafu_proxy_url,
-    quafu_verify_ssl,
-    quafu_result_task_id,
-    quafu_manual_bitstring,
-    quantum_action="auto",
-):
-    seed = int(seed or 2026)
-    customers = max(8, int(customers or 48))
-    vehicles = max(1, int(vehicles or 4))
-    capacity = max(1, int(capacity or 34))
-    time_limit = max(5, int(time_limit or 10))
-    quafu_token = (quafu_token or "").strip() or os.getenv("QUAFU_API_TOKEN", "")
-    quafu_backend = (quafu_backend or "").strip()
-    quafu_base_url = (quafu_base_url or "").strip() or os.getenv("QUAFU_BASE_URL", "")
-    quafu_shots = max(100, int(quafu_shots or 1000))
-    quafu_max_qubits = max(2, min(32, int(quafu_max_qubits or 8)))
-    quafu_wait = str(quafu_wait).lower().strip() == "true"
-    quafu_timeout_sec = max(5, int(quafu_timeout_sec or os.getenv("QUAFU_TIMEOUT_SEC", "25")))
-    quafu_proxy_url = (quafu_proxy_url or "").strip() or os.getenv("QUAFU_PROXY_URL", "")
-    quafu_verify_ssl = str(quafu_verify_ssl).lower().strip() == "true"
-    quafu_result_task_id = (quafu_result_task_id or "").strip()
-    quafu_manual_bitstring = (quafu_manual_bitstring or "").strip()
-
-    instance = generate_dispatch_instance(
-        seed=seed,
-        num_customers=customers,
-        num_vehicles=vehicles,
-        vehicle_capacity=capacity,
-    )
-
-    if not instance.feasible_capacity:
-        min_capacity = math.ceil(instance.total_demand / instance.num_vehicles)
-        return _build_error_outputs(
-            instance,
-            (
-                "Total demand exceeds fleet capacity. "
-                f"Set capacity >= {min_capacity} or increase vehicles."
-            ),
-        )
-
-    try:
-        result = run_optimization(
-            instance=instance,
-            mode=mode,
-            time_limit=time_limit,
-            num_reads=120,
-            quafu_token=quafu_token,
-            quafu_backend=quafu_backend,
-            quafu_base_url=quafu_base_url,
-            quafu_shots=quafu_shots,
-            quafu_wait=quafu_wait,
-            quafu_max_qubits=quafu_max_qubits,
-            quafu_timeout_sec=quafu_timeout_sec,
-            quafu_proxy_url=quafu_proxy_url,
-            quafu_verify_ssl=quafu_verify_ssl,
-            quafu_result_task_id=quafu_result_task_id,
-            quafu_manual_bitstring=quafu_manual_bitstring,
-            auto_repair_capacity=False,
-            quantum_action=quantum_action,
-        )
-    except ValueError as exc:
-        return _build_error_outputs(instance, str(exc))
-
-    fig = _build_figure(result)
-    used = result.metadata.used_mode
-    msg = result.metadata.message
-    qmeta = []
-    if str(mode).lower() in {"quantum", "quafu"}:
-        qmeta.append(f"backend_requested={quafu_backend or 'unspecified'}")
-    if result.metadata.quantum_backend:
-        qmeta.append(f"backend_actual={result.metadata.quantum_backend}")
-    if result.metadata.quantum_task_id:
-        qmeta.append(f"task_id={result.metadata.quantum_task_id}")
-    if result.metadata.quantum_bitstring:
-        qmeta.append(f"seed_bitstring={result.metadata.quantum_bitstring}")
-    if result.metadata.quantum_endpoint:
-        qmeta.append(f"endpoint={result.metadata.quantum_endpoint}")
-    qmeta_text = f" | Quafu: {', '.join(qmeta)}" if qmeta else ""
-    measurement = result.metadata.quantum_measurement_summary or {}
-    source = measurement.get("source")
-    shots_requested = measurement.get("shots_requested", 0)
-    shots_received = measurement.get("shots_received", 0)
-    source_text = (
-        f" | source={source}, shots_requested={shots_requested}, shots_received={shots_received}"
-        if source
-        else ""
-    )
-    counts = measurement.get("counts") or {}
-    formal_evaluable = (
-        source == "hardware"
-        and shots_received > 0
-        and isinstance(counts, dict)
-        and sum(counts.values()) == shots_received
-    )
-    provenance_text = ""
-    if str(mode).lower() in {"quantum", "quafu"}:
-        provenance_text = (
-            "FORMAL-EVALUABLE HARDWARE | "
-            if formal_evaluable
-            else "NOT_EVALUABLE FOR FORMAL STATISTICS | "
-        )
-    coverage = min(quafu_max_qubits, len(instance.customers)) / len(instance.customers)
-    coverage_text = (
-        f" | quantum coverage={min(quafu_max_qubits, len(instance.customers))}/"
-        f"{len(instance.customers)}={coverage:.1%}"
-        if str(mode).lower() in {"quantum", "quafu"}
-        else ""
-    )
-    status = (
-        f"{provenance_text}Requested solver: {mode} | Used: {used} | Classical full-assignment energy: "
-        f"{result.metadata.energy:.3f}{qmeta_text}{source_text}{coverage_text} | {msg}"
-    )
-    total_load = sum(r.load for r in result.routes)
-    metrics = (
-        f"Total demand={instance.total_demand}, served load={total_load}, "
-        f"fleet capacity={instance.num_vehicles * instance.vehicle_capacity}, "
-        f"total route distance={result.total_distance:.2f}"
-    )
-    table = _build_result_table(result)
-    return status, fig, metrics, table
-
-
-def _candidate_quality_layout():
-    return html.Div(
-        [
-            html.Div(
-                [
-                    _field(
-                        "Evidence JSON",
-                        dcc.Input(
-                            id="cq-evidence-path",
-                            value=str(ROOT / "results" / "quarkstudio_candidate_quality_validated" / "task_evidence.json"),
-                            style=INPUT_STYLE,
-                        ),
-                        span=2,
-                    ),
-                    _field(
-                        "Frozen thresholds",
-                        dcc.Input(
-                            id="cq-threshold-path",
-                            value=str(ROOT / "results" / "quarkstudio_candidate_quality_validated" / "frozen_thresholds.json"),
-                            style=INPUT_STYLE,
-                        ),
-                        span=2,
-                    ),
-                    _field("Seed", dcc.Input(id="cq-seed", type="number", value=2026, style=INPUT_STYLE)),
-                    _field("Customers", dcc.Input(id="cq-customers", type="number", value=4, min=4, style=INPUT_STYLE)),
-                    _field(
-                        "Capacity pressure",
-                        dcc.Dropdown(
-                            id="cq-pressure",
-                            options=[{"label": value.title(), "value": value} for value in ("loose", "medium", "tight")],
-                            value="medium",
-                            clearable=False,
-                            style=INPUT_STYLE,
-                        ),
-                    ),
-                    _field("Load and evaluate", html.Button("Load Evidence", id="cq-load-btn", n_clicks=0, style=BUTTON_STYLE)),
-                ],
-                style={**GRID_STYLE, **PANEL_STYLE, "marginBottom": "12px"},
-            ),
-            html.Div(id="cq-summary-cards", style={**GRID_STYLE, "marginBottom": "12px"}),
-            dcc.Graph(id="cq-energy-graph", config={"displayModeBar": False}),
-            html.Div(id="cq-conclusion", style=STATUS_BOX_STYLE),
-            dash_table.DataTable(
-                id="cq-candidate-table",
-                page_size=12,
-                sort_action="native",
-                filter_action="native",
-                style_table={"overflowX": "auto"},
-                style_cell={"fontFamily": "Segoe UI", "fontSize": 12, "padding": "7px"},
-                style_header={"fontWeight": "700", "backgroundColor": "#eaf3ff"},
-            ),
-        ],
-        style={"paddingTop": "12px"},
-    )
-
-
-def _batch_layout():
-    return html.Div(
-        [
-            html.Div(
-                [
-                    _field(
-                        "Experiment config",
-                        dcc.Input(
-                            id="batch-config-path",
-                            value=str(ROOT / "experiments" / "configs" / "formal_hardware_matrix_v2.json"),
-                            style=INPUT_STYLE,
-                        ),
-                        span=2,
-                    ),
-                    _field(
-                        "Results root",
-                        dcc.Input(
-                            id="batch-results-root",
-                            value=str(ROOT / "results" / "experiments"),
-                            style=INPUT_STYLE,
-                        ),
-                        span=2,
-                    ),
-                    _field("Preview", html.Button("Dry Run", id="batch-preview-btn", n_clicks=0, style=BUTTON_STYLE)),
-                    _field(
-                        "Max hardware tasks",
-                        dcc.Input(id="batch-max-tasks", type="number", min=1, max=1, value=1, style=INPUT_STYLE),
-                        "Formal UI submissions are capped at one fresh task per invocation.",
-                    ),
-                    _field(
-                        "Live confirmation",
-                        dcc.Checklist(
-                            id="batch-confirm-live",
-                            options=[
-                                {
-                                    "label": " I reviewed the dry run and confirm one fresh hardware task",
-                                    "value": "confirmed",
-                                }
-                            ],
-                            value=[],
-                        ),
-                    ),
-                    _field("Start", html.Button("Start Background Batch", id="batch-start-btn", n_clicks=0, style=BUTTON_STYLE)),
-                    _field("Resume", html.Button("Resume", id="batch-resume-btn", n_clicks=0, style=BUTTON_STYLE)),
-                    _field("Pause", html.Button("Pause after current task", id="batch-pause-btn", n_clicks=0, style={**BUTTON_STYLE, "background": "#8b5e00"})),
-                ],
-                style={**GRID_STYLE, **PANEL_STYLE, "marginBottom": "12px"},
-            ),
-            html.Div(id="batch-control-output", style=STATUS_BOX_STYLE),
-            html.Pre(id="batch-progress-output", style={**PANEL_STYLE, "whiteSpace": "pre-wrap", "maxHeight": "440px", "overflowY": "auto"}),
-            dcc.Interval(id="batch-progress-interval", interval=3000, n_intervals=0),
-        ],
-        style={"paddingTop": "12px"},
-    )
-
-
-def _history_layout():
-    return html.Div(
-        [
-            html.Div(
-                [
-                    _field(
-                        "Results root",
-                        dcc.Input(
-                            id="history-results-root",
-                            value=str(ROOT / "results" / "experiments"),
-                            style=INPUT_STYLE,
-                        ),
-                        span=2,
-                    ),
-                    _field("Refresh", html.Button("Refresh History", id="history-refresh-btn", n_clicks=0, style=BUTTON_STYLE)),
-                    _field("Instance filter", dcc.Input(id="history-instance-filter", value="", style=INPUT_STYLE)),
-                    _field("Backend filter", dcc.Input(id="history-backend-filter", value="", style=INPUT_STYLE)),
-                    _field("Status filter", dcc.Input(id="history-status-filter", value="", style=INPUT_STYLE)),
-                    _field("Source filter", dcc.Input(id="history-source-filter", value="", style=INPUT_STYLE)),
-                ],
-                style={**GRID_STYLE, **PANEL_STYLE, "marginBottom": "12px"},
-            ),
-            dash_table.DataTable(
-                id="history-table",
-                page_size=15,
-                sort_action="native",
-                filter_action="native",
-                style_table={"overflowX": "auto"},
-                style_cell={"fontFamily": "Segoe UI", "fontSize": 12, "padding": "7px", "textAlign": "left"},
-                style_header={"fontWeight": "700", "backgroundColor": "#eaf3ff"},
-            ),
-        ],
-        style={"paddingTop": "12px"},
-    )
-
-
-def _capacity_for_pressure(seed: int, customers: int, vehicles: int, pressure: str) -> tuple[int, int]:
-    probe = generate_dispatch_instance(seed, customers, vehicles, 999999)
-    minimum = math.ceil(probe.total_demand / vehicles)
-    ratio = {"loose": 1.30, "medium": 1.15, "tight": 1.0}.get(pressure, 1.15)
-    return max(minimum, math.ceil(minimum * ratio)), probe.total_demand
-
-
-app = Dash(__name__)
-app.title = "Quantum Route Forge"
-
-_initial_status, _initial_figure, _initial_metrics, _initial_table = _generate_outputs(
-    seed=2026,
-    customers=8,
-    vehicles=2,
-    capacity=13,
-    mode="classical",
-    time_limit=8,
-    quafu_token="",
-    quafu_backend="",
-    quafu_base_url="",
-    quafu_shots=1024,
-    quafu_max_qubits=8,
-    quafu_wait="false",
-    quafu_timeout_sec=25,
-    quafu_proxy_url="",
-    quafu_verify_ssl="true",
-    quafu_result_task_id="",
-    quafu_manual_bitstring="",
-)
-
-app.layout = html.Div(
-    style=PAGE_STYLE,
-    children=[
+controls = html.Div(
+    [
         html.Div(
             [
-                html.H1(
-                    "Quantum Route Forge",
-                    style={"marginBottom": "8px", "fontSize": "44px", "lineHeight": "1.05"},
-                ),
-                html.P(
-                    "Original competition project: quantum-enhanced fleet assignment + local route refinement.",
-                    style={"marginTop": "0", "color": "#425d78", "fontSize": "18px"},
-                ),
-            ],
-            style={"padding": "4px 4px 12px 4px"},
-        ),
-        dcc.Tabs(
-            id="main-tabs",
-            value="single-run",
-            children=[
-                dcc.Tab(
-                    label="Single Run",
-                    value="single-run",
-                    children=[
-        html.Div(
-            style={**PANEL_STYLE, "marginBottom": "12px"},
-            children=[
-                html.Div(
-                    "Scenario Settings",
-                    style={"fontWeight": "700", "fontSize": "15px", "marginBottom": "10px", "color": "#1a3552"},
-                ),
-                html.Div(
-                    style=GRID_STYLE,
-                    children=[
-                        _field("Seed", dcc.Input(id="seed", type="number", value=2026, style=INPUT_STYLE)),
-                        _field(
-                            "Customers",
-                            dcc.Input(id="customers", type="number", min=8, max=160, value=8, style=INPUT_STYLE),
-                        ),
-                        _field(
-                            "Vehicles",
-                            dcc.Input(id="vehicles", type="number", min=1, max=8, value=2, style=INPUT_STYLE),
-                        ),
-                        _field(
-                            "Capacity",
-                            dcc.Input(id="capacity", type="number", min=5, max=120, value=13, style=INPUT_STYLE),
-                        ),
-                        _field(
-                            "Mode",
-                            dcc.Dropdown(
-                                id="mode",
-                                options=[
-                                    {"label": "Quafu Real Quantum", "value": "quantum"},
-                                    {"label": "Classical Simulated Annealing", "value": "classical"},
-                                ],
-                                value="classical",
-                                clearable=False,
-                                style=INPUT_STYLE,
-                            ),
-                        ),
-                        _field(
-                            "Time Limit (s)",
-                            dcc.Input(id="time-limit", type="number", min=5, max=120, value=10, style=INPUT_STYLE),
-                        ),
-                        _field(
-                            "Capacity Pressure",
-                            dcc.Dropdown(
-                                id="capacity-pressure",
-                                options=[{"label": value.title(), "value": value} for value in ("loose", "medium", "tight")],
-                                value="medium",
-                                clearable=False,
-                                style=INPUT_STYLE,
-                            ),
-                        ),
-                        _field(
-                            "Auto Capacity",
-                            html.Button("Set feasible capacity", id="auto-capacity-btn", n_clicks=0, style=BUTTON_STYLE),
-                        ),
-                        html.Div(id="capacity-diagnostic", style=STATUS_BOX_STYLE),
-                    ],
-                ),
-            ],
+                html.Div("RUN CONFIG", style={"fontSize": "11px", "letterSpacing": "2px", "color": "#69e2ff"}),
+                html.H3("同条件公平对照", style={"margin": "5px 0 0", "fontSize": "18px"}),
+            ]
         ),
         html.Div(
-            id="quantum-connection-panel",
-            style={**PANEL_STYLE, "marginBottom": "12px", "display": "none"},
-            children=[
-                html.Div(
-                    "Quantum Connection",
-                    style={"fontWeight": "700", "fontSize": "15px", "marginBottom": "10px", "color": "#1a3552"},
+            [
+                _field("客户数", _number("num-customers", 16, 4, 60)),
+                _field("车辆数", _number("num-vehicles", 3, 2, 10)),
+                _field("车辆容量", _number("vehicle-capacity", 24, 2, 100)),
+                _field("Seed", _number("seed", 2026, 0, 999999)),
+                _field(
+                    "运行模式",
+                    dcc.Dropdown(
+                        id="mode",
+                        value="deepblock_simulator",
+                        clearable=False,
+                        options=[
+                            {"label": "Baihua Hardware", "value": "deepblock_hardware"},
+                            {"label": "Uniform Random", "value": "deepblock_random"},
+                            {"label": "Ideal Simulator", "value": "deepblock_simulator"},
+                            {"label": "Local Exact", "value": "deepblock_exact"},
+                        ],
+                    ),
                 ),
-                html.Div(
-                    style=GRID_STYLE,
-                    children=[
-                        _field(
-                            "Token",
-                            dcc.Input(
-                                id="quafu-token",
-                                type="password",
-                                placeholder="api_token or access_token (JWT)",
-                                style=INPUT_STYLE,
-                            ),
-                            "Use browser access_token for quafu-sqc.",
-                            span=2,
-                        ),
-                        _field("Backend", dcc.Input(id="quafu-backend", type="text", placeholder="ScQ-P10", style=INPUT_STYLE)),
-                        _field(
-                            "Base URL",
-                            dcc.Input(
-                                id="quafu-base-url",
-                                type="text",
-                                placeholder="https://quafu-sqc.baqis.ac.cn/",
-                                style=INPUT_STYLE,
-                            ),
-                            span=2,
-                        ),
-                        _field(
-                            "Shots",
-                            dcc.Input(id="quafu-shots", type="number", min=100, max=20000, value=1024, style=INPUT_STYLE),
-                        ),
-                        _field(
-                            "Max Qubits",
-                            dcc.Input(id="quafu-max-qubits", type="number", min=2, max=32, value=8, style=INPUT_STYLE),
-                            "Smaller value (2-4) may return results faster on busy real hardware.",
-                        ),
-                        _field(
-                            "Timeout (s)",
-                            dcc.Input(
-                                id="quafu-timeout-sec",
-                                type="number",
-                                min=5,
-                                max=120,
-                                value=25,
-                                style=INPUT_STYLE,
-                            ),
-                        ),
-                        _field(
-                            "Proxy URL",
-                            dcc.Input(
-                                id="quafu-proxy-url",
-                                type="text",
-                                value="",
-                                placeholder="Optional: leave empty unless you use local proxy",
-                                style=INPUT_STYLE,
-                            ),
-                        ),
-                        _field(
-                            "Manual Seed Bitstring",
-                            dcc.Input(
-                                id="quafu-manual-bitstring",
-                                type="text",
-                                value="",
-                                placeholder="Optional override, e.g. 01011010",
-                                style=INPUT_STYLE,
-                            ),
-                            "Use only 0/1. When provided, this seed overrides pending/missing Quafu bitstring.",
-                            span=2,
-                        ),
-                        _field(
-                            "Result Task ID",
-                            dcc.Input(
-                                id="quafu-result-task-id",
-                                type="text",
-                                value="",
-                                placeholder="Optional: query existing task result first",
-                                style=INPUT_STYLE,
-                            ),
-                            "When provided, the app first tries to fetch this task's bitstring before creating a new task.",
-                            span=2,
-                        ),
-                    ],
+                _field("Backend", dcc.Input(id="backend", value="Baihua", style={"width": "100%", "height": "38px"})),
+                _field("Shots", _number("shots", 4096, 1, 100000)),
+                _field("Top-k", _number("candidate-k", 64, 1, 256)),
+                _field(
+                    "QAOA depth",
+                    dcc.Dropdown(
+                        id="qaoa-depth",
+                        value=1,
+                        clearable=False,
+                        options=[{"label": f"p = {value}", "value": value} for value in (1, 2, 3)],
+                    ),
                 ),
             ],
+            style={"display": "grid", "gridTemplateColumns": "repeat(3, minmax(135px, 1fr))", "gap": "12px", "marginTop": "16px"},
+        ),
+        dcc.Checklist(
+            id="hardware-confirm",
+            options=[
+                {
+                    "label": " 我确认：Hardware 模式将真实提交最多 3 个 Baihua 任务",
+                    "value": "confirm",
+                }
+            ],
+            value=[],
+            style={"fontSize": "12px", "color": "#d8b56f", "marginTop": "13px"},
         ),
         html.Div(
-            style={**PANEL_STYLE, "marginBottom": "12px"},
-            children=[
-                html.Div(
-                    "Execution",
-                    style={"fontWeight": "700", "fontSize": "15px", "marginBottom": "10px", "color": "#1a3552"},
-                ),
-                html.Div(
-                    style=GRID_STYLE,
-                    children=[
-                        _field(
-                            "Wait For Quantum Result",
-                            dcc.Dropdown(
-                                id="quafu-wait",
-                                options=[
-                                    {"label": "Yes (sync)", "value": "true"},
-                                    {"label": "No (submit only)", "value": "false"},
-                                ],
-                                value="true",
-                                clearable=False,
-                                style=INPUT_STYLE,
-                            ),
-                        ),
-                        _field(
-                            "SSL Verify",
-                            dcc.Dropdown(
-                                id="quafu-verify-ssl",
-                                options=[
-                                    {"label": "On", "value": "true"},
-                                    {"label": "Off (diagnostic)", "value": "false"},
-                                ],
-                                value="true",
-                                clearable=False,
-                                style=INPUT_STYLE,
-                            ),
-                        ),
-                        _field(
-                            "Submit New Task",
-                            html.Button("Submit / Run", id="submit-task-btn", n_clicks=0, style=BUTTON_STYLE),
-                            "Classical mode runs locally; quantum mode submits a new task.",
-                        ),
-                        _field(
-                            "Query Existing Task",
-                            html.Button("Query Task", id="query-task-btn", n_clicks=0, style=BUTTON_STYLE),
-                            "Requires Result Task ID and never submits a replacement task.",
-                        ),
-                        _field(
-                            "Apply Manual Bitstring",
-                            html.Button("Debug only", id="manual-task-btn", n_clicks=0, style={**BUTTON_STYLE, "background": "#8b5e00"}),
-                            "MANUAL DEBUG source; excluded from formal statistics.",
-                        ),
-                    ],
-                ),
+            [
+                html.Button("运行 DeepBlock 对照", id="run-btn", n_clicks=0, className="run-button"),
+                html.Div("同一实例 · 同一初始分配 · 同一 Top-k · 严格改善才接受", style={"fontSize": "11px", "color": MUTED}),
             ],
-        ),
-        dcc.Loading(
-            type="dot",
-            children=[
-                html.Div(
-                    id="status-line",
-                    children=_initial_status,
-                    style=STATUS_BOX_STYLE,
-                ),
-                html.Div(
-                    [dcc.Graph(id="route-graph", figure=_initial_figure, config={"displayModeBar": False})],
-                    style=PANEL_STYLE,
-                ),
-                html.Div(
-                    id="metrics-line",
-                    children=_initial_metrics,
-                    style=METRICS_BOX_STYLE,
-                ),
-                html.Div(id="table-area", children=_initial_table, style=PANEL_STYLE),
-            ],
-        ),
-                    ],
-                ),
-                dcc.Tab(label="Candidate Quality", value="candidate-quality", children=[_candidate_quality_layout()]),
-                dcc.Tab(label="Batch Experiment", value="batch", children=[_batch_layout()]),
-                dcc.Tab(label="Experiment History", value="history", children=[_history_layout()]),
-            ],
+            style={"display": "flex", "alignItems": "center", "gap": "15px", "marginTop": "14px"},
         ),
     ],
+    style={**PANEL, "padding": "20px"},
+)
+
+
+route_page = html.Div(
+    [
+        html.Div(id="metric-row", style={"display": "grid", "gridTemplateColumns": "repeat(5, 1fr)", "gap": "12px"}),
+        html.Div(
+            [
+                html.Div(dcc.Graph(id="initial-route", figure=_empty_figure("初始路线")), style={**PANEL, "padding": "5px"}),
+                html.Div(dcc.Graph(id="final-route", figure=_empty_figure("最终路线")), style={**PANEL, "padding": "5px"}),
+            ],
+            style={"display": "grid", "gridTemplateColumns": "1fr 1fr", "gap": "14px", "marginTop": "14px"},
+        ),
+        html.Div([html.H3("车辆路线明细"), _table("route-table", 10)], style={**PANEL, "padding": "18px", "marginTop": "14px"}),
+    ]
+)
+
+
+process_page = html.Div(
+    [
+        html.Div(
+            [
+                html.Div([html.Div("DEEPBLOCK TRACE", className="eyebrow"), html.H2("B1 · B2 · B3 扫描过程", style={"margin": "6px 0"})]),
+                html.Div(id="process-badges", style={"display": "flex", "gap": "8px", "flexWrap": "wrap"}),
+            ],
+            style={"display": "flex", "justifyContent": "space-between", "alignItems": "center"},
+        ),
+        html.Div([html.H3("Block 与接受决策"), _table("block-table", 10)], style={**PANEL, "padding": "18px", "marginTop": "14px"}),
+        html.Div([html.H3("Top-k 候选（逐 bitstring 真路线评价）"), _table("candidate-table", 16)], style={**PANEL, "padding": "18px", "marginTop": "14px"}),
+        html.Details(
+            [
+                html.Summary("查看完整 counts / QASM / 编译审计", style={"cursor": "pointer", "fontWeight": 700, "color": "#9fc6ff"}),
+                html.Pre(id="evidence-json", style={"whiteSpace": "pre-wrap", "fontSize": "11px", "color": "#94abd0", "maxHeight": "560px", "overflow": "auto"}),
+            ],
+            style={**PANEL, "padding": "18px", "marginTop": "14px"},
+        ),
+    ]
+)
+
+
+comparison_page = html.Div(
+    [
+        html.Div(id="fairness-strip", style={**PANEL, "padding": "14px 18px"}),
+        html.Div(
+            [
+                html.Div(dcc.Graph(id="comparison-bars", figure=_empty_figure("最终距离对比")), style={**PANEL, "padding": "5px"}),
+                html.Div(dcc.Graph(id="scan-lines", figure=_empty_figure("扫描距离变化")), style={**PANEL, "padding": "5px"}),
+            ],
+            style={"display": "grid", "gridTemplateColumns": "1fr 1fr", "gap": "14px", "marginTop": "14px"},
+        ),
+        html.Div([html.H3("Initial / Hardware / Random / Simulator / Exact"), _table("comparison-table", 10)], style={**PANEL, "padding": "18px", "marginTop": "14px"}),
+    ]
+)
+
+
+history_page = html.Div(
+    [
+        html.Div(
+            [
+                html.Div([html.Div("LOCAL HISTORY", className="eyebrow"), html.H2("运行历史与证据重载", style={"margin": "6px 0"})]),
+                html.Div(
+                    [
+                        dcc.Dropdown(id="history-run-id", placeholder="选择 run ID", style={"minWidth": "310px"}),
+                        html.Button("重新打开", id="open-history-btn", n_clicks=0, className="secondary-button"),
+                        html.Button("刷新", id="refresh-history-btn", n_clicks=0, className="secondary-button"),
+                    ],
+                    style={"display": "flex", "gap": "10px", "alignItems": "center"},
+                ),
+            ],
+            style={"display": "flex", "justifyContent": "space-between", "alignItems": "center"},
+        ),
+        html.Div([_table("history-table", 12)], style={**PANEL, "padding": "18px", "marginTop": "14px"}),
+        html.Div(id="history-detail", style={**PANEL, "padding": "18px", "marginTop": "14px"}),
+    ]
+)
+
+
+app = Dash(__name__, title="Quantum Route Forge · DeepBlock", suppress_callback_exceptions=True)
+app.layout = html.Div(
+    [
+        dcc.Store(id="run-store", data=INITIAL_PAYLOAD),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.Div("QRF", className="logo-mark"),
+                        html.Div(
+                            [
+                                html.Div("QUANTUM ROUTE FORGE", className="eyebrow"),
+                                html.H1("Baihua DeepBlock 控制台", style={"margin": "3px 0", "fontSize": "28px"}),
+                                html.Div("可复核的量子候选生成 · 经典约束修复 · 真实路线单调接受", style={"color": MUTED}),
+                            ]
+                        ),
+                    ],
+                    style={"display": "flex", "gap": "16px", "alignItems": "center"},
+                ),
+                html.Div(
+                    [
+                        html.Span("Baihua", className="status-pill"),
+                        html.Span("≤ 8 qubits / block", className="status-pill"),
+                        html.Span("Hardware ≠ fallback", className="status-pill"),
+                    ],
+                    style={"display": "flex", "gap": "8px"},
+                ),
+            ],
+            style={"display": "flex", "justifyContent": "space-between", "alignItems": "center", "marginBottom": "18px"},
+        ),
+        controls,
+        html.Div(id="run-status", children=_initial_status_text(), className="status-banner"),
+        dcc.Tabs(
+            id="tabs",
+            value="route",
+            children=[
+                dcc.Tab(label="01  路线优化", value="route", children=[route_page]),
+                dcc.Tab(label="02  DeepBlock 过程", value="process", children=[process_page]),
+                dcc.Tab(label="03  方法对比", value="comparison", children=[comparison_page]),
+                dcc.Tab(label="04  运行历史", value="history", children=[history_page]),
+            ],
+        ),
+        html.Div(
+            "Quantum Route Forge · competition/deepblock-ui-integration · Hardware failures never become Exact results",
+            style={"textAlign": "center", "color": "#536b8e", "fontSize": "11px", "padding": "28px 0 10px"},
+        ),
+    ],
+    style={"maxWidth": "1500px", "margin": "0 auto", "padding": "24px", "color": INK},
 )
 
 
 @app.callback(
-    Output("status-line", "children"),
-    Output("route-graph", "figure"),
-    Output("metrics-line", "children"),
-    Output("table-area", "children"),
-    Input("submit-task-btn", "n_clicks"),
-    Input("query-task-btn", "n_clicks"),
-    Input("manual-task-btn", "n_clicks"),
+    Output("run-store", "data"),
+    Output("run-status", "children"),
+    Input("run-btn", "n_clicks"),
+    Input("open-history-btn", "n_clicks"),
+    State("history-run-id", "value"),
+    State("num-customers", "value"),
+    State("num-vehicles", "value"),
+    State("vehicle-capacity", "value"),
     State("seed", "value"),
-    State("customers", "value"),
-    State("vehicles", "value"),
-    State("capacity", "value"),
     State("mode", "value"),
-    State("time-limit", "value"),
-    State("quafu-token", "value"),
-    State("quafu-backend", "value"),
-    State("quafu-base-url", "value"),
-    State("quafu-shots", "value"),
-    State("quafu-max-qubits", "value"),
-    State("quafu-wait", "value"),
-    State("quafu-timeout-sec", "value"),
-    State("quafu-proxy-url", "value"),
-    State("quafu-verify-ssl", "value"),
-    State("quafu-result-task-id", "value"),
-    State("quafu-manual-bitstring", "value"),
+    State("backend", "value"),
+    State("shots", "value"),
+    State("candidate-k", "value"),
+    State("qaoa-depth", "value"),
+    State("hardware-confirm", "value"),
+    prevent_initial_call=True,
 )
-def run_pipeline(
-    _submit_clicks,
-    _query_clicks,
-    _manual_clicks,
+def execute_or_open(
+    _run_clicks,
+    _open_clicks,
+    history_run_id,
+    num_customers,
+    num_vehicles,
+    vehicle_capacity,
     seed,
-    customers,
-    vehicles,
-    capacity,
     mode,
-    time_limit,
-    quafu_token,
-    quafu_backend,
-    quafu_base_url,
-    quafu_shots,
-    quafu_max_qubits,
-    quafu_wait,
-    quafu_timeout_sec,
-    quafu_proxy_url,
-    quafu_verify_ssl,
-    quafu_result_task_id,
-    quafu_manual_bitstring,
+    backend,
+    shots,
+    candidate_k,
+    qaoa_depth,
+    hardware_confirm,
 ):
-    action_by_trigger = {
-        "submit-task-btn": "submit",
-        "query-task-btn": "query",
-        "manual-task-btn": "manual",
-    }
-    quantum_action = action_by_trigger.get(ctx.triggered_id, "auto")
-    return _generate_outputs(
-        seed=seed,
-        customers=customers,
-        vehicles=vehicles,
-        capacity=capacity,
-        mode=mode,
-        time_limit=time_limit,
-        quafu_token=quafu_token,
-        quafu_backend=quafu_backend,
-        quafu_base_url=quafu_base_url,
-        quafu_shots=quafu_shots,
-        quafu_max_qubits=quafu_max_qubits,
-        quafu_wait=quafu_wait,
-        quafu_timeout_sec=quafu_timeout_sec,
-        quafu_proxy_url=quafu_proxy_url,
-        quafu_verify_ssl=quafu_verify_ssl,
-        quafu_result_task_id=quafu_result_task_id,
-        quafu_manual_bitstring=quafu_manual_bitstring,
-        quantum_action=quantum_action,
-    )
-
-
-@app.callback(Output("quantum-connection-panel", "style"), Input("mode", "value"))
-def toggle_quantum_connection(mode):
-    style = {**PANEL_STYLE, "marginBottom": "12px"}
-    if str(mode).lower() not in {"quantum", "quafu"}:
-        style["display"] = "none"
-    return style
-
-
-@app.callback(
-    Output("capacity-diagnostic", "children"),
-    Input("seed", "value"),
-    Input("customers", "value"),
-    Input("vehicles", "value"),
-    Input("capacity", "value"),
-    Input("capacity-pressure", "value"),
-)
-def show_capacity_diagnostic(seed, customers, vehicles, capacity, pressure):
-    seed = int(seed or 2026)
-    customers = max(4, int(customers or 8))
-    vehicles = max(1, int(vehicles or 2))
-    recommended, demand = _capacity_for_pressure(seed, customers, vehicles, pressure or "medium")
-    current = max(1, int(capacity or 1))
-    feasible = current * vehicles >= demand
-    return (
-        f"Demand {demand} | fleet capacity {current * vehicles} | minimum {math.ceil(demand / vehicles)} "
-        f"per vehicle | {str(pressure).title()} recommendation {recommended} | "
-        f"{'FEASIBLE' if feasible else 'INFEASIBLE'}"
-    )
-
-
-@app.callback(
-    Output("capacity", "value"),
-    Input("auto-capacity-btn", "n_clicks"),
-    State("seed", "value"),
-    State("customers", "value"),
-    State("vehicles", "value"),
-    State("capacity-pressure", "value"),
-    prevent_initial_call=True,
-)
-def set_auto_capacity(_clicks, seed, customers, vehicles, pressure):
-    recommended, _demand = _capacity_for_pressure(
-        int(seed or 2026),
-        max(4, int(customers or 8)),
-        max(1, int(vehicles or 2)),
-        pressure or "medium",
-    )
-    return recommended
-
-
-@app.callback(
-    Output("cq-summary-cards", "children"),
-    Output("cq-energy-graph", "figure"),
-    Output("cq-conclusion", "children"),
-    Output("cq-candidate-table", "data"),
-    Output("cq-candidate-table", "columns"),
-    Input("cq-load-btn", "n_clicks"),
-    State("cq-evidence-path", "value"),
-    State("cq-threshold-path", "value"),
-    State("cq-seed", "value"),
-    State("cq-customers", "value"),
-    State("cq-pressure", "value"),
-)
-def load_candidate_quality(_clicks, evidence_path, threshold_path, seed, customers, pressure):
+    if ctx.triggered_id == "open-history-btn":
+        if not history_run_id:
+            return no_update, "请选择一个历史 run ID。"
+        try:
+            payload = HISTORY.load(history_run_id)
+            return payload, f"已重新打开历史结果 {history_run_id}。"
+        except Exception as exc:
+            return no_update, f"历史结果读取失败：{type(exc).__name__}: {exc}"
     try:
-        seed = int(seed or 2026)
-        customers = max(4, int(customers or 4))
-        capacity, _demand = _capacity_for_pressure(seed, customers, 2, pressure or "medium")
-        instance = generate_dispatch_instance(seed, customers, 2, capacity)
-        selected = sorted(instance.customers, key=lambda customer: (-customer.demand, customer.customer_id))
-        selected_ids = [customer.customer_id for customer in selected]
-        evidence_payload = json.loads(Path(str(evidence_path)).read_text(encoding="utf-8"))
-        evidence_source = str(evidence_payload.get("source") or "replay")
-        measurement = measurement_from_evidence(
-            Path(str(evidence_path)),
-            source=evidence_source,
-            selected_customer_ids=selected_ids,
+        instance = generate_dispatch_instance(
+            seed=int(seed),
+            num_customers=int(num_customers),
+            num_vehicles=int(num_vehicles),
+            vehicle_capacity=int(vehicle_capacity),
         )
-        bqm = build_assignment_bqm(instance)
-        thresholds = json.loads(Path(str(threshold_path)).read_text(encoding="utf-8"))
-        preferred_ids = [
-            f"seed{seed}_c{customers}_v2_{pressure}",
-            f"seed{seed}_c{customers}_v2",
-        ]
-        info = None
-        for instance_id in preferred_ids:
-            if instance_id in thresholds.get("instances", {}):
-                info = dict(thresholds["instances"][instance_id])
-                selected_instance_id = instance_id
-                break
-        if info is None:
-            selected_instance_id, raw_info = next(iter(thresholds.get("instances", {}).items()))
-            info = dict(raw_info)
-        if "best_classical_energy_all" not in info:
-            info["best_classical_energy_all"] = info.get("threshold")
-            info["best_classical_energy_feasible"] = info.get("threshold")
-        if info.get("exact_optimum_energy") is None or info.get("random_median_energy") is None:
-            info.update(exact_assignment_reference(instance, bqm, selected_customer_ids=selected_ids))
-        evaluations, summary = evaluate_measurement(
-            measurement,
-            instance_id=selected_instance_id,
+        confirmed = "confirm" in (hardware_confirm or [])
+        payload = run_deepblock_optimization(
             instance=instance,
-            bqm=bqm,
-            threshold_info=info,
+            mode=mode,
+            backend=backend,
+            shots=int(shots),
+            candidate_k=int(candidate_k),
+            qaoa_depth=int(qaoa_depth),
+            pool_size=16,
+            block_size=8,
+            overlap=3,
+            seed=int(seed),
+            submit_hardware=(mode == "deepblock_hardware" and confirmed),
+            confirm_hardware_submit=(mode == "deepblock_hardware" and confirmed),
+            history_root=HISTORY.root,
         )
-        summary_dict = summary.to_dict()
-        card_keys = [
-            "shots_received",
-            "unique_bitstrings",
-            "raw_feasible_rate",
-            "quality_hit_rate",
-            "random_quality_hit_rate",
-            "classical_reach_feasible_rate",
-            "strict_improvement_rate",
-            "best_gap",
+        selected = payload["selected"]
+        return (
+            payload,
+            f"{payload['run_id']} · {selected['status']} · source={selected['source']} · "
+            f"{selected['baseline_distance']:.3f} → {selected['final_distance']:.3f} · "
+            f"accepted={selected['accepted_moves']}",
+        )
+    except Exception as exc:
+        return no_update, f"运行失败：{type(exc).__name__}: {exc}"
+
+
+@app.callback(
+    Output("metric-row", "children"),
+    Output("initial-route", "figure"),
+    Output("final-route", "figure"),
+    Output("route-table", "data"),
+    Output("route-table", "columns"),
+    Output("block-table", "data"),
+    Output("block-table", "columns"),
+    Output("candidate-table", "data"),
+    Output("candidate-table", "columns"),
+    Output("process-badges", "children"),
+    Output("evidence-json", "children"),
+    Output("comparison-bars", "figure"),
+    Output("scan-lines", "figure"),
+    Output("comparison-table", "data"),
+    Output("comparison-table", "columns"),
+    Output("fairness-strip", "children"),
+    Output("history-detail", "children"),
+    Input("run-store", "data"),
+)
+def render_run(payload):
+    if not payload:
+        metrics = [
+            _metric("Initial", "—"),
+            _metric("Final", "—"),
+            _metric("Improvement", "—"),
+            _metric("Accepted", "—"),
+            _metric("Source", "—", "#9478ff"),
         ]
-        cards = [
-            html.Div(
-                [
-                    html.Div(key.replace("_", " ").title(), style=LABEL_STYLE),
-                    html.Div(
-                        f"{summary_dict[key]:.4g}" if isinstance(summary_dict[key], float) else str(summary_dict[key]),
-                        style={"fontSize": "24px", "fontWeight": "700"},
-                    ),
-                ],
-                style=PANEL_STYLE,
+        empty = _empty_figure("等待 DeepBlock 运行")
+        return (
+            metrics,
+            empty,
+            empty,
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            "{}",
+            empty,
+            empty,
+            [],
+            [],
+            "公平性参数将在运行后锁定。",
+            "选择历史记录可查看完整详情。",
+        )
+
+    instance = payload["instance"]
+    initial = payload["initial"]
+    selected = payload["selected"]
+    improvement = float(selected.get("improvement", 0.0))
+    metrics = [
+        _metric("Initial distance", f"{initial['distance']:.3f}", "#dce8ff"),
+        _metric("Final distance", f"{selected['final_distance']:.3f}", "#69e2ff"),
+        _metric("Improvement", f"{improvement:.3f} · {selected['improvement_pct']:.2f}%", "#55e6a5" if improvement > 0 else "#ffca6b"),
+        _metric("Accepted moves", str(selected.get("accepted_moves", 0)), "#ffca6b"),
+        _metric("Source / status", f"{selected.get('source')} · {selected.get('status')}", "#9478ff"),
+    ]
+    initial_figure = _route_figure(instance, initial.get("routes", []), "容量约束初始路线")
+    final_figure = _route_figure(instance, selected.get("routes", []), "DeepBlock 最终路线")
+
+    route_rows = [
+        {
+            "vehicle": route["vehicle_id"],
+            "customers": " → ".join(f"C{value}" for value in route["customer_ids"]) or "—",
+            "load": route["load"],
+            "capacity": instance["vehicle_capacity"],
+            "distance": round(route["distance"], 6),
+        }
+        for route in selected.get("routes", [])
+    ]
+    route_columns = [{"name": name, "id": key} for name, key in [
+        ("车辆", "vehicle"), ("客户顺序", "customers"), ("载荷", "load"), ("容量", "capacity"), ("距离", "distance")
+    ]]
+
+    block_rows = []
+    candidate_rows = []
+    evidence = []
+    for trace in selected.get("traces", []):
+        block = trace["block"]
+        run = trace["run"]
+        batch = trace.get("candidates") or {}
+        block_rows.append(
+            {
+                "sequence": trace["sequence"],
+                "block": block["block_id"],
+                "vehicle_pair": str(block["vehicle_pair"]),
+                "customers": str(block["customer_ids"]),
+                "width": block["width"],
+                "depth": run["parameters"]["depth"],
+                "task_id": run.get("task_id") or "—",
+                "backend": run.get("backend") or "—",
+                "shots": sum(run.get("counts", {}).values()),
+                "accepted": trace["accepted"],
+                "distance": round(trace["distance_after"], 6),
+                "decision": trace["decision"],
+                "status": trace["status"],
+            }
+        )
+        for rank, row in enumerate(batch.get("top_frequency", []), start=1):
+            candidate_rows.append(
+                {
+                    "block": block["block_id"],
+                    "rank": rank,
+                    "bitstring": row["bitstring"],
+                    "count": row["count"],
+                    "probability": round(row["probability"], 6),
+                    "proxy_energy": round(row["proxy_energy"], 6),
+                    "feasible": row["feasible_after_repair"],
+                    "repaired": row["repaired"],
+                    "repair": row["repair_summary"],
+                    "true_distance": round(row["true_distance"], 6),
+                    "improvement": round(row["improvement"], 6),
+                    "accepted": bool(batch.get("accepted") and batch["accepted"]["bitstring"] == row["bitstring"]),
+                }
             )
-            for key in card_keys
-        ]
-        rows = [row.to_dict() for row in evaluations]
-        figure = go.Figure()
-        figure.add_trace(
+        evidence.append(
+            {
+                "block": block,
+                "source": trace["source"],
+                "status": trace["status"],
+                "task_id": run.get("task_id"),
+                "backend": run.get("backend"),
+                "shots": run.get("shots"),
+                "counts": run.get("counts"),
+                "qasm": run.get("qasm"),
+                "physical_qasm": run.get("physical_qasm"),
+                "compilation": run.get("compilation"),
+                "message": run.get("message"),
+            }
+        )
+    block_columns = [{"name": key.replace("_", " ").title(), "id": key} for key in (block_rows[0].keys() if block_rows else [])]
+    candidate_columns = [{"name": key.replace("_", " ").title(), "id": key} for key in (candidate_rows[0].keys() if candidate_rows else [])]
+    badges = [
+        html.Span(f"source={selected.get('source')}", className="status-pill"),
+        html.Span(f"backend={selected.get('backend') or '—'}", className="status-pill"),
+        html.Span(f"tasks={len(selected.get('task_ids', []))}", className="status-pill"),
+        html.Span(f"shots received={selected.get('shots_received', 0)}", className="status-pill"),
+    ]
+
+    comparisons = payload.get("comparisons", [])
+    bar = go.Figure(
+        go.Bar(
+            x=[row["method"] for row in comparisons],
+            y=[
+                row["final_distance"]
+                if row["status"] == "COMPLETED"
+                else None
+                for row in comparisons
+            ],
+            text=[
+                f"{row['final_distance']:.2f}"
+                if row["status"] == "COMPLETED"
+                else "N/E"
+                for row in comparisons
+            ],
+            textposition="outside",
+            marker={"color": ["#536b8e", "#9478ff", "#ffca6b", "#69e2ff", "#55e6a5"]},
+        )
+    )
+    bar.update_layout(
+        template="plotly_dark",
+        title="最终真实路线距离（越低越好）",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(5,12,25,.25)",
+        height=410,
+        margin={"l": 45, "r": 20, "t": 55, "b": 35},
+        yaxis={"gridcolor": "rgba(120,150,200,.12)"},
+    )
+    scan = go.Figure()
+    for index, (arm_mode, arm) in enumerate(payload.get("arms", {}).items()):
+        ys = [arm["baseline_distance"]] + [trace["distance_after"] for trace in arm.get("traces", [])]
+        xs = ["Initial"] + [f"{trace['block']['block_id']}·{trace['sequence']}" for trace in arm.get("traces", [])]
+        scan.add_trace(
             go.Scatter(
-                x=[row.energy for row in evaluations],
-                y=[row.probability for row in evaluations],
-                mode="markers+text",
-                text=[row.bitstring for row in evaluations],
-                textposition="top center",
-                marker={
-                    "size": [8 + 35 * row.probability for row in evaluations],
-                    "color": ["#1a8f5b" if row.quality_gate_pass else "#b54a4a" for row in evaluations],
-                },
-                name=measurement.source.upper(),
+                x=xs,
+                y=ys,
+                mode="lines+markers",
+                name=arm["source"].title(),
+                line={"color": COLORS[index % len(COLORS)], "width": 2.4},
             )
         )
-        for label, value, color in (
-            ("Feasible classical threshold", info.get("best_classical_energy_feasible"), "#d97706"),
-            ("Exact optimum", info.get("exact_optimum_energy"), "#2563eb"),
-        ):
-            if value is not None:
-                figure.add_vline(x=float(value), line_dash="dash", line_color=color, annotation_text=label)
-        figure.update_layout(
-            template="plotly_white",
-            title="Measured candidate probability versus BQM energy",
-            xaxis_title="Quantum candidate energy (shared BQM evaluator)",
-            yaxis_title="Probability",
-            height=460,
-        )
-        columns = [{"name": key.replace("_", " ").title(), "id": key} for key in rows[0]] if rows else []
-        source_label = measurement.source.upper().replace("_", " ")
-        provenance = (
-            "FRESH HARDWARE EVIDENCE"
-            if measurement.source == "hardware"
-            else source_label
-        )
-        conclusion = (
-            f"{provenance} | backend={measurement.backend or 'unknown'} | "
-            f"task_id={measurement.task_id or 'none'} | shots={measurement.shots_received} | "
-            f"{summary.decision}: {summary.conclusion}"
-        )
-        return cards, figure, conclusion, rows, columns
-    except Exception as exc:
-        figure = go.Figure()
-        figure.update_layout(template="plotly_white", height=250)
-        return [], figure, f"NOT_EVALUABLE: {type(exc).__name__}: {exc}", [], []
-
-
-def _batch_store(config_path, results_root):
-    config = json.loads(Path(str(config_path)).read_text(encoding="utf-8"))
-    return config, ResultStore(Path(str(results_root)), str(config["experiment_id"]))
-
-
-@app.callback(
-    Output("batch-control-output", "children"),
-    Input("batch-preview-btn", "n_clicks"),
-    Input("batch-start-btn", "n_clicks"),
-    Input("batch-resume-btn", "n_clicks"),
-    Input("batch-pause-btn", "n_clicks"),
-    State("batch-config-path", "value"),
-    State("batch-results-root", "value"),
-    State("batch-max-tasks", "value"),
-    State("batch-confirm-live", "value"),
-    prevent_initial_call=True,
-)
-def control_batch(
-    _preview,
-    _start,
-    _resume,
-    _pause,
-    config_path,
-    results_root,
-    max_tasks,
-    live_confirmation,
-):
-    try:
-        config, store = _batch_store(config_path, results_root)
-        trigger = ctx.triggered_id
-        if trigger == "batch-preview-btn":
-            specs = expand_matrix(config)
-            _load_frozen_protocol_thresholds(config)
-            manifest = build_dry_run_manifest(config, specs)
-            return (
-                f"DRY RUN: {manifest['task_count']} tasks, "
-                f"{manifest['unique_task_keys']} unique keys, "
-                f"{manifest['total_requested_shots']} requested shots. "
-                f"Fixed backends: {', '.join(manifest['backends'])}. "
-                f"Config SHA-256: {manifest['config_sha256']}. "
-                f"No hardware task was submitted."
-            )
-        pause_path = store.path / ".pause"
-        if trigger == "batch-pause-btn":
-            pause_path.write_text("pause requested\n", encoding="utf-8")
-            return "Pause requested; the runner will stop before the next task."
-        if pause_path.exists():
-            pause_path.unlink()
-        if "confirmed" not in (live_confirmation or []):
-            return (
-                "BLOCKED: review the dry run and check the live-confirmation box before "
-                "submitting one fresh hardware task."
-            )
-        command = [
-            sys.executable,
-            str(ROOT / "experiments" / "batch_candidate_quality.py"),
-            "--config",
-            str(config_path),
-            "--results-root",
-            str(results_root),
-            "--max-hardware-tasks",
-            "1",
-            "--confirm-live",
+    scan.update_layout(
+        template="plotly_dark",
+        title="DeepBlock 扫描距离变化",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(5,12,25,.25)",
+        height=410,
+        margin={"l": 45, "r": 20, "t": 55, "b": 35},
+        yaxis={"gridcolor": "rgba(120,150,200,.12)"},
+    )
+    comparison_rows = [
+        {
+            "method": row["method"],
+            "source": row["source"],
+            "status": row["status"],
+            "final_distance": round(row["final_distance"], 6),
+            "improvement": round(row["improvement"], 6),
+            "improvement_pct": round(row["improvement_pct"], 3),
+            "accepted_moves": row["accepted_moves"],
+            "task_ids": ", ".join(row.get("task_ids", [])) or "—",
+        }
+        for row in comparisons
+    ]
+    comparison_columns = [{"name": key.replace("_", " ").title(), "id": key} for key in comparison_rows[0]]
+    fairness = payload.get("fairness", {})
+    fairness_text = html.Div(
+        [
+            html.Strong("公平性锁定：", style={"color": "#69e2ff"}),
+            html.Span("  相同实例 / 初始分配 / B1-B3 / shots / Top-k / 修复 / 路线评价器 / 严格接受规则"),
+            html.Span("  ·  全部通过" if all(fairness.values()) else "  ·  请检查", style={"color": "#55e6a5"}),
         ]
-        if trigger == "batch-resume-btn":
-            command.append("--resume")
-        log_path = store.logs_dir / "batch_ui.log"
-        with log_path.open("ab") as log_stream:
-            process = subprocess.Popen(
-                command,
-                cwd=ROOT,
-                stdout=log_stream,
-                stderr=subprocess.STDOUT,
-                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-            )
-        return f"Background batch started (pid={process.pid}). Progress is read from the result store."
-    except Exception as exc:
-        return f"Batch control error: {type(exc).__name__}: {exc}"
-
-
-@app.callback(
-    Output("batch-progress-output", "children"),
-    Input("batch-progress-interval", "n_intervals"),
-    State("batch-config-path", "value"),
-    State("batch-results-root", "value"),
-)
-def refresh_batch_progress(_interval, config_path, results_root):
-    try:
-        _config, store = _batch_store(config_path, results_root)
-        return json.dumps(
-            {"integrity": store.integrity_report(), "latest_tasks": list(store.latest_tasks_by_hash().values())[-20:]},
-            ensure_ascii=False,
-            indent=2,
-        )
-    except Exception as exc:
-        return f"No progress available: {type(exc).__name__}: {exc}"
+    )
+    history_detail = html.Div(
+        [
+            html.H3(f"当前结果 · {payload.get('run_id')}"),
+            html.P(
+                f"{payload['created_at']} · seed={payload['parameters']['seed']} · "
+                f"{payload['parameters']['num_customers']} customers · {payload['parameters']['num_vehicles']} vehicles",
+                style={"color": MUTED},
+            ),
+            html.P(
+                f"source={selected.get('source')} · backend={selected.get('backend') or '—'} · "
+                f"task IDs={', '.join(selected.get('task_ids', [])) or '—'} · status={selected.get('status')}"
+            ),
+            html.P("Warnings: " + (" | ".join(payload.get("warnings", [])) or "none"), style={"color": "#d8b56f"}),
+        ]
+    )
+    return (
+        metrics,
+        initial_figure,
+        final_figure,
+        route_rows,
+        route_columns,
+        block_rows,
+        block_columns,
+        candidate_rows,
+        candidate_columns,
+        badges,
+        json.dumps(evidence, ensure_ascii=False, indent=2),
+        bar,
+        scan,
+        comparison_rows,
+        comparison_columns,
+        fairness_text,
+        history_detail,
+    )
 
 
 @app.callback(
     Output("history-table", "data"),
     Output("history-table", "columns"),
-    Input("history-refresh-btn", "n_clicks"),
-    State("history-results-root", "value"),
-    State("history-instance-filter", "value"),
-    State("history-backend-filter", "value"),
-    State("history-status-filter", "value"),
-    State("history-source-filter", "value"),
+    Output("history-run-id", "options"),
+    Input("refresh-history-btn", "n_clicks"),
+    Input("run-store", "data"),
 )
-def refresh_history(
-    _clicks,
-    results_root,
-    instance_filter="",
-    backend_filter="",
-    status_filter="",
-    source_filter="",
-):
-    root = Path(str(results_root))
-    rows: list[dict[str, Any]] = []
-    for experiment in list_experiments(root):
-        experiment_id = str(experiment["experiment_id"])
-        try:
-            store = ResultStore(root, experiment_id)
-            latest = sorted(
-                store.latest_tasks_by_hash().values(),
-                key=lambda row: int(row.get("execution_index", 0)),
-            )
-        except (OSError, ValueError):
-            latest = []
-        if not latest:
-            rows.append(
-                {
-                    "experiment_id": experiment_id,
-                    "instance_id": "",
-                    "backend_requested": "",
-                    "backend_actual": "",
-                    "status": "incomplete_store" if not experiment.get("complete") else "no_tasks",
-                    "source": "",
-                    "task_id": "",
-                    "task_key": "",
-                    "repeat_index": "",
-                    "integrity_complete": experiment.get("complete"),
-                }
-            )
-            continue
-        for row in latest:
-            rows.append(
-                {
-                    "experiment_id": experiment_id,
-                    "instance_id": row.get("instance_id", ""),
-                    "backend_requested": row.get("backend_requested", row.get("backend", "")),
-                    "backend_actual": row.get("backend_actual", ""),
-                    "status": row.get("status", ""),
-                    "source": row.get("source", ""),
-                    "task_id": row.get("task_id", ""),
-                    "task_key": row.get("task_key", row.get("config_hash", "")),
-                    "repeat_index": row.get("repeat_index", row.get("repeat", "")),
-                    "integrity_complete": experiment.get("complete"),
-                }
-            )
-    filters = {
-        "instance_id": str(instance_filter or "").strip().lower(),
-        "backend_actual": str(backend_filter or "").strip().lower(),
-        "status": str(status_filter or "").strip().lower(),
-        "source": str(source_filter or "").strip().lower(),
-    }
-    for key, value in filters.items():
-        if value:
-            if key == "backend_actual":
-                rows = [
-                    row
-                    for row in rows
-                    if value
-                    in str(row.get("backend_actual") or row.get("backend_requested", "")).lower()
-                ]
-            else:
-                rows = [row for row in rows if value in str(row.get(key, "")).lower()]
-    columns = [{"name": key.replace("_", " ").title(), "id": key} for key in rows[0]] if rows else []
-    return rows, columns
+def refresh_history(_clicks, _payload):
+    rows = HISTORY.rows()
+    columns = [{"name": key.replace("_", " ").title(), "id": key} for key in (rows[0].keys() if rows else [])]
+    options = [{"label": f"{row['time']} · {row['run_id']} · {row['mode']}", "value": row["run_id"]} for row in rows]
+    return rows, columns, options
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Run Quantum Route Forge web app.")
-    parser.add_argument("--port", type=int, default=8050, help="Port for Dash server.")
-    parser.add_argument("--debug", action="store_true", help="Enable Dash debug mode.")
-    args = parser.parse_args()
-    app.run(port=args.port, debug=args.debug)
+app.index_string = """
+<!DOCTYPE html>
+<html>
+  <head>
+    {%metas%}
+    <title>{%title%}</title>
+    {%favicon%}
+    {%css%}
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 12% 4%, rgba(51,112,180,.24), transparent 31%),
+          radial-gradient(circle at 88% 0%, rgba(113,70,180,.19), transparent 28%),
+          #07101f;
+        font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      }
+      .logo-mark {
+        width: 54px; height: 54px; display: grid; place-items: center;
+        border-radius: 16px; color: #06101d; font-weight: 900; letter-spacing: -1px;
+        background: linear-gradient(145deg,#69e2ff,#9478ff);
+        box-shadow: 0 0 30px rgba(105,226,255,.22);
+      }
+      .eyebrow { font-size: 10px; letter-spacing: 2.4px; color: #69e2ff; font-weight: 800; }
+      .status-pill {
+        display: inline-flex; align-items: center; min-height: 28px; padding: 5px 10px;
+        border: 1px solid rgba(122,166,225,.22); border-radius: 999px;
+        background: rgba(28,49,82,.58); color: #aecdff; font-size: 11px; font-weight: 700;
+      }
+      .status-banner {
+        margin: 13px 0; padding: 11px 15px; border-left: 3px solid #69e2ff;
+        border-radius: 8px; background: rgba(15,30,54,.72); color: #a9bedc; font-size: 12px;
+      }
+      .run-button, .secondary-button {
+        border: 0; border-radius: 10px; padding: 11px 18px; cursor: pointer;
+        font-weight: 800; color: #06101d; background: linear-gradient(90deg,#69e2ff,#9478ff);
+      }
+      .secondary-button { color: #bcd3f5; background: #1a2b4a; border: 1px solid #30486f; }
+      input, .Select-control, .dash-dropdown .Select-control {
+        border-radius: 9px !important; border: 1px solid #2b4267 !important;
+        background: #0d192e !important; color: #dce8ff !important;
+      }
+      .Select-menu-outer { background: #101e36 !important; border-color: #2b4267 !important; }
+      .Select-value-label, .Select-placeholder { color: #dce8ff !important; }
+      .tab { background: #0c172b !important; color: #8299bd !important; border: 0 !important; padding: 14px !important; }
+      .tab--selected { color: #69e2ff !important; border-top: 2px solid #69e2ff !important; background: #111f38 !important; }
+      .tab-content { padding-top: 15px; }
+      @media (max-width: 900px) {
+        #metric-row { grid-template-columns: 1fr 1fr !important; }
+      }
+    </style>
+  </head>
+  <body>
+    {%app_entry%}
+    <footer>{%config%}{%scripts%}{%renderer%}</footer>
+  </body>
+</html>
+"""
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Quantum Route Forge competition UI")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=8050)
+    parser.add_argument("--debug", action="store_true")
+    args = parser.parse_args()
+    app.run(host=args.host, port=args.port, debug=args.debug)
