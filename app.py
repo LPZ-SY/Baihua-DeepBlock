@@ -19,14 +19,14 @@ from quantum_route_forge.deepblock_service import run_deepblock_optimization  # 
 from quantum_route_forge.scenario import generate_dispatch_instance  # noqa: E402
 
 
-COLORS = ["#69e2ff", "#9478ff", "#ffca6b", "#55e6a5", "#ff7f9f", "#82a7ff"]
-INK = "#dce8ff"
-MUTED = "#8fa7c9"
+COLORS = ["#2f80ed", "#7c5cfc", "#f2a93b", "#22a06b", "#e65f8e", "#5b8def"]
+INK = "#183153"
+MUTED = "#6e809b"
 PANEL = {
-    "background": "linear-gradient(145deg, rgba(19,31,57,.96), rgba(12,21,40,.96))",
-    "border": "1px solid rgba(132,166,220,.18)",
+    "background": "linear-gradient(145deg, rgba(255,255,255,.99), rgba(248,251,255,.99))",
+    "border": "1px solid #dce6f2",
     "borderRadius": "18px",
-    "boxShadow": "0 18px 50px rgba(0,0,0,.24)",
+    "boxShadow": "0 14px 38px rgba(67,90,124,.10)",
 }
 HISTORY = CompetitionHistory(ROOT / "results" / "competition_history")
 
@@ -55,9 +55,9 @@ def _initial_status_text():
 def _field(label: str, control, hint: str = ""):
     return html.Div(
         [
-            html.Label(label, style={"fontSize": "12px", "fontWeight": 700, "color": "#b9c9e4"}),
+            html.Label(label, style={"fontSize": "12px", "fontWeight": 700, "color": "#405b7d"}),
             control,
-            html.Small(hint, style={"color": "#647fa6", "lineHeight": "1.25"}) if hint else None,
+            html.Small(hint, style={"color": "#7b8da6", "lineHeight": "1.25"}) if hint else None,
         ],
         style={"display": "flex", "flexDirection": "column", "gap": "6px"},
     )
@@ -84,10 +84,10 @@ def _empty_figure(title: str, subtitle: str = "运行后显示"):
         xref="paper",
         yref="paper",
         showarrow=False,
-        font={"color": "#a9bedc", "size": 16},
+        font={"color": "#7186a2", "size": 16},
     )
     figure.update_layout(
-        template="plotly_dark",
+        template="plotly_white",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         height=410,
@@ -109,7 +109,7 @@ def _route_figure(instance: dict[str, Any], routes: list[dict[str, Any]], title:
             text=["DEPOT"],
             textposition="top center",
             name="Depot",
-            marker={"size": 19, "symbol": "star", "color": "#ffffff", "line": {"color": "#69e2ff", "width": 2}},
+            marker={"size": 19, "symbol": "star", "color": "#183153", "line": {"color": "#73b8ff", "width": 2}},
         )
     )
     for index, route in enumerate(routes or []):
@@ -130,20 +130,21 @@ def _route_figure(instance: dict[str, Any], routes: list[dict[str, Any]], title:
             )
         )
     figure.update_layout(
-        template="plotly_dark",
+        template="plotly_white",
         title={"text": title, "x": 0.03, "font": {"size": 16}},
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(5,12,25,.25)",
+        plot_bgcolor="#fbfdff",
         height=440,
         margin={"l": 35, "r": 20, "t": 55, "b": 35},
         legend={"orientation": "h", "y": -0.14},
-        xaxis={"gridcolor": "rgba(120,150,200,.10)", "zeroline": False},
-        yaxis={"gridcolor": "rgba(120,150,200,.10)", "zeroline": False, "scaleanchor": "x", "scaleratio": 1},
+        font={"color": INK},
+        xaxis={"gridcolor": "#e8eef6", "zeroline": False},
+        yaxis={"gridcolor": "#e8eef6", "zeroline": False, "scaleanchor": "x", "scaleratio": 1},
     )
     return figure
 
 
-def _metric(label: str, value: str, tone: str = "#69e2ff"):
+def _metric(label: str, value: str, tone: str = "#2f80ed"):
     return html.Div(
         [
             html.Div(label, style={"fontSize": "11px", "letterSpacing": "1px", "textTransform": "uppercase", "color": MUTED}),
@@ -163,15 +164,15 @@ def _table(component_id: str, page_size: int = 10):
         filter_action="native",
         style_table={"overflowX": "auto", "borderRadius": "12px"},
         style_header={
-            "backgroundColor": "#152544",
-            "color": "#cfe0fb",
+            "backgroundColor": "#edf4fc",
+            "color": "#294866",
             "fontWeight": 700,
-            "border": "1px solid #263a5e",
+            "border": "1px solid #d5e1ef",
         },
         style_cell={
-            "backgroundColor": "#0e1a31",
-            "color": "#b9c9e4",
-            "border": "1px solid #213452",
+            "backgroundColor": "#ffffff",
+            "color": "#405b7d",
+            "border": "1px solid #e0e8f2",
             "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
             "fontSize": "12px",
             "padding": "10px",
@@ -181,7 +182,7 @@ def _table(component_id: str, page_size: int = 10):
             "textOverflow": "ellipsis",
         },
         style_data_conditional=[
-            {"if": {"filter_query": "{accepted} = true"}, "backgroundColor": "rgba(45,180,125,.16)", "color": "#8af2c5"}
+            {"if": {"filter_query": "{accepted} = true"}, "backgroundColor": "#e8f8f1", "color": "#137b55"}
         ],
     )
 
@@ -190,7 +191,7 @@ controls = html.Div(
     [
         html.Div(
             [
-                html.Div("RUN CONFIG", style={"fontSize": "11px", "letterSpacing": "2px", "color": "#69e2ff"}),
+                html.Div("RUN CONFIG", style={"fontSize": "11px", "letterSpacing": "2px", "color": "#2f80ed"}),
                 html.H3("同条件公平对照", style={"margin": "5px 0 0", "fontSize": "18px"}),
             ]
         ),
@@ -238,7 +239,7 @@ controls = html.Div(
                 }
             ],
             value=[],
-            style={"fontSize": "12px", "color": "#d8b56f", "marginTop": "13px"},
+            style={"fontSize": "12px", "color": "#a86800", "marginTop": "13px"},
         ),
         html.Div(
             [
@@ -280,8 +281,8 @@ process_page = html.Div(
         html.Div([html.H3("Top-k 候选（逐 bitstring 真路线评价）"), _table("candidate-table", 16)], style={**PANEL, "padding": "18px", "marginTop": "14px"}),
         html.Details(
             [
-                html.Summary("查看完整 counts / QASM / 编译审计", style={"cursor": "pointer", "fontWeight": 700, "color": "#9fc6ff"}),
-                html.Pre(id="evidence-json", style={"whiteSpace": "pre-wrap", "fontSize": "11px", "color": "#94abd0", "maxHeight": "560px", "overflow": "auto"}),
+                html.Summary("查看完整 counts / QASM / 编译审计", style={"cursor": "pointer", "fontWeight": 700, "color": "#2f80ed"}),
+                html.Pre(id="evidence-json", style={"whiteSpace": "pre-wrap", "fontSize": "11px", "color": "#5f7390", "maxHeight": "560px", "overflow": "auto"}),
             ],
             style={**PANEL, "padding": "18px", "marginTop": "14px"},
         ),
@@ -370,7 +371,7 @@ app.layout = html.Div(
         ),
         html.Div(
             "Quantum Route Forge · competition/deepblock-ui-integration · Hardware failures never become Exact results",
-            style={"textAlign": "center", "color": "#536b8e", "fontSize": "11px", "padding": "28px 0 10px"},
+            style={"textAlign": "center", "color": "#8291a7", "fontSize": "11px", "padding": "28px 0 10px"},
         ),
     ],
     style={"maxWidth": "1500px", "margin": "0 auto", "padding": "24px", "color": INK},
@@ -479,7 +480,7 @@ def render_run(payload):
             _metric("Final", "—"),
             _metric("Improvement", "—"),
             _metric("Accepted", "—"),
-            _metric("Source", "—", "#9478ff"),
+            _metric("Source", "—", "#6b50d9"),
         ]
         empty = _empty_figure("等待 DeepBlock 运行")
         return (
@@ -507,11 +508,11 @@ def render_run(payload):
     selected = payload["selected"]
     improvement = float(selected.get("improvement", 0.0))
     metrics = [
-        _metric("Initial distance", f"{initial['distance']:.3f}", "#dce8ff"),
-        _metric("Final distance", f"{selected['final_distance']:.3f}", "#69e2ff"),
-        _metric("Improvement", f"{improvement:.3f} · {selected['improvement_pct']:.2f}%", "#55e6a5" if improvement > 0 else "#ffca6b"),
-        _metric("Accepted moves", str(selected.get("accepted_moves", 0)), "#ffca6b"),
-        _metric("Source / status", f"{selected.get('source')} · {selected.get('status')}", "#9478ff"),
+        _metric("Initial distance", f"{initial['distance']:.3f}", "#183153"),
+        _metric("Final distance", f"{selected['final_distance']:.3f}", "#2f80ed"),
+        _metric("Improvement", f"{improvement:.3f} · {selected['improvement_pct']:.2f}%", "#168f62" if improvement > 0 else "#b87513"),
+        _metric("Accepted moves", str(selected.get("accepted_moves", 0)), "#b87513"),
+        _metric("Source / status", f"{selected.get('source')} · {selected.get('status')}", "#6b50d9"),
     ]
     initial_figure = _route_figure(instance, initial.get("routes", []), "容量约束初始路线")
     final_figure = _route_figure(instance, selected.get("routes", []), "DeepBlock 最终路线")
@@ -612,17 +613,18 @@ def render_run(payload):
                 for row in comparisons
             ],
             textposition="outside",
-            marker={"color": ["#536b8e", "#9478ff", "#ffca6b", "#69e2ff", "#55e6a5"]},
+            marker={"color": ["#8291a7", "#7c5cfc", "#f2a93b", "#2f80ed", "#22a06b"]},
         )
     )
     bar.update_layout(
-        template="plotly_dark",
+        template="plotly_white",
         title="最终真实路线距离（越低越好）",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(5,12,25,.25)",
+        plot_bgcolor="#fbfdff",
         height=410,
         margin={"l": 45, "r": 20, "t": 55, "b": 35},
-        yaxis={"gridcolor": "rgba(120,150,200,.12)"},
+        font={"color": INK},
+        yaxis={"gridcolor": "#e8eef6"},
     )
     scan = go.Figure()
     for index, (arm_mode, arm) in enumerate(payload.get("arms", {}).items()):
@@ -638,13 +640,14 @@ def render_run(payload):
             )
         )
     scan.update_layout(
-        template="plotly_dark",
+        template="plotly_white",
         title="DeepBlock 扫描距离变化",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(5,12,25,.25)",
+        plot_bgcolor="#fbfdff",
         height=410,
         margin={"l": 45, "r": 20, "t": 55, "b": 35},
-        yaxis={"gridcolor": "rgba(120,150,200,.12)"},
+        font={"color": INK},
+        yaxis={"gridcolor": "#e8eef6"},
     )
     comparison_rows = [
         {
@@ -663,9 +666,9 @@ def render_run(payload):
     fairness = payload.get("fairness", {})
     fairness_text = html.Div(
         [
-            html.Strong("公平性锁定：", style={"color": "#69e2ff"}),
+            html.Strong("公平性锁定：", style={"color": "#2f80ed"}),
             html.Span("  相同实例 / 初始分配 / B1-B3 / shots / Top-k / 修复 / 路线评价器 / 严格接受规则"),
-            html.Span("  ·  全部通过" if all(fairness.values()) else "  ·  请检查", style={"color": "#55e6a5"}),
+            html.Span("  ·  全部通过" if all(fairness.values()) else "  ·  请检查", style={"color": "#168f62"}),
         ]
     )
     history_detail = html.Div(
@@ -680,7 +683,7 @@ def render_run(payload):
                 f"source={selected.get('source')} · backend={selected.get('backend') or '—'} · "
                 f"task IDs={', '.join(selected.get('task_ids', [])) or '—'} · status={selected.get('status')}"
             ),
-            html.P("Warnings: " + (" | ".join(payload.get("warnings", [])) or "none"), style={"color": "#d8b56f"}),
+            html.P("Warnings: " + (" | ".join(payload.get("warnings", [])) or "none"), style={"color": "#a86800"}),
         ]
     )
     return (
@@ -727,45 +730,51 @@ app.index_string = """
     {%favicon%}
     {%css%}
     <style>
-      :root { color-scheme: dark; }
+      :root { color-scheme: light; }
       * { box-sizing: border-box; }
       body {
         margin: 0;
         background:
-          radial-gradient(circle at 12% 4%, rgba(51,112,180,.24), transparent 31%),
-          radial-gradient(circle at 88% 0%, rgba(113,70,180,.19), transparent 28%),
-          #07101f;
+          radial-gradient(circle at 12% 4%, rgba(95,171,255,.20), transparent 31%),
+          radial-gradient(circle at 88% 0%, rgba(151,123,255,.14), transparent 28%),
+          linear-gradient(180deg, #f7faff 0%, #f3f6fb 100%);
         font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
       }
       .logo-mark {
         width: 54px; height: 54px; display: grid; place-items: center;
-        border-radius: 16px; color: #06101d; font-weight: 900; letter-spacing: -1px;
-        background: linear-gradient(145deg,#69e2ff,#9478ff);
-        box-shadow: 0 0 30px rgba(105,226,255,.22);
+        border-radius: 16px; color: #ffffff; font-weight: 900; letter-spacing: -1px;
+        background: linear-gradient(145deg,#3da7f5,#7c5cfc);
+        box-shadow: 0 10px 28px rgba(67,124,218,.22);
       }
-      .eyebrow { font-size: 10px; letter-spacing: 2.4px; color: #69e2ff; font-weight: 800; }
+      .eyebrow { font-size: 10px; letter-spacing: 2.4px; color: #2f80ed; font-weight: 800; }
       .status-pill {
         display: inline-flex; align-items: center; min-height: 28px; padding: 5px 10px;
-        border: 1px solid rgba(122,166,225,.22); border-radius: 999px;
-        background: rgba(28,49,82,.58); color: #aecdff; font-size: 11px; font-weight: 700;
+        border: 1px solid #cfe0f4; border-radius: 999px;
+        background: #edf5ff; color: #315b8f; font-size: 11px; font-weight: 700;
       }
       .status-banner {
-        margin: 13px 0; padding: 11px 15px; border-left: 3px solid #69e2ff;
-        border-radius: 8px; background: rgba(15,30,54,.72); color: #a9bedc; font-size: 12px;
+        margin: 13px 0; padding: 11px 15px; border-left: 3px solid #2f80ed;
+        border-radius: 8px; background: #edf6ff; color: #496783; font-size: 12px;
+        box-shadow: 0 6px 18px rgba(63,107,158,.07);
       }
       .run-button, .secondary-button {
         border: 0; border-radius: 10px; padding: 11px 18px; cursor: pointer;
-        font-weight: 800; color: #06101d; background: linear-gradient(90deg,#69e2ff,#9478ff);
+        font-weight: 800; color: #ffffff; background: linear-gradient(90deg,#3da7f5,#7c5cfc);
+        box-shadow: 0 8px 18px rgba(79,126,211,.18);
       }
-      .secondary-button { color: #bcd3f5; background: #1a2b4a; border: 1px solid #30486f; }
+      .secondary-button { color: #365978; background: #ffffff; border: 1px solid #cedbea; box-shadow: none; }
       input, .Select-control, .dash-dropdown .Select-control {
-        border-radius: 9px !important; border: 1px solid #2b4267 !important;
-        background: #0d192e !important; color: #dce8ff !important;
+        border-radius: 9px !important; border: 1px solid #cfdaea !important;
+        background: #ffffff !important; color: #183153 !important;
+        box-shadow: 0 2px 5px rgba(69,92,125,.04);
       }
-      .Select-menu-outer { background: #101e36 !important; border-color: #2b4267 !important; }
-      .Select-value-label, .Select-placeholder { color: #dce8ff !important; }
-      .tab { background: #0c172b !important; color: #8299bd !important; border: 0 !important; padding: 14px !important; }
-      .tab--selected { color: #69e2ff !important; border-top: 2px solid #69e2ff !important; background: #111f38 !important; }
+      input:focus { border-color: #68a9f5 !important; outline: none; box-shadow: 0 0 0 3px rgba(47,128,237,.10); }
+      .Select-menu-outer { background: #ffffff !important; border-color: #cfdaea !important; }
+      .Select-value-label, .Select-placeholder { color: #183153 !important; }
+      .Select-option { color: #294866 !important; background: #ffffff !important; }
+      .Select-option.is-focused { background: #edf5ff !important; }
+      .tab { background: rgba(255,255,255,.76) !important; color: #70849f !important; border: 0 !important; padding: 14px !important; }
+      .tab--selected { color: #2f80ed !important; border-top: 2px solid #2f80ed !important; background: #ffffff !important; font-weight: 700; }
       .tab-content { padding-top: 15px; }
       @media (max-width: 900px) {
         #metric-row { grid-template-columns: 1fr 1fr !important; }
