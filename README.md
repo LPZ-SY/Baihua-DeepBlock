@@ -2,6 +2,9 @@
 
 ## DeepBlock 比赛前端
 
+完整的项目背景、技术方案、实验设置、真机结果、Web 操作和结论边界见
+[`docs/Quantum_Route_Forge_项目完整文档.md`](docs/Quantum_Route_Forge_项目完整文档.md)。
+
 新的比赛入口保留路线地图与参数控制，并把 Baihua DeepBlock 算法隔离在
 `src/quantum_route_forge/deepblock/` 中。页面包含路线优化、B1/B2/B3 过程、
 Hardware/Random/Simulator/Exact 公平对照以及可重载的本地运行历史。
