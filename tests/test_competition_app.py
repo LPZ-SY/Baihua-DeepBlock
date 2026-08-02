@@ -47,3 +47,15 @@ def test_competition_app_empty_state_renders_all_outputs():
     assert len(outputs) == 17
     assert outputs[3] == []
     assert outputs[10] == "{}"
+
+
+def test_history_option_label_is_compact_and_in_china_time():
+    label = competition_app._history_option_label(
+        {
+            "time": "2026-08-02T04:29:57.617109+00:00",
+            "run_id": "20260802T042957Z-a4cd72b9",
+            "mode": "deepblock_hardware",
+            "status": "FAILED",
+        }
+    )
+    assert label == "08-02 12:29 | Hardware | FAILED | a4cd72b9"

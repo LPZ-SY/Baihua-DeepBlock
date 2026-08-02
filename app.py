@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 import sys
@@ -29,6 +30,29 @@ PANEL = {
     "boxShadow": "0 14px 38px rgba(67,90,124,.10)",
 }
 HISTORY = CompetitionHistory(ROOT / "results" / "competition_history")
+CHINA_STANDARD_TIME = timezone(timedelta(hours=8))
+
+
+def _history_option_label(row: dict[str, Any]) -> str:
+    """Build a compact, single-line label for the history selector."""
+    raw_time = str(row.get("time") or "")
+    try:
+        parsed = datetime.fromisoformat(raw_time.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        display_time = parsed.astimezone(CHINA_STANDARD_TIME).strftime("%m-%d %H:%M")
+    except ValueError:
+        display_time = raw_time[:16] or "-- --:--"
+    mode = {
+        "deepblock_hardware": "Hardware",
+        "deepblock_random": "Random",
+        "deepblock_simulator": "Simulator",
+        "deepblock_exact": "Exact",
+    }.get(str(row.get("mode") or ""), str(row.get("mode") or "Unknown"))
+    status = str(row.get("status") or "UNKNOWN").upper()
+    run_id = str(row.get("run_id") or "")
+    short_id = run_id.rsplit("-", 1)[-1] if run_id else "--------"
+    return f"{display_time} | {mode} | {status} | {short_id}"
 
 
 def _latest_history_payload():
@@ -313,11 +337,16 @@ history_page = html.Div(
                 html.Div([html.Div("LOCAL HISTORY", className="eyebrow"), html.H2("运行历史与证据重载", style={"margin": "6px 0"})]),
                 html.Div(
                     [
-                        dcc.Dropdown(id="history-run-id", placeholder="选择 run ID", style={"minWidth": "310px"}),
+                        dcc.Dropdown(
+                            id="history-run-id",
+                            placeholder="选择运行记录",
+                            className="history-dropdown",
+                            style={"width": "520px", "maxWidth": "65vw"},
+                        ),
                         html.Button("重新打开", id="open-history-btn", n_clicks=0, className="secondary-button"),
                         html.Button("刷新", id="refresh-history-btn", n_clicks=0, className="secondary-button"),
                     ],
-                    style={"display": "flex", "gap": "10px", "alignItems": "center"},
+                    style={"display": "flex", "gap": "10px", "alignItems": "center", "flexWrap": "wrap"},
                 ),
             ],
             style={"display": "flex", "justifyContent": "space-between", "alignItems": "center"},
@@ -744,7 +773,10 @@ def render_run(payload):
 def refresh_history(_clicks, _payload):
     rows = HISTORY.rows()
     columns = [{"name": key.replace("_", " ").title(), "id": key} for key in (rows[0].keys() if rows else [])]
-    options = [{"label": f"{row['time']} · {row['run_id']} · {row['mode']}", "value": row["run_id"]} for row in rows]
+    options = [
+        {"label": _history_option_label(row), "value": row["run_id"]}
+        for row in rows
+    ]
     return rows, columns, options
 
 
@@ -803,6 +835,21 @@ app.index_string = """
       .Select-value-label, .Select-placeholder { color: #183153 !important; }
       .Select-option { color: #294866 !important; background: #ffffff !important; }
       .Select-option.is-focused { background: #edf5ff !important; }
+      .history-dropdown .Select-control { min-height: 42px !important; height: 42px !important; }
+      .history-dropdown .Select-placeholder,
+      .history-dropdown .Select-value { line-height: 40px !important; }
+      .history-dropdown .Select-value-label {
+        display: block !important; overflow: hidden !important;
+        text-overflow: ellipsis !important; white-space: nowrap !important;
+      }
+      .history-dropdown .Select-menu-outer {
+        min-width: 520px !important; z-index: 1100 !important;
+      }
+      .history-dropdown .Select-option {
+        min-height: 40px !important; padding: 10px 12px !important;
+        line-height: 20px !important; overflow: hidden !important;
+        text-overflow: ellipsis !important; white-space: nowrap !important;
+      }
       .tab { background: rgba(255,255,255,.76) !important; color: #70849f !important; border: 0 !important; padding: 14px !important; font-size: 15px !important; }
       .tab--selected { color: #2f80ed !important; border-top: 2px solid #2f80ed !important; background: #ffffff !important; font-weight: 700; }
       .tab-content { padding-top: 15px; }
