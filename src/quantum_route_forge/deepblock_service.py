@@ -176,6 +176,7 @@ def run_deepblock_optimization(
     block_size: int = 8,
     overlap: int = 3,
     seed: int = 2026,
+    api_token: str = "",
     submit_hardware: bool = False,
     confirm_hardware_submit: bool = False,
     history_root: str | Path | None = None,
@@ -233,6 +234,7 @@ def run_deepblock_optimization(
             mode=arm_mode,
             config=config,
             seed=int(seed),
+            api_token=str(api_token or "").strip(),
             chip_info=chip_info if is_hardware else None,
         )
 

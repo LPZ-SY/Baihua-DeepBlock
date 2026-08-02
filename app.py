@@ -3,15 +3,18 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timedelta, timezone
 import json
+import os
 from pathlib import Path
 import sys
 from typing import Any
 
 from dash import Dash, Input, Output, State, ctx, dash_table, dcc, html, no_update
+from dotenv import load_dotenv
 import plotly.graph_objects as go
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
+PROJECT_ENV_FILE = ROOT / ".env"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
@@ -31,6 +34,18 @@ PANEL = {
 }
 HISTORY = CompetitionHistory(ROOT / "results" / "competition_history")
 CHINA_STANDARD_TIME = timezone(timedelta(hours=8))
+
+
+def _configure_quafu_token(env_file: Path = PROJECT_ENV_FILE) -> str:
+    """Load the project-local .env without logging or returning the credential."""
+    had_environment_token = bool(os.getenv("QUAFU_API_TOKEN", "").strip())
+    load_dotenv(dotenv_path=env_file, override=False)
+    if not os.getenv("QUAFU_API_TOKEN", "").strip():
+        return "missing"
+    return "environment" if had_environment_token else "project_env"
+
+
+QUAFU_TOKEN_SOURCE = _configure_quafu_token()
 
 
 def _history_option_label(row: dict[str, Any]) -> str:
@@ -230,8 +245,9 @@ controls = html.Div(
                     "运行模式",
                     dcc.Dropdown(
                         id="mode",
-                        value="deepblock_simulator",
+                        value="deepblock_hardware",
                         clearable=False,
+                        disabled=True,
                         options=[
                             {"label": "Baihua Hardware", "value": "deepblock_hardware"},
                             {"label": "Uniform Random", "value": "deepblock_random"},
@@ -261,9 +277,10 @@ controls = html.Div(
                 {
                     "label": " 我确认：Hardware 模式将真实提交最多 3 个 Baihua 任务",
                     "value": "confirm",
+                    "disabled": True,
                 }
             ],
-            value=[],
+            value=["confirm"],
             style={"fontSize": "13px", "color": "#a86800", "marginTop": "13px"},
         ),
         html.Div(
@@ -456,10 +473,12 @@ def execute_or_open(
             num_vehicles=int(num_vehicles),
             vehicle_capacity=int(vehicle_capacity),
         )
-        confirmed = "confirm" in (hardware_confirm or [])
+        quafu_token = os.getenv("QUAFU_API_TOKEN", "").strip()
+        if not quafu_token:
+            raise RuntimeError(f"QUAFU_API_TOKEN is missing from {PROJECT_ENV_FILE}")
         payload = run_deepblock_optimization(
             instance=instance,
-            mode=mode,
+            mode="deepblock_hardware",
             backend=backend,
             shots=int(shots),
             candidate_k=int(candidate_k),
@@ -468,8 +487,9 @@ def execute_or_open(
             block_size=8,
             overlap=3,
             seed=int(seed),
-            submit_hardware=(mode == "deepblock_hardware" and confirmed),
-            confirm_hardware_submit=(mode == "deepblock_hardware" and confirmed),
+            api_token=quafu_token,
+            submit_hardware=True,
+            confirm_hardware_submit=True,
             history_root=HISTORY.root,
         )
         selected = payload["selected"]
@@ -867,6 +887,14 @@ app.index_string = """
 
 
 if __name__ == "__main__":
+    if QUAFU_TOKEN_SOURCE == "missing":
+        print(
+            f"WARNING: QUAFU_API_TOKEN is unavailable in {PROJECT_ENV_FILE}. "
+            "Hardware submission will fail.",
+            flush=True,
+        )
+    else:
+        print(f"Quafu token configured from {QUAFU_TOKEN_SOURCE}.", flush=True)
     parser = argparse.ArgumentParser(description="Quantum Route Forge competition UI")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8050)

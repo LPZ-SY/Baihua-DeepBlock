@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import sys
 
@@ -8,6 +9,21 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import app as competition_app  # noqa: E402
+
+
+def test_configure_quafu_token_loads_local_file_without_overwriting_environment(
+    tmp_path, monkeypatch
+):
+    env_file = tmp_path / ".env"
+    env_file.write_text("QUAFU_API_TOKEN=local-test-token\n", encoding="utf-8")
+    monkeypatch.delenv("QUAFU_API_TOKEN", raising=False)
+
+    assert competition_app._configure_quafu_token(env_file) == "project_env"
+    assert os.environ["QUAFU_API_TOKEN"] == "local-test-token"
+
+    monkeypatch.setenv("QUAFU_API_TOKEN", "environment-token")
+    assert competition_app._configure_quafu_token(env_file) == "environment"
+    assert os.environ["QUAFU_API_TOKEN"] == "environment-token"
 
 
 def _component_ids(component):
@@ -26,7 +42,7 @@ def _component_ids(component):
     return found
 
 
-def test_competition_app_has_four_pages_and_guarded_hardware_confirmation():
+def test_competition_app_has_four_pages_and_forces_hardware_confirmation():
     ids = _component_ids(competition_app.app.layout)
     assert {
         "tabs",
@@ -40,6 +56,12 @@ def test_competition_app_has_four_pages_and_guarded_hardware_confirmation():
         "history-table",
         "open-history-btn",
     } <= ids
+    mode = competition_app.app.layout["mode"]
+    confirmation = competition_app.app.layout["hardware-confirm"]
+    assert mode.value == "deepblock_hardware"
+    assert mode.disabled is True
+    assert confirmation.value == ["confirm"]
+    assert confirmation.options[0]["disabled"] is True
 
 
 def test_competition_app_empty_state_renders_all_outputs():
