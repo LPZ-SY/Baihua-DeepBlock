@@ -431,6 +431,11 @@ def run_baihua_arm(
         },
     }
     task_id = str(manager.run(task_payload))
+    print(
+        f"Baihua hardware task submitted: task_id={task_id} "
+        f"backend={backend} shots={max(1, int(shots))}",
+        flush=True,
+    )
     counts: dict[str, int] = {}
     message = "Submitted precompiled circuit to Baihua; result polling skipped."
     if wait:
@@ -473,6 +478,11 @@ def run_baihua_arm(
             message = f"Baihua task polling timed out with status={status}; counts are not available yet."
         else:
             message = f"Baihua task ended with status={status} but no counts; error={error_text or 'none'}."
+        print(
+            f"Baihua hardware task result: task_id={task_id} "
+            f"status={status} shots_received={sum(counts.values())}",
+            flush=True,
+        )
     return QAOARunResult(
         arm=f"baihua_p{parameters.depth}",
         counts=counts,
@@ -486,4 +496,3 @@ def run_baihua_arm(
         backend=str(backend or "Baihua"),
         message=message,
     )
-

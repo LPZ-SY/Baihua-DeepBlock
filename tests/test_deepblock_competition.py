@@ -9,6 +9,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from quantum_route_forge.competition_history import CompetitionHistory
+from quantum_route_forge.deepblock_service import low_energy_effect_from_payload
 from quantum_route_forge.deepblock.builder import build_overlapping_blocks, scan_sequence
 from quantum_route_forge.deepblock.evaluator import evaluate_counts, normalize_counts, repair_capacity
 from quantum_route_forge.deepblock.proxy_qubo import (
@@ -138,3 +139,26 @@ def test_history_save_and_reload(tmp_path):
     history.save(payload)
     assert history.load("run-001")["selected"]["source"] == "random"
     assert history.rows()[0]["run_id"] == "run-001"
+
+
+def test_low_energy_effect_uses_fixed_state_space_rank():
+    hardware = {
+        "traces": [
+            {
+                "block": {"block_id": "B1"},
+                "proxy": {
+                    "customer_ids": [1, 2],
+                    "linear": [-1.0, -0.5],
+                    "quadratic": [],
+                    "constant": 0.0,
+                },
+                "run": {"counts": {"11": 80, "00": 20}},
+            }
+        ]
+    }
+    effect = low_energy_effect_from_payload(hardware)
+    assert effect["evaluable"]
+    assert effect["blocks"][0]["low_energy_states"] == 1
+    assert effect["mean_uniform_mass"] == 0.25
+    assert effect["mean_hardware_mass"] == 0.8
+    assert effect["enrichment"] == 3.2

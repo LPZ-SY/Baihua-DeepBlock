@@ -5,7 +5,11 @@ import os
 from typing import Mapping, Sequence
 
 from ..models import Customer, DispatchInstance
-from .adapters import offline_identity_subgraph
+from .adapters import (
+    PhysicalSubgraph,
+    offline_identity_subgraph,
+    select_baihua_subgraph,
+)
 from .builder import (
     BoundaryCandidate,
     DeepBlock,
@@ -236,41 +240,22 @@ def _hardware_run(
     config: DeepBlockConfig,
     seed: int,
     api_token: str,
+    topology: PhysicalSubgraph,
 ) -> QAOARunResult:
     logical_qasm = build_qaoa_qasm(
         proxy, config.qaoa_depth, parameters.gamma, parameters.beta
     )
-    if not config.submit_hardware:
-        audit = compilation_audit(
-            logical_qasm,
-            swap_count=0,
-            mapping_verified=True,
-            max_cnot=config.max_cnot,
-            max_depth=config.max_depth,
-        )
-        return run_baihua_arm(
-            proxy=proxy,
-            parameters=parameters,
-            physical_qasm=logical_qasm,
-            compilation=audit,
-            shots=config.shots,
-            seed=seed,
-            backend=config.backend,
-            api_token=api_token,
-            submit_hardware=False,
-            confirm_hardware_submit=False,
-            wait=config.wait_hardware,
-        )
     try:
         physical_qasm, raw_audit = transpile_for_baihua(
             logical_qasm,
             backend_name=config.backend,
-            target_qubits=list(range(proxy.width)),
+            target_qubits=list(topology.qubits),
         )
         audit = compilation_audit(
             physical_qasm,
             swap_count=raw_audit.swap_count,
             mapping_verified=raw_audit.mapping_verified,
+            uncalibrated_couplings=topology.uncalibrated_couplings,
             max_cnot=config.max_cnot,
             max_depth=config.max_depth,
         )
@@ -302,8 +287,10 @@ def _hardware_run(
         seed=seed,
         backend=config.backend,
         api_token=api_token,
-        submit_hardware=True,
-        confirm_hardware_submit=config.confirm_hardware_submit,
+        submit_hardware=config.submit_hardware,
+        confirm_hardware_submit=(
+            config.confirm_hardware_submit if config.submit_hardware else False
+        ),
         wait=config.wait_hardware,
     )
 
@@ -316,6 +303,8 @@ def run_deepblock(
     config: DeepBlockConfig,
     seed: int,
     api_token: str = "",
+    chip_info: Mapping[str, object] | None = None,
+    manual_physical_qubits: Sequence[int] | None = None,
 ) -> DeepBlockResult:
     normalized_mode = str(mode or "").strip().lower()
     if normalized_mode not in MODE_TO_ARM:
@@ -350,7 +339,18 @@ def run_deepblock(
     for index, block in enumerate(sequence, start=1):
         before = true_route_distance(current, instance.depot, routing_method=config.routing_method)
         block_customers = [by_id[customer_id] for customer_id in block.customer_ids]
-        topology = offline_identity_subgraph(len(block_customers))
+        if source == "hardware" and chip_info:
+            topology = select_baihua_subgraph(
+                chip_info,
+                width=len(block_customers),
+                manual_qubits=(
+                    list(manual_physical_qubits)[: len(block_customers)]
+                    if manual_physical_qubits is not None
+                    else None
+                ),
+            )
+        else:
+            topology = offline_identity_subgraph(len(block_customers))
         proxy = build_sparse_proxy_qubo(
             assignments=current,
             block_customers=block_customers,
@@ -394,6 +394,7 @@ def run_deepblock(
                         config,
                         run_seed,
                         api_token or os.environ.get("QUAFU_API_TOKEN", ""),
+                        topology,
                     )
                 )
         except Exception as exc:

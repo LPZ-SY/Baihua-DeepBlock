@@ -8,8 +8,8 @@ from uuid import uuid4
 
 from .competition_history import CompetitionHistory
 from .models import Customer, DispatchInstance
-from .pipeline import run_optimization
 from .routing import build_route_plans
+from .deepblock.clustering import capacity_constrained_kmeans
 from .deepblock.solver import DeepBlockConfig, DeepBlockResult, run_deepblock
 
 
@@ -19,6 +19,85 @@ MODE_ORDER = (
     "deepblock_simulator",
     "deepblock_exact",
 )
+
+
+def low_energy_effect_from_payload(hardware: dict[str, Any]) -> dict[str, Any]:
+    """Measure hardware mass in the pre-defined bottom-10% QUBO states."""
+    rows: list[dict[str, Any]] = []
+    for trace in hardware.get("traces", []):
+        proxy = trace.get("proxy") or {}
+        run = trace.get("run") or {}
+        width = len(proxy.get("customer_ids") or [])
+        if width < 1 or width > 8 or not run.get("counts"):
+            continue
+        ranked: list[tuple[float, str]] = []
+        for value in range(1 << width):
+            bitstring = format(value, f"0{width}b")
+            bits = tuple(int(bit) for bit in reversed(bitstring))
+            energy = float(proxy.get("constant", 0.0))
+            energy += sum(
+                float(coefficient) * bits[index]
+                for index, coefficient in enumerate(proxy.get("linear") or [])
+            )
+            energy += sum(
+                float(row["coefficient"])
+                * bits[int(row["left"])]
+                * bits[int(row["right"])]
+                for row in proxy.get("quadratic") or []
+                if row.get("kept")
+            )
+            ranked.append((energy, bitstring))
+        ranked.sort(key=lambda item: (item[0], item[1]))
+        tail_size = max(1, math.ceil(0.10 * (1 << width)))
+        low_energy = {bitstring for _energy, bitstring in ranked[:tail_size]}
+        counts: dict[str, int] = {}
+        for key, value in (run.get("counts") or {}).items():
+            canonical = str(key).replace(" ", "")[-width:].zfill(width)
+            counts[canonical] = counts.get(canonical, 0) + int(value)
+        shots = sum(counts.values())
+        hits = sum(counts.get(bitstring, 0) for bitstring in low_energy)
+        hardware_mass = hits / max(1, shots)
+        uniform_mass = tail_size / (1 << width)
+        rows.append(
+            {
+                "block_id": trace.get("block", {}).get("block_id"),
+                "width": width,
+                "low_energy_states": tail_size,
+                "energy_threshold": ranked[tail_size - 1][0],
+                "hits": hits,
+                "shots": shots,
+                "hardware_mass": hardware_mass,
+                "uniform_mass": uniform_mass,
+                "enrichment": hardware_mass / uniform_mass,
+                "difference_percentage_points": 100.0
+                * (hardware_mass - uniform_mass),
+                "positive": hardware_mass > uniform_mass,
+            }
+        )
+    if not rows:
+        return {
+            "evaluable": False,
+            "definition": "exact bottom 10% proxy-QUBO energy rank",
+            "blocks": [],
+        }
+    hardware_mean = sum(row["hardware_mass"] for row in rows) / len(rows)
+    uniform_mean = sum(row["uniform_mass"] for row in rows) / len(rows)
+    return {
+        "evaluable": True,
+        "definition": "exact bottom 10% proxy-QUBO energy rank",
+        "blocks": rows,
+        "mean_hardware_mass": hardware_mean,
+        "mean_uniform_mass": uniform_mean,
+        "enrichment": hardware_mean / uniform_mean,
+        "difference_percentage_points": 100.0 * (hardware_mean - uniform_mean),
+        "positive_blocks": sum(bool(row["positive"]) for row in rows),
+        "total_blocks": len(rows),
+        "interpretation": (
+            "positive_low_energy_enrichment"
+            if hardware_mean > uniform_mean
+            else "no_positive_low_energy_enrichment"
+        ),
+    }
 
 
 def _routes_payload(
@@ -111,13 +190,7 @@ def run_deepblock_optimization(
             "Total demand exceeds fleet capacity; increase capacity before running."
         )
 
-    initial_result = run_optimization(
-        instance=instance,
-        mode="classical",
-        num_reads=300,
-        num_sweeps=40,
-        two_opt_rounds=2,
-    )
+    initial_result = capacity_constrained_kmeans(instance, seed=int(seed))
     initial_assignments = {
         vehicle: list(customers)
         for vehicle, customers in initial_result.assignments.items()
@@ -136,6 +209,15 @@ def run_deepblock_optimization(
     )
 
     results: dict[str, DeepBlockResult] = {}
+    chip_info: dict[str, Any] | None = None
+    if submit_hardware:
+        try:
+            from quark.circuit import Backend
+        except ImportError as exc:
+            raise RuntimeError(
+                "quarkcircuit==0.5.13 is required for Baihua calibration and compilation."
+            ) from exc
+        chip_info = dict(Backend(str(backend or "Baihua")).chip_info)
     # All arms receive the same immutable starting assignment and parameters.
     for arm_mode in MODE_ORDER:
         is_hardware = arm_mode == "deepblock_hardware"
@@ -151,6 +233,7 @@ def run_deepblock_optimization(
             mode=arm_mode,
             config=config,
             seed=int(seed),
+            chip_info=chip_info if is_hardware else None,
         )
 
     selected = _result_payload(results[requested_mode], instance)
@@ -196,6 +279,10 @@ def run_deepblock_optimization(
         + "-"
         + uuid4().hex[:8]
     )
+    arms_payload = {
+        arm_mode: _result_payload(result, instance)
+        for arm_mode, result in results.items()
+    }
     payload: dict[str, Any] = {
         "schema_version": 1,
         "run_id": run_id,
@@ -234,10 +321,10 @@ def run_deepblock_optimization(
             "routes": initial_routes,
         },
         "selected": selected,
-        "arms": {
-            arm_mode: _result_payload(result, instance)
-            for arm_mode, result in results.items()
-        },
+        "arms": arms_payload,
+        "quantum_effect": low_energy_effect_from_payload(
+            arms_payload["deepblock_hardware"]
+        ),
         "comparisons": comparisons,
         "warnings": (
             [

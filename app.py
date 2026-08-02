@@ -596,6 +596,20 @@ def render_run(payload):
         html.Span(f"tasks={len(selected.get('task_ids', []))}", className="status-pill"),
         html.Span(f"shots received={selected.get('shots_received', 0)}", className="status-pill"),
     ]
+    quantum_effect = payload.get("quantum_effect") or {}
+    if quantum_effect.get("evaluable"):
+        badges.extend(
+            [
+                html.Span(
+                    f"最低10%能量质量={100 * quantum_effect['mean_hardware_mass']:.2f}%",
+                    className="status-pill",
+                ),
+                html.Span(
+                    f"相对均匀随机={quantum_effect['enrichment']:.2f}×",
+                    className="status-pill",
+                ),
+            ]
+        )
 
     comparisons = payload.get("comparisons", [])
     bar = go.Figure(
@@ -683,6 +697,18 @@ def render_run(payload):
             html.P(
                 f"source={selected.get('source')} · backend={selected.get('backend') or '—'} · "
                 f"task IDs={', '.join(selected.get('task_ids', [])) or '—'} · status={selected.get('status')}"
+            ),
+            (
+                html.P(
+                    f"最低10% QUBO 能量区域：Hardware "
+                    f"{100 * quantum_effect['mean_hardware_mass']:.2f}% vs Uniform "
+                    f"{100 * quantum_effect['mean_uniform_mass']:.2f}% · "
+                    f"{quantum_effect['enrichment']:.2f}× · "
+                    f"{quantum_effect['positive_blocks']}/{quantum_effect['total_blocks']} blocks 为正向",
+                    style={"color": "#168f62", "fontWeight": 700},
+                )
+                if quantum_effect.get("evaluable")
+                else None
             ),
             html.P("Warnings: " + (" | ".join(payload.get("warnings", [])) or "none"), style={"color": "#a86800"}),
         ]
