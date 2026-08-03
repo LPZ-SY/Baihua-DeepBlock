@@ -21,6 +21,7 @@ from deepblock_study import (
     ensure_directories,
     read_csv,
     read_jsonl,
+    write_csv,
 )
 
 
@@ -31,7 +32,7 @@ FIGURES = (
     "04_经典局部陷阱与量子候选.png",
     "05_QUBO能量与真实路线距离.png",
     "06_有限预算下改善状态发现率.png",
-    "07_QUBO映射噪声模型与真机结果对比.png",
+    "07_真机理想与随机基线改善概率对比.png",
     "08_四种方法路线改善对比.png",
 )
 
@@ -187,44 +188,73 @@ def figure_6(rows: list[dict[str, str]]) -> None:
 
 
 def figure_7(rows: list[dict[str, str]]) -> None:
-    order = ["完整 QUBO 理想模拟", "硬件兼容理想模拟", "带噪声模拟：当前噪声", "Baihua 真机"]
-    paired_ids = {
-        row["instance_id"]
-        for row in rows
-        if row["stage"] == "Baihua 真机" and row["p"] == "2" and row["status"] == "COMPLETED"
-    }
-    values = []
-    labels = []
-    for stage in order:
-        subset = [
-            float(row["improving_probability"])
-            for row in rows
-            if row["instance_id"] in paired_ids
-            and row["stage"] == stage
-            and row["p"] == "2"
-            and row["status"] != "NOT_RUN"
-            and row["improving_probability"]
-        ]
-        labels.append(stage.replace("模拟：", "\n"))
-        values.append(float(np.mean(subset)) if subset else np.nan)
-    fig, ax = plt.subplots(figsize=(9.2, 6.2))
-    bars = ax.bar(labels, np.nan_to_num(values), color=["#2F80B7", "#6BAED6", "#E07A5F", "#815AC0"])
+    stages = ["Baihua 真机", "硬件兼容理想模拟", "均匀随机基线"]
+    labels = ["Baihua 真机", "硬件兼容理想模型", "均匀随机基线"]
+    colors = ["#2F80B7", "#E07A5F", "#7A8793"]
+    rng = np.random.default_rng(20260803)
+    summary: list[dict[str, object]] = []
+    paired_values: dict[tuple[int, str], np.ndarray] = {}
+    for depth in (1, 2, 3):
+        paired_ids = {
+            row["instance_id"] for row in rows
+            if row["stage"] == "Baihua 真机" and row["p"] == str(depth)
+            and row["status"] == "COMPLETED"
+        }
+        for stage, label in zip(stages, labels):
+            values_by_id = {
+                row["instance_id"]: float(row["improving_probability"])
+                for row in rows
+                if row["instance_id"] in paired_ids and row["stage"] == stage
+                and row["p"] == str(depth) and row["status"] != "NOT_RUN"
+            }
+            values = np.asarray([values_by_id[key] for key in sorted(paired_ids)], dtype=float)
+            if len(values) != 10:
+                raise ValueError(f"p={depth} {stage} requires 10 paired instances; got {len(values)}")
+            paired_values[(depth, stage)] = values
+            boot = np.mean(rng.choice(values, size=(5000, len(values)), replace=True), axis=1)
+            summary.append({
+                "p": depth, "stage": stage, "label": label, "independent_instances": len(values),
+                "mean_improving_probability": float(np.mean(values)),
+                "bootstrap_ci_low": float(np.quantile(boot, 0.025)),
+                "bootstrap_ci_high": float(np.quantile(boot, 0.975)),
+            })
+    write_csv(HARDWARE_DIR / "hardware_ideal_random_probability_comparison.csv", summary)
+    difference_rows: list[dict[str, object]] = []
+    for depth in (1, 2, 3):
+        for reference in ("均匀随机基线", "硬件兼容理想模拟"):
+            differences = paired_values[(depth, "Baihua 真机")] - paired_values[(depth, reference)]
+            boot = np.mean(rng.choice(differences, size=(5000, len(differences)), replace=True), axis=1)
+            difference_rows.append({
+                "p": depth, "contrast": f"Baihua 真机 - {reference}",
+                "independent_instances": len(differences), "mean_difference": float(np.mean(differences)),
+                "bootstrap_ci_low": float(np.quantile(boot, 0.025)),
+                "bootstrap_ci_high": float(np.quantile(boot, 0.975)),
+            })
+    write_csv(HARDWARE_DIR / "hardware_probability_paired_differences.csv", difference_rows)
+
+    x = np.arange(3)
+    width = 0.24
+    fig, ax = plt.subplots(figsize=(10.2, 6.4))
+    for method_index, (stage, label, color) in enumerate(zip(stages, labels, colors)):
+        method_rows = [row for row in summary if row["stage"] == stage]
+        means = np.asarray([float(row["mean_improving_probability"]) for row in method_rows])
+        positions = x + (method_index - 1) * width
+        bars = ax.bar(positions, means, width, label=label, color=color, alpha=0.94)
+        for bar, value in zip(bars, means):
+            ax.text(bar.get_x() + bar.get_width() / 2, value + 0.0012,
+                    f"{value:.2%}", ha="center", va="bottom", fontsize=9.5)
+    ax.set_xticks(x, ["p=1\nn=10", "p=2\nn=10", "p=3\nn=10"])
     ax.set_ylabel("真实改善状态概率")
-    ax.set_title(f"QUBO 映射、噪声模型与真机结果对比（p=2，配对实例 n={len(paired_ids)}）")
-    ax.set_ylim(0, max([value for value in values if not np.isnan(value)] + [0.1]) * 1.25)
-    for bar, value, stage in zip(bars, values, order):
-        label = "未运行" if np.isnan(value) else f"{value:.1%}"
-        ax.text(bar.get_x() + bar.get_width() / 2, 0 if np.isnan(value) else value, label, ha="center", va="bottom")
+    ax.set_title("真机、硬件兼容理想模型与随机基线的改善状态概率")
+    ax.set_ylim(0, max(float(row["mean_improving_probability"]) for row in summary) * 1.45)
+    ax.legend(ncol=3, loc="upper center")
     fig.text(
-        0.5,
-        0.015,
-        "在该配对实例集合中，完整 QUBO、硬件兼容 QUBO 和带噪声模拟结果接近，\n"
-        "真机改善状态概率略低。当前结果未观察到明显的拓扑裁剪损失，真机与模拟之间仍存在小幅实现差距。",
-        ha="center",
-        va="bottom",
-        fontsize=10.5,
+        0.5, 0.012,
+        "三种深度使用同一组10个独立Seed，柱高为实例均值。\n"
+        "随机基线按每个实例的改善状态数/256计算；Bootstrap区间另见配对统计表。",
+        ha="center", va="bottom", fontsize=10.2,
     )
-    _save(fig, FIGURES[6], rect=(0, 0.13, 1, 1))
+    _save(fig, FIGURES[6], rect=(0, 0.12, 1, 1))
 
 
 def figure_8(rows: list[dict[str, str]]) -> None:
@@ -309,11 +339,18 @@ def run() -> dict[str, object]:
     figure_7(hardware)
     figure_8(paired)
     report = _report(blocks, algorithm, hardware, paired)
-    report += """
+    probability_rows = read_csv(HARDWARE_DIR / "hardware_ideal_random_probability_comparison.csv")
+    probability = {
+        (int(row["p"]), row["stage"]): float(row["mean_improving_probability"])
+        for row in probability_rows
+    }
+    report += f"""
 
 ## 图 7 结果解释
 
-在该配对实例集合中，完整 QUBO、硬件兼容 QUBO 和带噪声模拟结果接近，真机改善状态概率略低。当前结果未观察到明显的拓扑裁剪损失，真机与模拟之间仍存在小幅实现差距。因此图 7 采用中性对比标题，不将观测差异预设为拓扑裁剪或噪声造成的性能损失。
+图 7 对同一组 10 个独立 Seed 比较 Baihua 真机、硬件兼容理想模型和均匀随机基线。p=1 三者均值分别为 {probability[(1, 'Baihua 真机')]:.2%}、{probability[(1, '硬件兼容理想模拟')]:.2%}、{probability[(1, '均匀随机基线')]:.2%}；p=2 分别为 {probability[(2, 'Baihua 真机')]:.2%}、{probability[(2, '硬件兼容理想模拟')]:.2%}、{probability[(2, '均匀随机基线')]:.2%}；p=3 分别为 {probability[(3, 'Baihua 真机')]:.2%}、{probability[(3, '硬件兼容理想模拟')]:.2%}、{probability[(3, '均匀随机基线')]:.2%}。
+
+三种深度均使用相同实例集合。随机基线按每个实例的严格改善状态数除以 256 计算，不使用不匹配的随机任务替代。为保持主图清晰，Bootstrap 95% 区间不画在柱形图中，完整区间保留在 `hardware_probability_paired_differences.csv`。均值差异只作本次 10 个实例内的描述，不能单凭柱高声称稳定量子优势。
 """
     live = read_jsonl(HARDWARE_DIR / "hardware_live_results.jsonl")
     extension_path = HARDWARE_DIR / "hardware_extensions_summary.json"
@@ -325,7 +362,7 @@ def run() -> dict[str, object]:
 
 ## 真机增强收尾实验
 
-- 独立 Seed 主矩阵：10 个 Seed，p=1/p=2 共 20 个任务；另有 3 个代表性 p=3 任务。
+- 独立 Seed 主矩阵：10 个 Seed，p=1/p=2/p=3 共 30 个真机任务。
 - 重复运行方差：2 个 Seed × p=1/p=2 × 3 次独立运行，共 {extension['repeat_tasks']} 个观测（其中新增 8 个任务）。
 - Shots 扫描：对 20 个主矩阵任务的真实 1024-shot counts，在 64/256 shots 下各做 {extension['shot_resamples']} 次无放回重采样；1024 档直接使用原始 counts。该分析不冒充新的低 shots 真机提交。
 - 真机闭环：{closed['seeds']} 个 Seed × {closed['rounds_per_seed']} 轮，共 {closed['hardware_rounds']} 个真机轮次；接受 {closed['accepted_moves']} 次严格改善，累计路线改善 {closed['total_route_improvement']:.6f}。

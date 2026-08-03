@@ -146,8 +146,6 @@ def run(instance_count: int = 8, hardware_results: Path | None = None) -> dict[s
         reference = enumerate_context(context, full_proxy)
         p2_probabilities = None
         for depth in (1, 2, 3):
-            if depth == 3 and context_index >= 3:
-                continue
             full_parameters = pretrain_parameters(full_proxy, depth, rounds=2)
             compatible_parameters = pretrain_parameters(compatible_proxy, depth, rounds=2)
             full_probabilities = ideal_probabilities(full_proxy, full_parameters)
@@ -157,6 +155,7 @@ def run(instance_count: int = 8, hardware_results: Path | None = None) -> dict[s
             stage_probabilities = [
                 ("完整 QUBO 理想模拟", "ideal", full_probabilities),
                 ("硬件兼容理想模拟", "ideal", compatible_probabilities),
+                ("均匀随机基线", "uniform", np.full(len(compatible_probabilities), 1.0 / len(compatible_probabilities))),
                 ("带噪声模拟：当前噪声", "current", apply_bitflip_noise(compatible_probabilities, 8, 0.08)),
                 ("带噪声模拟：50% 噪声", "50pct", apply_bitflip_noise(compatible_probabilities, 8, 0.04)),
                 ("带噪声模拟：25% 噪声", "25pct", apply_bitflip_noise(compatible_probabilities, 8, 0.02)),
@@ -257,8 +256,8 @@ def run(instance_count: int = 8, hardware_results: Path | None = None) -> dict[s
     metadata = {
         "created_at": datetime.now(timezone.utc).isoformat(),
         "instances": len(contexts),
-        "p_main": [1, 2],
-        "p3_representative_instances": min(3, len(contexts)),
+        "p_main": [1, 2, 3],
+        "p3_independent_instances": len(contexts),
         "hardware_results_source": str(hardware_results) if hardware_results else None,
         "completed_hardware_tasks": sum(row["status"] == "COMPLETED" for row in rows if row["stage"] == "Baihua 真机"),
         "hardware_status": "COMPLETED" if hardware else "NOT_RUN_NO_COMPATIBLE_COUNTS_PROVIDED",
