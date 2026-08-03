@@ -1,0 +1,49 @@
+﻿scope,sampler,metric,n,missing,mean,median,sample_std
+primary_independent_tasks,Random,low_energy_probability,23,0,0.10882302989130435,0.111328125,0.009426029328472944
+primary_independent_tasks,Random,enrichment_ratio,23,0,1.0714882943143813,1.0961538461538463,0.09281013492650282
+primary_independent_tasks,Random,shannon_entropy,23,0,7.805677467515519,7.805546809500742,0.016382182205674087
+primary_independent_tasks,Random,normalized_entropy,23,0,0.9757096834394399,0.9756933511875927,0.002047772775709261
+primary_independent_tasks,Random,unique_states,23,0,251.91304347826087,252.0,2.193234296613542
+primary_independent_tasks,Random,coverage,23,0,0.9840353260869565,0.984375,0.008567321471146649
+primary_independent_tasks,Random,effective_states,23,0,223.75349588905576,223.71943930932716,2.539844192375905
+primary_independent_tasks,Random,route_improvement,23,0,0.5738885658722215,0.2030521019465823,0.770708162354387
+primary_independent_tasks,Ideal QAOA Simulator,low_energy_probability,23,0,0.18287194293478262,0.123046875,0.1313372490911046
+primary_independent_tasks,Ideal QAOA Simulator,enrichment_ratio,23,0,1.8005852842809362,1.2115384615384615,1.2931667602816455
+primary_independent_tasks,Ideal QAOA Simulator,shannon_entropy,23,0,7.437636817580018,7.754825438222174,0.5449590699610668
+primary_independent_tasks,Ideal QAOA Simulator,normalized_entropy,23,0,0.9297046021975023,0.9693531797777718,0.06811988374513335
+primary_independent_tasks,Ideal QAOA Simulator,unique_states,23,0,225.2173913043478,247.0,37.83811993424228
+primary_independent_tasks,Ideal QAOA Simulator,coverage,23,0,0.8797554347826086,0.96484375,0.1478051559931339
+primary_independent_tasks,Ideal QAOA Simulator,effective_states,23,0,183.47281786217175,215.99070799955052,53.147490643167316
+primary_independent_tasks,Ideal QAOA Simulator,route_improvement,23,0,0.5860870627117969,0.5747736673325647,0.5347210197797659
+primary_independent_tasks,Quafu Hardware,low_energy_probability,23,0,0.12742017663043478,0.119140625,0.06043498927041005
+primary_independent_tasks,Quafu Hardware,enrichment_ratio,23,0,1.2545986622073577,1.1730769230769231,0.5950522020471144
+primary_independent_tasks,Quafu Hardware,shannon_entropy,23,0,7.484048722173605,7.630432420930951,0.3052662932811243
+primary_independent_tasks,Quafu Hardware,normalized_entropy,23,0,0.9355060902717006,0.9538040526163689,0.03815828666014054
+primary_independent_tasks,Quafu Hardware,unique_states,23,0,231.43478260869566,240.0,18.612864776220388
+primary_independent_tasks,Quafu Hardware,coverage,23,0,0.9040421195652174,0.9375,0.07270650303211089
+primary_independent_tasks,Quafu Hardware,effective_states,23,0,182.66026396780927,198.1477013514791,35.153506034227554
+primary_independent_tasks,Quafu Hardware,route_improvement,23,0,0.4687577347192702,0.0,0.6832759117568785
+all_historical_tasks,Random,low_energy_probability,33,0,0.10727391098484848,0.1083984375,0.011757142341553842
+all_historical_tasks,Random,enrichment_ratio,33,0,1.0562354312354314,1.0673076923076923,0.11576263228606862
+all_historical_tasks,Random,shannon_entropy,33,0,7.805769140575683,7.805546809500742,0.015294237216105963
+all_historical_tasks,Random,normalized_entropy,33,0,0.9757211425719604,0.9756933511875927,0.0019117796520132454
+all_historical_tasks,Random,unique_states,33,0,251.93939393939394,252.0,2.135114076861497
+all_historical_tasks,Random,coverage,33,0,0.9841382575757576,0.984375,0.008340289362740222
+all_historical_tasks,Random,effective_states,33,0,223.76610880898698,223.71943930932716,2.3714159832279664
+all_historical_tasks,Random,route_improvement,33,0,0.4317289491326374,0.0,0.6979758109598654
+all_historical_tasks,Ideal QAOA Simulator,low_energy_probability,33,0,0.16796875,0.1318359375,0.11807525071556262
+all_historical_tasks,Ideal QAOA Simulator,enrichment_ratio,33,0,1.653846153846154,1.2980769230769231,1.1625870839686163
+all_historical_tasks,Ideal QAOA Simulator,shannon_entropy,33,0,7.49851386798925,7.711625973306118,0.472048264533854
+all_historical_tasks,Ideal QAOA Simulator,normalized_entropy,33,0,0.9373142334986563,0.9639532466632648,0.05900603306673175
+all_historical_tasks,Ideal QAOA Simulator,unique_states,33,0,228.66666666666666,245.0,32.90769920044041
+all_historical_tasks,Ideal QAOA Simulator,coverage,33,0,0.8932291666666666,0.95703125,0.12854570000172036
+all_historical_tasks,Ideal QAOA Simulator,effective_states,33,0,188.68893463325028,209.61904270704366,46.52813849790874
+all_historical_tasks,Ideal QAOA Simulator,route_improvement,33,0,0.558731314612965,0.5495998254435221,0.5325938511553625
+all_historical_tasks,Quafu Hardware,low_energy_probability,33,0,0.11848958333333333,0.1123046875,0.05959615511642552
+all_historical_tasks,Quafu Hardware,enrichment_ratio,33,0,1.166666666666667,1.1057692307692308,0.5867929119155744
+all_historical_tasks,Quafu Hardware,shannon_entropy,33,0,7.507845672588605,7.630432420930951,0.27522874505193723
+all_historical_tasks,Quafu Hardware,normalized_entropy,33,0,0.9384807090735756,0.9538040526163689,0.034403593131492154
+all_historical_tasks,Quafu Hardware,unique_states,33,0,233.0909090909091,240.0,16.950965378783806
+all_historical_tasks,Quafu Hardware,coverage,33,0,0.9105113636363636,0.9375,0.06621470851087424
+all_historical_tasks,Quafu Hardware,effective_states,33,0,185.0313509006978,198.1477013514791,31.93951880688139
+all_historical_tasks,Quafu Hardware,route_improvement,33,0,0.37406602706255526,0.0,0.6141624617107192

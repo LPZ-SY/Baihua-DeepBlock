@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 import numpy as np
 
+from deepblock_distribution_diagnostics import run as run_distribution_diagnostics
 from deepblock_study import (
     ALGORITHM_DIR,
     FIGURE_DIR,
@@ -333,10 +334,13 @@ def run() -> dict[str, object]:
 
 增强实验明细见 `hardware_gap/hardware_repeat_summary.csv`、`hardware_gap/hardware_shots_scan_summary.csv`、`hardware_gap/hardware_closed_loop_rounds.csv`。重复方差与 shots 扫描属于稳健性分析，不改变“未证明通用量子优势”的结论边界。
 """
+    diagnostics = run_distribution_diagnostics()
+    report += "\n\n" + Path(str(diagnostics["report_section"])).read_text(encoding="utf-8")
     (RESULT_ROOT / "final_report.md").write_text(report, encoding="utf-8")
     return {
         "figures": [str(FIGURE_DIR / name) for name in FIGURES],
         "final_report": str(RESULT_ROOT / "final_report.md"),
+        "distribution_diagnostics": diagnostics,
     }
 
 

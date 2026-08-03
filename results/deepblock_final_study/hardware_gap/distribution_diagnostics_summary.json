@@ -1,0 +1,482 @@
+[
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Random",
+    "metric": "low_energy_probability",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.10882302989130435,
+    "median": 0.111328125,
+    "sample_std": 0.009426029328472944
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Random",
+    "metric": "enrichment_ratio",
+    "n": 23,
+    "missing": 0,
+    "mean": 1.0714882943143813,
+    "median": 1.0961538461538463,
+    "sample_std": 0.09281013492650282
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Random",
+    "metric": "shannon_entropy",
+    "n": 23,
+    "missing": 0,
+    "mean": 7.805677467515519,
+    "median": 7.805546809500742,
+    "sample_std": 0.016382182205674087
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Random",
+    "metric": "normalized_entropy",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.9757096834394399,
+    "median": 0.9756933511875927,
+    "sample_std": 0.002047772775709261
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Random",
+    "metric": "unique_states",
+    "n": 23,
+    "missing": 0,
+    "mean": 251.91304347826087,
+    "median": 252.0,
+    "sample_std": 2.193234296613542
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Random",
+    "metric": "coverage",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.9840353260869565,
+    "median": 0.984375,
+    "sample_std": 0.008567321471146649
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Random",
+    "metric": "effective_states",
+    "n": 23,
+    "missing": 0,
+    "mean": 223.75349588905576,
+    "median": 223.71943930932716,
+    "sample_std": 2.539844192375905
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Random",
+    "metric": "route_improvement",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.5738885658722215,
+    "median": 0.2030521019465823,
+    "sample_std": 0.770708162354387
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "low_energy_probability",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.18287194293478262,
+    "median": 0.123046875,
+    "sample_std": 0.1313372490911046
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "enrichment_ratio",
+    "n": 23,
+    "missing": 0,
+    "mean": 1.8005852842809362,
+    "median": 1.2115384615384615,
+    "sample_std": 1.2931667602816455
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "shannon_entropy",
+    "n": 23,
+    "missing": 0,
+    "mean": 7.437636817580018,
+    "median": 7.754825438222174,
+    "sample_std": 0.5449590699610668
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "normalized_entropy",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.9297046021975023,
+    "median": 0.9693531797777718,
+    "sample_std": 0.06811988374513335
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "unique_states",
+    "n": 23,
+    "missing": 0,
+    "mean": 225.2173913043478,
+    "median": 247.0,
+    "sample_std": 37.83811993424228
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "coverage",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.8797554347826086,
+    "median": 0.96484375,
+    "sample_std": 0.1478051559931339
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "effective_states",
+    "n": 23,
+    "missing": 0,
+    "mean": 183.47281786217175,
+    "median": 215.99070799955052,
+    "sample_std": 53.147490643167316
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "route_improvement",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.5860870627117969,
+    "median": 0.5747736673325647,
+    "sample_std": 0.5347210197797659
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "low_energy_probability",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.12742017663043478,
+    "median": 0.119140625,
+    "sample_std": 0.06043498927041005
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "enrichment_ratio",
+    "n": 23,
+    "missing": 0,
+    "mean": 1.2545986622073577,
+    "median": 1.1730769230769231,
+    "sample_std": 0.5950522020471144
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "shannon_entropy",
+    "n": 23,
+    "missing": 0,
+    "mean": 7.484048722173605,
+    "median": 7.630432420930951,
+    "sample_std": 0.3052662932811243
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "normalized_entropy",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.9355060902717006,
+    "median": 0.9538040526163689,
+    "sample_std": 0.03815828666014054
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "unique_states",
+    "n": 23,
+    "missing": 0,
+    "mean": 231.43478260869566,
+    "median": 240.0,
+    "sample_std": 18.612864776220388
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "coverage",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.9040421195652174,
+    "median": 0.9375,
+    "sample_std": 0.07270650303211089
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "effective_states",
+    "n": 23,
+    "missing": 0,
+    "mean": 182.66026396780927,
+    "median": 198.1477013514791,
+    "sample_std": 35.153506034227554
+  },
+  {
+    "scope": "primary_independent_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "route_improvement",
+    "n": 23,
+    "missing": 0,
+    "mean": 0.4687577347192702,
+    "median": 0.0,
+    "sample_std": 0.6832759117568785
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Random",
+    "metric": "low_energy_probability",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.10727391098484848,
+    "median": 0.1083984375,
+    "sample_std": 0.011757142341553842
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Random",
+    "metric": "enrichment_ratio",
+    "n": 33,
+    "missing": 0,
+    "mean": 1.0562354312354314,
+    "median": 1.0673076923076923,
+    "sample_std": 0.11576263228606862
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Random",
+    "metric": "shannon_entropy",
+    "n": 33,
+    "missing": 0,
+    "mean": 7.805769140575683,
+    "median": 7.805546809500742,
+    "sample_std": 0.015294237216105963
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Random",
+    "metric": "normalized_entropy",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.9757211425719604,
+    "median": 0.9756933511875927,
+    "sample_std": 0.0019117796520132454
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Random",
+    "metric": "unique_states",
+    "n": 33,
+    "missing": 0,
+    "mean": 251.93939393939394,
+    "median": 252.0,
+    "sample_std": 2.135114076861497
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Random",
+    "metric": "coverage",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.9841382575757576,
+    "median": 0.984375,
+    "sample_std": 0.008340289362740222
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Random",
+    "metric": "effective_states",
+    "n": 33,
+    "missing": 0,
+    "mean": 223.76610880898698,
+    "median": 223.71943930932716,
+    "sample_std": 2.3714159832279664
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Random",
+    "metric": "route_improvement",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.4317289491326374,
+    "median": 0.0,
+    "sample_std": 0.6979758109598654
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "low_energy_probability",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.16796875,
+    "median": 0.1318359375,
+    "sample_std": 0.11807525071556262
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "enrichment_ratio",
+    "n": 33,
+    "missing": 0,
+    "mean": 1.653846153846154,
+    "median": 1.2980769230769231,
+    "sample_std": 1.1625870839686163
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "shannon_entropy",
+    "n": 33,
+    "missing": 0,
+    "mean": 7.49851386798925,
+    "median": 7.711625973306118,
+    "sample_std": 0.472048264533854
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "normalized_entropy",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.9373142334986563,
+    "median": 0.9639532466632648,
+    "sample_std": 0.05900603306673175
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "unique_states",
+    "n": 33,
+    "missing": 0,
+    "mean": 228.66666666666666,
+    "median": 245.0,
+    "sample_std": 32.90769920044041
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "coverage",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.8932291666666666,
+    "median": 0.95703125,
+    "sample_std": 0.12854570000172036
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "effective_states",
+    "n": 33,
+    "missing": 0,
+    "mean": 188.68893463325028,
+    "median": 209.61904270704366,
+    "sample_std": 46.52813849790874
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Ideal QAOA Simulator",
+    "metric": "route_improvement",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.558731314612965,
+    "median": 0.5495998254435221,
+    "sample_std": 0.5325938511553625
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "low_energy_probability",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.11848958333333333,
+    "median": 0.1123046875,
+    "sample_std": 0.05959615511642552
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "enrichment_ratio",
+    "n": 33,
+    "missing": 0,
+    "mean": 1.166666666666667,
+    "median": 1.1057692307692308,
+    "sample_std": 0.5867929119155744
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "shannon_entropy",
+    "n": 33,
+    "missing": 0,
+    "mean": 7.507845672588605,
+    "median": 7.630432420930951,
+    "sample_std": 0.27522874505193723
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "normalized_entropy",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.9384807090735756,
+    "median": 0.9538040526163689,
+    "sample_std": 0.034403593131492154
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "unique_states",
+    "n": 33,
+    "missing": 0,
+    "mean": 233.0909090909091,
+    "median": 240.0,
+    "sample_std": 16.950965378783806
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "coverage",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.9105113636363636,
+    "median": 0.9375,
+    "sample_std": 0.06621470851087424
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "effective_states",
+    "n": 33,
+    "missing": 0,
+    "mean": 185.0313509006978,
+    "median": 198.1477013514791,
+    "sample_std": 31.93951880688139
+  },
+  {
+    "scope": "all_historical_tasks",
+    "sampler": "Quafu Hardware",
+    "metric": "route_improvement",
+    "n": 33,
+    "missing": 0,
+    "mean": 0.37406602706255526,
+    "median": 0.0,
+    "sample_std": 0.6141624617107192
+  }
+]

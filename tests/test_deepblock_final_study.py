@@ -19,6 +19,11 @@ from deepblock_study import (
     make_contexts,
     observed_distribution_metrics,
 )
+from deepblock_distribution_diagnostics import (
+    UNIFORM_LOW_ENERGY_PROBABILITY,
+    _counts_vector,
+    distribution_metrics,
+)
 from quantum_route_forge.deepblock.proxy_qubo import build_sparse_proxy_qubo
 from quantum_route_forge.deepblock.qaoa_runner import ideal_probabilities, pretrain_parameters
 
@@ -70,3 +75,35 @@ def test_observed_metrics_do_not_resample_hardware_distribution():
     assert metrics["unique_states"] == 2
     assert metrics["improving_probability"] == 0.25
     assert metrics["found_improvement"]
+
+
+def test_distribution_diagnostics_use_empirical_counts():
+    space = StateSpace(
+        states=np.arange(256),
+        bitstrings=[f"{state:08b}" for state in range(256)],
+        distances=np.full(256, 10.0),
+        feasible_before=np.ones(256, dtype=bool),
+        repaired=np.zeros(256, dtype=bool),
+        improvements=np.r_[0.0, 5.0, np.zeros(254)],
+        energies=np.arange(256, dtype=float),
+        current_state=0,
+    )
+    counts = np.zeros(256, dtype=int)
+    counts[:2] = 512
+    metrics = distribution_metrics(space, counts)
+    assert metrics["shannon_entropy"] == 1.0
+    assert metrics["normalized_entropy"] == 0.125
+    assert metrics["unique_states"] == 2
+    assert metrics["coverage"] == 2 / 256
+    assert metrics["effective_states"] == 2.0
+    assert metrics["low_energy_probability"] == 1.0
+    assert metrics["enrichment_ratio"] == 1.0 / UNIFORM_LOW_ENERGY_PROBABILITY
+    assert metrics["route_improvement"] == 5.0
+
+
+def test_distribution_diagnostics_mark_missing_counts_without_filling_them():
+    assert _counts_vector({}) == (None, "MISSING_COUNTS")
+    vector, status = _counts_vector({"00000000": 1024})
+    assert status == "COMPLETE"
+    assert vector is not None
+    assert int(vector.sum()) == 1024

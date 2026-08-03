@@ -1,0 +1,37 @@
+{
+  "created_at": "2026-08-03T06:58:23.492208+00:00",
+  "analysis_type": "offline_reuse_of_historical_counts",
+  "hardware_submission_performed": false,
+  "width": 8,
+  "state_count": 256,
+  "low_energy_fraction_rule": 0.1,
+  "low_energy_state_count": 26,
+  "uniform_low_energy_probability": 0.1015625,
+  "top_k": 64,
+  "standard_deviation": "sample_std_ddof_1",
+  "historical_tasks": 33,
+  "detail_rows": 99,
+  "hardware_complete": 33,
+  "hardware_missing": 0,
+  "paired_focus": {
+    "versus_random": {
+      "baseline_sampler": "Random",
+      "n": 23,
+      "hardware_entropy_lower": 23,
+      "hardware_low_energy_probability_higher": 14,
+      "lower_entropy_and_higher_low_energy_probability": 14,
+      "mean_entropy_delta_hardware_minus_baseline": -0.3216287453419105,
+      "mean_low_energy_probability_delta_hardware_minus_baseline": 0.018597146739130436
+    },
+    "versus_ideal": {
+      "baseline_sampler": "Ideal QAOA Simulator",
+      "n": 23,
+      "hardware_entropy_lower": 17,
+      "hardware_low_energy_probability_higher": 11,
+      "lower_entropy_and_higher_low_energy_probability": 11,
+      "mean_entropy_delta_hardware_minus_baseline": 0.046411904593587454,
+      "mean_low_energy_probability_delta_hardware_minus_baseline": -0.055451766304347824
+    }
+  },
+  "claim_boundary": "Entropy and unique-state metrics are descriptive aids and are not, by themselves, evidence of a positive quantum contribution."
+}
