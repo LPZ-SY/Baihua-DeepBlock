@@ -1,0 +1,12 @@
+dash>=3.0,<4.0
+plotly>=6.0,<7.0
+python-dotenv>=1.0,<2.0
+numpy>=1.26,<3.0
+scikit-learn>=1.3,<1.7
+matplotlib>=3.9,<4.0
+dimod>=0.12,<0.13
+pyquafu==0.4.5
+PySocks>=1.7,<2
+quarkstudio==7.3.9; python_version >= "3.12"
+quarkcircuit==0.5.13; python_version >= "3.12"
+pytest>=7,<9
